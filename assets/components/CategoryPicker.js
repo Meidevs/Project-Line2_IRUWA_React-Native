@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import {
     View,
+    Picker
 } from 'react-native';
-import { Picker } from '@react-native-community/picker';
+// import { Picker } from '@react-native-community/picker';
 import DATA_SOURCE from '../dataSource/dataModel';
 
 const CategoryPicker = ({ callback }) => {

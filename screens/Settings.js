@@ -35,7 +35,6 @@ function SettingsScreen({ route, navigation }) {
     Logout = async () => {
         var LOGOUT = await AUTHENTICATION.LOGOUT();
         if (LOGOUT) {
-            console.log('a')
             navigation.popToTop('Login');
         } else {
             alert('로그아웃에 실패하였습니다.')
