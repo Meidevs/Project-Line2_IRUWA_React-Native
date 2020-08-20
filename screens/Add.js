@@ -33,6 +33,8 @@ function AddScreen({ route, navigation }) {
     const [images, setImage] = useState([]);
     const [title, setItemTitle] = useState('');
     const [content, setItemContent] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
 
     useEffect(() => {
         navigation.setOptions({
@@ -85,7 +87,7 @@ function AddScreen({ route, navigation }) {
     }
 
     const SaveImages = async (images) => {
-
+        setIsLoading(true);
         var formData = new FormData();
         formData.append('item_name', title)
         formData.append('item_content', content)
@@ -96,9 +98,15 @@ function AddScreen({ route, navigation }) {
                 name: images[i].id,
             })
         }
-        
         try {
-            await DATA_SOURCE.SAVE_IMAGES(formData);
+            var SAVE_RESULT = await DATA_SOURCE.SAVE_IMAGES(formData);
+            if (SAVE_RESULT.flags == 0) {
+                navigation.goBack();
+                alert(SAVE_RESULT.message);
+            } else {
+                alert(SAVE_RESULT.message);
+            }
+            setIsLoading(false);
         } catch (err) {
             console.log(err)
         }

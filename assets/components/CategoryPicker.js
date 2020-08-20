@@ -11,7 +11,7 @@ const CategoryPicker = ({ callback }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const CATEGORIES = await DATA_SOURCE.GetCategoryList();
+            const CATEGORIES = await DATA_SOURCE.GET_CATEGORIES();
             setCategories(CATEGORIES);
         }
         fetchData();

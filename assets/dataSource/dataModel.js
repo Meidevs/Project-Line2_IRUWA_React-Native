@@ -6,10 +6,10 @@ class DATA_SORUCE {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials : 'include',
                 body: JSON.stringify({ user_location: user_location })
             });
             var json = await response.json();
-
             if (response.ok) {
                 return json;
             }
@@ -18,7 +18,7 @@ class DATA_SORUCE {
         }
     }
 
-    GetCategoryList = async () => {
+    GET_CATEGORIES = async () => {
         try {
             var response = await fetch('http://localhost:8888/api/category/all', {
                 method: 'GET',
@@ -37,60 +37,6 @@ class DATA_SORUCE {
         }
     }
 
-    UpdateLocationStatus = async (data) => {
-        try {
-            var response = await fetch('http://localhost:3000/api/locations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ data: data })
-            });
-            var json = await response.json();
-
-            if (response.ok) {
-                return json;
-            }
-        } catch (err) {
-            console.log('Update Location Status Err :', err)
-        }
-    }
-
-    GetItemInfos = async (data) => {
-        try {
-            var response = await fetch('http://localhost:3000/api/itemdetail', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ data: data })
-            });
-            var json = await response.json();
-            if (response.ok) {
-                return json;
-            }
-        } catch (err) {
-            console.log('Fail! Getting Item Information!');
-        }
-    }
-
-    GetAdsList = async (data) => {
-        try {
-            var response = await fetch('http://localhost:3000/api/adslist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ data: data })
-            });
-            var json = await response.json();
-            if (response.ok) {
-                return json;
-            }
-        } catch (err) {
-            console.log('Fail! Getting Item Information!');
-        }
-    }
     SAVE_IMAGES = async (formData) => {
         console.log(formData)
         try {

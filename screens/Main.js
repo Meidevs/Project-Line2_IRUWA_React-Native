@@ -3,8 +3,6 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    StatusBar,
     StyleSheet,
     Image,
     Dimensions,
@@ -16,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
+import TimeGap from '../assets/components/TimeGap';
 
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
@@ -23,13 +22,15 @@ import * as Location from 'expo-location';
 const { width, height } = Dimensions.get('window');
 
 const getItem = (data, index) => {
-    if (data[index]) {
+    const items = data[index];
+    if (data[index] != undefined) {
         return {
-            id: data[index].id,
-            title: data[index].title,
-            location: data[index].location,
-            reg_date: data[index].reg_date,
-            cmp_code: data[index].cmp_code
+            items_seq: items.items_seq,
+            item_name: items.item_name,
+            cmp_location: items.cmp_location,
+            reg_date: items.reg_date,
+            cmp_seq: items.cmp_seq,
+            uri : items.uri
         }
     }
 }
@@ -40,35 +41,22 @@ const getItemCount = (data) => {
 }
 
 const Item = ({ data, navigation }) => {
+    var time_gap = TimeGap(data.reg_date);
     return (
         <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
-            item_code: data.id,
-            cmp_code: data.cmp_code
+            items_seq: data.items_seq,
+            cmp_seq: data.cmp_seq
         })}>
             <View style={styles.LeftArea}>
-                <Text>Image Area</Text>
+                <Image source={{ uri : data.uri[0]}} style={styles.ImageContent}/>
             </View>
             <View style={styles.RightArea}>
-                <Text>{data.title}</Text>
-                <Text>{data.location}</Text>
-                <Text>{data.reg_date}</Text>
+                <Text>{data.item_name}</Text>
+                <Text>{data.cmp_location}</Text>
+                <Text>{time_gap}</Text>
             </View>
         </TouchableOpacity>
     );
-}
-
-const DATA_SET_ARRANGE = (LOCATIONS, ITEMS_LIST) => {
-    var rawArray = new Array();
-    var items_list = ITEMS_LIST;
-    var locations = LOCATIONS;
-    for (var i = 0; i < items_list.length; i++) {
-        for (var j = 0; j < locations.length; j++) {
-            if (items_list[i].locationid == locations[j].locationid && locations[j].status == 1) {
-                rawArray.push(items_list[i]);
-            }
-        }
-    }
-    return { items_list: rawArray, locations: locations }
 }
 
 function MainScreen({ route, navigation }) {
@@ -79,30 +67,22 @@ function MainScreen({ route, navigation }) {
 
     useFocusEffect(
         React.useCallback(() => {
-            const GET_USER_LOCATION = async () => {
+            const GET_MAIN_INFOs = async () => {
                 setIsError(false);
                 setIsLoading(true);
                 try {
                     const data = await AUTHENTICATION.GET_USER_LOCATION();
-                    console.log(data)
+                    const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+                    setData(ITEMS.content);
                     setUserLocation(data.user_location);
                 } catch (err) {
                     setIsError(true)
                 }
                 setIsLoading(false);
             }
-            GET_USER_LOCATION();
+            GET_MAIN_INFOs();
         }, [user_location])
     );
-
-    const ITEM_INFOs = useCallback(async () => {
-        const data = await DATA_SOURCE.GET_ITEMS(user_location);
-        setData(data)
-    }, [user_location]);
-
-    useEffect(() => {
-        ITEM_INFOs()
-    }, [ITEM_INFOs]);
 
     useEffect(() => {
         navigation.setOptions({
@@ -129,14 +109,14 @@ function MainScreen({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.Container}>
-            {/* <VirtualizedList
-                data={data.length == undefined ? [] : data}
-                initialNumToRender={data.length}
-                renderItem={({ item }) => <Item key={item.id} data={item} navigation={navigation} />}
-                keyExtractor={item => item.id}
+            <VirtualizedList
+                data={data}
+                initialNumToRender={10}
+                renderItem={({ item }) => <Item data={item} />}
+                keyExtractor={(item, index) => index}
                 getItemCount={getItemCount}
                 getItem={getItem}
-            /> */}
+            />
         </SafeAreaView>
     )
 }
@@ -175,6 +155,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    ImageContent : {
+        resizeMode : 'contain',
+        width : 100,
+        height : 100,
     }
 })
 
