@@ -72,19 +72,42 @@ class AUTHENTICATION {
     GET_USER_LOCATION = async () => {
         try {
             let response = await fetch('http://localhost:8888/api/auth/info', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
 
-        let json = await response.json();
-        if (response.ok) {
-            return json;
-        }
+            let json = await response.json();
+            if (response.ok) {
+                return json;
+            }
         } catch (err) {
 
+        }
+    }
+
+    UPDATE_USER_LOCATION = async (user_location) => {
+        try {
+            let response = await fetch('http://localhost:8888/api/auth/userlocation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body : JSON.stringify({user_location : user_location})
+            });
+
+            let json = await response.json();
+
+            if (response.ok) {
+                return json;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 }

@@ -7,13 +7,17 @@ import {
     Animated,
     TextInput,
     Dimensions,
+    AsyncStorage,
     ScrollView,
     SafeAreaView,
     StatusBar
 } from 'react-native';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
-import Constants from "expo-constants";
 import Icon from 'react-native-vector-icons/Ionicons';
+import ROADAPI from '../assets/dataSource/roadAPI';
+import AUTHENTICATION from '../assets/dataSource/authModel';
+
+import Constants from "expo-constants";
+import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,24 +30,50 @@ function LocationScreen({ route, navigation }) {
     const scrollY = useRef(new Animated.Value(0)).current;
     const [yPosition, setYposition] = useState(null);
     const [prevLocate, setPrevLocate] = useState([]);
-    console.log(prevLocate)
-    
-    const ReadFiles = useCallback(async () => {
-        var dataa = [
-            { location: '구로구 신도림동' },
-            { location: '구로구 구로제1동' },
-            { location: '구로구 구로제2동' },
-            { location: '구로구 구로제3동' },
-            { location: '구로구 대림제4동' },
-            { location: '관악구 관악제1동' },
-        ]
-        setPrevLocate(dataa)
-    },[])
+    const [currentLocation, setUserLocation] = useState('');
+    console.log(prevLocate);
+
+    const READ_PREVIOUSE_LOCATION = useCallback(async () => {
+        const prevLocation = await AsyncStorage.getItem('@my_prev_location');
+        console.log('Before prevLocation', prevLocation);
+        var prevLocationList = JSON.parse(prevLocation);
+        console.log('After Parse prevLocation', prevLocationList);
+        setPrevLocate(prevLocationList)
+    }, []);
+
+    const GET_CURRENT_LOCATION = useCallback(async () => {
+        let position = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest
+        });
+        var response = await ROADAPI.GET_CURRENT_LOCATION(position);
+        setUserLocation(response);
+    }, []);
 
     useEffect(() => {
-        ReadFiles();
-    }, [ReadFiles])
+        READ_PREVIOUSE_LOCATION();
+    }, [READ_PREVIOUSE_LOCATION])
 
+    useEffect(() => {
+        GET_CURRENT_LOCATION();
+    }, [GET_CURRENT_LOCATION]);
+
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+            }
+        }, []);
+    })
+
+    const UPDATE_CURRENT_LOCATION = async () => {
+        var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(response);
+        if (UPDATE_RESULT) {
+
+            await AsyncStorage.setItem('@my_Locations');
+            navigation.popToTop('Main');
+        }
+    }
     return (
         <SafeAreaView style={styles.Container}>
             <StatusBar />
@@ -94,7 +124,7 @@ function LocationScreen({ route, navigation }) {
                         </View>
                     </View>
                     <View style={styles.CurrentLocate}>
-                        <TouchableOpacity style={styles.CLBtn}>
+                        <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_CURRENT_LOCATION()}>
                             <Icon name={'ios-locate'} size={20} />
                             <Text>현 위치로 주소 설정</Text>
                         </TouchableOpacity>
@@ -105,11 +135,11 @@ function LocationScreen({ route, navigation }) {
                         <Text style={styles.PrevSearchText}>최근 주소</Text>
                     </View>
                     {
-                        prevLocate.map((data) => {
+                        prevLocate.map((data, index) => {
                             return (
-                                <TouchableOpacity style={styles.Locations}>
-                                    <Text style={{textAlignVertical : 'center'}}>{data.location}</Text>
-                                    <Icon name={'ios-close'} size={32} style={{alignSelf : 'center'}}/>
+                                <TouchableOpacity key={JSON.stringify(index)} style={styles.Locations} >
+                                    <Text style={{ textAlignVertical: 'center' }}>{data.location}</Text>
+                                    <Icon name={'ios-close'} size={32} style={{ alignSelf: 'center' }} />
                                 </TouchableOpacity>
                             )
                         })
@@ -226,7 +256,7 @@ const styles = StyleSheet.create({
     },
     PrevSearchTitle: {
         height: 20,
-        padding : 20,
+        padding: 20,
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'center'
@@ -235,15 +265,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    Locations : {
-        height : 60,
-        paddingRight : 20,
-        paddingLeft : 20,
-        flexDirection : 'row',
-        justifyContent : 'space-between',
-        alignContent : 'center',
-        borderBottomWidth : 1,
-        borderColor : 'rgba(230, 230, 230, 1)',
+    Locations: {
+        height: 60,
+        paddingRight: 20,
+        paddingLeft: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        borderBottomWidth: 1,
+        borderColor: 'rgba(230, 230, 230, 1)',
     }
 })
 

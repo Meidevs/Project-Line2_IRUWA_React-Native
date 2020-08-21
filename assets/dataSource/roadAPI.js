@@ -16,6 +16,8 @@ class ROADAPI {
             let json = await response.json();
             if (response.ok) {
                 return json.addressInfo.fullAddress;
+            } else {
+                return false;
             }
         } catch (err) {
             console.log(err);
