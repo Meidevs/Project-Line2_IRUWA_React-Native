@@ -29,17 +29,21 @@ const scrollHandle = (event) => {
 function LocationScreen({ route, navigation }) {
     const scrollY = useRef(new Animated.Value(0)).current;
     const [yPosition, setYposition] = useState(null);
-    const [prevLocate, setPrevLocate] = useState([]);
+    const [location, setLocation] = useState(null);
+    const [prevLocate, setPrevLocate] = useState([{}]);
     const [currentLocation, setUserLocation] = useState('');
+    const [isLoaded, setIsLoading] = useState(false);
     console.log(prevLocate);
+    console.log(isLoaded);
 
-    const READ_PREVIOUSE_LOCATION = useCallback(async () => {
-        const prevLocation = await AsyncStorage.getItem('@my_prev_location');
-        console.log('Before prevLocation', prevLocation);
-        var prevLocationList = JSON.parse(prevLocation);
-        console.log('After Parse prevLocation', prevLocationList);
-        setPrevLocate(prevLocationList)
-    }, []);
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+            }
+        }, []);
+    });
 
     const GET_CURRENT_LOCATION = useCallback(async () => {
         let position = await Location.getCurrentPositionAsync({
@@ -47,6 +51,22 @@ function LocationScreen({ route, navigation }) {
         });
         var response = await ROADAPI.GET_CURRENT_LOCATION(position);
         setUserLocation(response);
+    }, []);
+
+    const READ_PREVIOUSE_LOCATION = useCallback(async () => {
+        var prevLocationList = new Array();
+        const allKeys = await AsyncStorage.getAllKeys();
+        var filtered = allKeys.filter(key => key != "@my_Key");
+        console.log('filtered', filtered)
+        const prevLocation = await AsyncStorage.multiget(filtered);
+        console.log('prevLocation', prevLocation)
+        if (prevLocation != null) {
+            prevLocationList = JSON.parse(prevLocation);
+        } else {
+            prevLocationList = [];
+        }
+        setPrevLocate(prevLocationList);
+        setIsLoading(true)
     }, []);
 
     useEffect(() => {
@@ -57,23 +77,42 @@ function LocationScreen({ route, navigation }) {
         GET_CURRENT_LOCATION();
     }, [GET_CURRENT_LOCATION]);
 
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestPermissionsAsync();
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-            }
-        }, []);
-    })
+
 
     const UPDATE_CURRENT_LOCATION = async () => {
-        var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(response);
+        var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
         if (UPDATE_RESULT) {
-
-            await AsyncStorage.setItem('@my_Locations');
+            var object = {
+                id: prevLocate.length + 1,
+                location_name: currentLocation,
+            }
+            var locationArray = [
+                ...prevLocate,
+                object
+            ]
+            var key = '@my_prev_location_' + (prevLocate.length + 1);
+            console.log(key)
+            await AsyncStorage.setItem(key, JSON.stringify(locationArray));
             navigation.popToTop('Main');
         }
     }
+
+    const DELETE_PREV_LOCATION = async () => {
+        try {
+            var keys = await AsyncStorage.getAllKeys();
+            console.log(keys)
+            await AsyncStorage.removeItem();
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const SEARCH_LOCATIONS = async () => {
+        console.log(location)
+        var address = location;
+        var SEARCH_RESULT = await ROADAPI.SEARCH_ADDRESS(address);
+    }
+
     return (
         <SafeAreaView style={styles.Container}>
             <StatusBar />
@@ -116,12 +155,15 @@ function LocationScreen({ route, navigation }) {
                     <View style={styles.SearchBox}>
                         <View style={styles.SearchInput}>
                             <TextInput
+                                value={location}
                                 placeholder={'예) 배민동'}
-                                placeholderTextColor='#B4B4B4' />
+                                placeholderTextColor='#B4B4B4'
+                                onChangeText={(text) => setLocation(text)}
+                            />
                         </View>
-                        <View style={styles.SearchInputBtn}>
+                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => SEARCH_LOCATIONS()}>
                             <Icon name={'ios-search'} size={32} />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.CurrentLocate}>
                         <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_CURRENT_LOCATION()}>
@@ -137,10 +179,16 @@ function LocationScreen({ route, navigation }) {
                     {
                         prevLocate.map((data, index) => {
                             return (
-                                <TouchableOpacity key={JSON.stringify(index)} style={styles.Locations} >
-                                    <Text style={{ textAlignVertical: 'center' }}>{data.location}</Text>
-                                    <Icon name={'ios-close'} size={32} style={{ alignSelf: 'center' }} />
-                                </TouchableOpacity>
+                                <View style={styles.Locations}>
+                                    <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter}>
+                                        <Text style={{ textAlignVertical: 'center' }}>
+                                            {data.location_name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.ContentCenter} onPress={() => DELETE_PREV_LOCATION()}>
+                                        <Icon name={'ios-close'} size={32} />
+                                    </TouchableOpacity>
+                                </View>
                             )
                         })
                     }
@@ -266,14 +314,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     Locations: {
-        height: 60,
-        paddingRight: 20,
-        paddingLeft: 20,
+        height: 80,
+        padding: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
         borderBottomWidth: 1,
         borderColor: 'rgba(230, 230, 230, 1)',
+    },
+    ContentCenter: {
+        justifyContent: 'center',
+        alignContent: 'center'
     }
 })
 
