@@ -28,11 +28,14 @@ const scrollHandle = (event) => {
 
 function LocationScreen({ route, navigation }) {
     const scrollY = useRef(new Animated.Value(0)).current;
+    const [keys, setAllKeys] = useState([]);
     const [yPosition, setYposition] = useState(null);
     const [location, setLocation] = useState(null);
-    const [prevLocate, setPrevLocate] = useState([{}]);
+    const [prevLocate, setPrevLocate] = useState([[]]);
     const [currentLocation, setUserLocation] = useState('');
     const [isLoaded, setIsLoading] = useState(false);
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    console.log('Keys', keys);
     console.log(prevLocate);
     console.log(isLoaded);
 
@@ -44,71 +47,60 @@ function LocationScreen({ route, navigation }) {
             }
         }, []);
     });
-
-    const GET_CURRENT_LOCATION = useCallback(async () => {
-        let position = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.Highest
-        });
-        var response = await ROADAPI.GET_CURRENT_LOCATION(position);
-        setUserLocation(response);
-    }, []);
-
-    const READ_PREVIOUSE_LOCATION = useCallback(async () => {
-        var prevLocationList = new Array();
-        const allKeys = await AsyncStorage.getAllKeys();
-        var filtered = allKeys.filter(key => key != "@my_Key");
-        console.log('filtered', filtered)
-        const prevLocation = await AsyncStorage.multiget(filtered);
-        console.log('prevLocation', prevLocation)
-        if (prevLocation != null) {
-            prevLocationList = JSON.parse(prevLocation);
-        } else {
-            prevLocationList = [];
+    useEffect(() => {
+        const GET_ALL_KEYS = async () => {
+            const allKeys = await AsyncStorage.getAllKeys();
+            var filtered = allKeys.filter(key => key != "@my_Key");
+            setAllKeys(filtered);
         }
-        setPrevLocate(prevLocationList);
-        setIsLoading(true)
+        GET_ALL_KEYS();
     }, []);
 
     useEffect(() => {
-        READ_PREVIOUSE_LOCATION();
-    }, [READ_PREVIOUSE_LOCATION])
+        const GET_CURRENT_LOCATION = async () => {
+            let position = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.Highest
+            });
+            var response = await ROADAPI.GET_CURRENT_LOCATION(position);
+            setUserLocation(response);
+        };
+        GET_CURRENT_LOCATION();
+    }, []);
 
     useEffect(() => {
-        GET_CURRENT_LOCATION();
-    }, [GET_CURRENT_LOCATION]);
-
-
+        const READ_PREVIOUSE_LOCATION = async () => {
+            const prevLocations = await AsyncStorage.multiGet(keys);
+            setPrevLocate(prevLocations);
+            setIsLoading(true)
+        };
+        READ_PREVIOUSE_LOCATION();
+    }, [keys])
 
     const UPDATE_CURRENT_LOCATION = async () => {
+        console.log(currentLocation)
         var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
         if (UPDATE_RESULT) {
             var object = {
-                id: prevLocate.length + 1,
+                id: keys.length + 1,
                 location_name: currentLocation,
             }
-            var locationArray = [
-                ...prevLocate,
-                object
-            ]
-            var key = '@my_prev_location_' + (prevLocate.length + 1);
-            console.log(key)
-            await AsyncStorage.setItem(key, JSON.stringify(locationArray));
+            var key = '@my_prev_location_' + (keys.length + 1);
+            await AsyncStorage.setItem(key, JSON.stringify(object));
             navigation.popToTop('Main');
         }
     }
 
-    const DELETE_PREV_LOCATION = async () => {
+    const DELETE_PREV_LOCATION = async (index) => {
         try {
-            var keys = await AsyncStorage.getAllKeys();
-            console.log(keys)
-            await AsyncStorage.removeItem();
+            var keyString = "@my_prev_location_" + (index + 1);
+            setAllKeys([...keys.filter(data => data != keyString)])
+            await AsyncStorage.removeItem(keyString);
         } catch (err) {
             console.log(err)
         }
     }
 
     const SEARCH_LOCATIONS = async () => {
-        console.log(location)
         var address = location;
         var SEARCH_RESULT = await ROADAPI.SEARCH_ADDRESS(address);
     }
@@ -178,18 +170,23 @@ function LocationScreen({ route, navigation }) {
                     </View>
                     {
                         prevLocate.map((data, index) => {
-                            return (
-                                <View style={styles.Locations}>
-                                    <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter}>
-                                        <Text style={{ textAlignVertical: 'center' }}>
-                                            {data.location_name}
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.ContentCenter} onPress={() => DELETE_PREV_LOCATION()}>
-                                        <Icon name={'ios-close'} size={32} />
-                                    </TouchableOpacity>
+                            if (data[0] != undefined) {
+                                return (
+                                    <View style={styles.Locations}>
+                                        <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter}>
+                                            <Text style={{ textAlignVertical: 'center' }}>
+                                                {JSON.parse(data[1]).location_name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.ContentCenter} onPress={() => DELETE_PREV_LOCATION(index)}>
+                                            <Icon name={'ios-close'} size={32} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            } else {
+                                <View>
                                 </View>
-                            )
+                            }
                         })
                     }
                 </View>
