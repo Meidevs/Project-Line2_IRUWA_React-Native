@@ -24,27 +24,19 @@ class ROADAPI {
         }
     }
 
-    SEARCH_ADDRESS = async () => {
+    SEARCH_ADDRESS = async (location) => {
         try {
-            var version = 1;
-            var count = 10;
-            var page = 10;
-            var area_dong = '합정동';
-            var callback = 'application/json';
-            var appKey = 'l7xxba602108162b4d6b83018e804f81a596';
-            var url = `https://apis.openapi.sk.com/tmap/poi/findPoiAreaDataByName?version=${version}&count=${count}&page=${page}&area_dong=${area_dong}&callback=${callback}&appKey=${appKey}`;
-            console.log(url);
-
+            var url = `https://dapi.kakao.com/v2/local/search/address.json?page=1&size=10&query=%ED%95%A9%EC%A0%95%EB%8F%99`;
             let response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": "KakaoAK fc1b70cdd283cc64b06d6d36d2f539a1",
                 }
             });
             let json = await response.json();
-            console.log(json)
             if (response.ok) {
-                console.log('json')
+                return json;
             }
         } catch (err) {
             console.log(err);

@@ -58,9 +58,6 @@ const LocationStackScreens = () => {
       <LocationStack.Screen
         name='SearchLocation'
         component={SearchLocationScreen}
-        options={{
-          headerShown: false,
-        }}
       />
     </LocationStack.Navigator>
   )

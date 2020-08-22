@@ -34,10 +34,6 @@ function LocationScreen({ route, navigation }) {
     const [prevLocate, setPrevLocate] = useState([[]]);
     const [currentLocation, setUserLocation] = useState('');
     const [isLoaded, setIsLoading] = useState(false);
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-    console.log('Keys', keys);
-    console.log(prevLocate);
-    console.log(isLoaded);
 
     useEffect(() => {
         (async () => {
@@ -103,6 +99,11 @@ function LocationScreen({ route, navigation }) {
     const SEARCH_LOCATIONS = async () => {
         var address = location;
         var SEARCH_RESULT = await ROADAPI.SEARCH_ADDRESS(address);
+        console.log(SEARCH_RESULT.meta)
+        if (SEARCH_RESULT.meta.is_end == true)
+        navigation.navigate('SearchLocation', {
+            search_locations : SEARCH_RESULT
+        })
     }
 
     return (

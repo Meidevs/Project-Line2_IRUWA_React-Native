@@ -16,8 +16,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const { width, height } = Dimensions.get('window');
 
 function SearchLocationScreen({ route, navigation }) {
-    const [locations, setLocations] = useState([]);
-
+    console.log('Route', route)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
