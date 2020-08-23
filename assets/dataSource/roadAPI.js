@@ -1,21 +1,20 @@
 class ROADAPI {
     GET_CURRENT_LOCATION = async (position) => {
         try {
-            var version = 1;
+            console.log(position)
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
-            var addressType = 'A01';
-            var appKey = 'l7xxba602108162b4d6b83018e804f81a596';
-            var url = `https://apis.openapi.sk.com/tmap/geo/reversegeocoding?version=${version}&lat=${lat}&lon=${lon}&coordType=WGS84GEO&addressType=${addressType}&appKey=${appKey}`
+            var url = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${lon}&y=${lat}`;
             let response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'KakaoAK fc1b70cdd283cc64b06d6d36d2f539a1'
                 }
             });
             let json = await response.json();
             if (response.ok) {
-                return json.addressInfo.fullAddress;
+                return json.documents[1].address_name;
             } else {
                 return false;
             }

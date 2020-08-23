@@ -3,14 +3,14 @@ import {
     View,
     Text,
     TouchableOpacity,
-    StatusBar,
+    TouchableHighlight,
     Dimensions,
     StyleSheet,
     TextInput,
     ScrollView,
     SafeAreaView,
     Platform,
-    NavigatorIOS
+    Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoryPicker from '../assets/components/CategoryPicker';
@@ -23,6 +23,7 @@ const { width, height } = Dimensions.get('window');
 
 function RegisterScreen({ route, navigation }) {
     const [isSelected, checkSelection] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
     const [status, SelectionStatus] = useState(0);
     const [user_id, setUserID] = useState('');
     const [user_pw, setPassword] = useState('');
@@ -257,7 +258,7 @@ function RegisterScreen({ route, navigation }) {
                                         <View style={styles.ContentText}>
                                             <Text style={styles.ContentTextStyle}>업체 위치</Text>
                                         </View>
-                                        <TouchableOpacity style={styles.ContentInput} onPress={() => SearchAddress()}>
+                                        <TouchableOpacity style={styles.ContentInput} onPress={() => setModalVisible(true)}>
                                             <Text>{cmp_location}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -290,6 +291,31 @@ function RegisterScreen({ route, navigation }) {
             <TouchableOpacity style={styles.RegisterBtn} onPress={() => Register()}>
                 <Text style={styles.RegisterBtnStyle}>회원등록</Text>
             </TouchableOpacity>
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                    }}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Hello World!</Text>
+
+                            <TouchableHighlight
+                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Hide Modal</Text>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
         </SafeAreaView>
     )
 }
