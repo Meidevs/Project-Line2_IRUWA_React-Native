@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoryPicker from '../assets/components/CategoryPicker';
+import LocationSearchBox from '../assets/components/LocationSearchBox';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import PASSWORD_CHECK from '../assets/components/PasswordMatch';
@@ -110,12 +111,12 @@ function RegisterScreen({ route, navigation }) {
             alert('비밀번호가 일치하지 않습니다.')
         }
     }
-
-    const SearchAddress = () => {
-        setCompanyLocation('서울특별시 구로구 구로3동')
-    }
-    const ReturnValue = (ChildFrom) => {
+    const ReturnCategory = (ChildFrom) => {
         setCompanyCate(ChildFrom)
+    }
+
+    const ReturnVisible = (ChildFrom) => {
+        setModalVisible(ChildFrom)
     }
     return (
         <SafeAreaView style={styles.Container}>
@@ -280,7 +281,7 @@ function RegisterScreen({ route, navigation }) {
                                             <Text style={styles.ContentTextStyle}>카테고리</Text>
                                         </View>
                                         <View style={styles.ContentInput}>
-                                            <CategoryPicker callback={ReturnValue} />
+                                            <CategoryPicker callback={ReturnCategory} />
                                         </View>
                                     </View>
                                 </View>
@@ -291,31 +292,7 @@ function RegisterScreen({ route, navigation }) {
             <TouchableOpacity style={styles.RegisterBtn} onPress={() => Register()}>
                 <Text style={styles.RegisterBtnStyle}>회원등록</Text>
             </TouchableOpacity>
-            <View style={styles.centeredView}>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                    }}
-                >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
-
-                            <TouchableHighlight
-                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                                onPress={() => {
-                                    setModalVisible(!modalVisible);
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </TouchableHighlight>
-                        </View>
-                    </View>
-                </Modal>
-            </View>
+            <LocationSearchBox visible={modalVisible} callback={ReturnVisible}/>
         </SafeAreaView>
     )
 }
