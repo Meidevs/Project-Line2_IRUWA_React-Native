@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import {
     View,
     Modal,
@@ -12,38 +12,86 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ROADAPI from '../../assets/dataSource/roadAPI';
-
 const { width, height } = Dimensions.get('window');
 
 const LocationSearchFunction = ({ visible, location, callback }) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [addressList, setAddressList] = useState([]);
-    const [pageCount, setPageCount] = useState([]);
+    const [totalPage, setTotalPage] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [keyword, setKeywords] = useState(null);
+    const [address, setAddressList] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
+        var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(currentPage, '합정동');
+        if (DETAIL_SEARCH_RESPONSE.documents.length == 0) {
+            var SEARCH_RESPONSE = await ROADAPI.SEARCH_ADDRESS('합정동');
+            setAddressList(SEARCH_RESPONSE.documents);
+            setTotalPage(Math.ceil(SEARCH_RESPONSE.meta.pageable_count / 10));
+        } else {
+            setAddressList(DETAIL_SEARCH_RESPONSE.documents);
+            setTotalPage(Math.ceil(DETAIL_SEARCH_RESPONSE.meta.pageable_count / 10));
+        }
+
+        setIsLoaded(true)
+    }, [currentPage]);
+
+    useEffect(() => {
+        SEARCH_DETAIL_ADDRESS()
+    }, [SEARCH_DETAIL_ADDRESS]);
+
     useEffect(() => {
         setModalVisible(visible)
-    }, [visible])
-
-    const SEARCH_DETAIL_ADDRESS = async (pageNum) => {
-        var SEARCH_RESULT = await ROADAPI.SEARCH_DETAIL_ADDRESS(pageNum, '시흥대로 161가길 23');
-        console.log(SEARCH_RESULT.meta)
-        setAddressList(SEARCH_RESULT.documents);
-        setPageCount(SEARCH_RESULT.meta.pageable_count)
-    }
+    }, [visible]);
 
     const onChangeVisible = (visibility) => {
         setModalVisible(visibility);
         callback(visibility)
     }
+    const prevPage = async () => {
+        if (currentPage > 1)
+            setCurrentPage(currentPage - 1)
+        SEARCH_DETAIL_ADDRESS();
+    }
+    const nextPage = async () => {
+        if (currentPage < totalPage)
+            setCurrentPage(currentPage + 1)
+        SEARCH_DETAIL_ADDRESS();
+    }
+
+    const setPageNumber = async (number) => {
+        setCurrentPage(number);
+        SEARCH_DETAIL_ADDRESS();
+    }
+
     const componentJSX = () => {
-        if (pageCount > 10) {
+        var numArray = new Array();
+        for (var i = 1; i <= totalPage; i++) {
+            numArray.push(i)
+        }
+        if (isLoaded && totalPage > 0) {
             return (
                 <View style={styles.PaginationForm}>
-                    <TouchableOpacity style={styles.PaginationItem} >
-                        <Icon name={'ios-arrow-back'} size={28} />
+                    <TouchableOpacity style={styles.PaginationItem} onPress={() => prevPage()}>
+                        <Icon name={'ios-arrow-back'} size={24} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.PaginationItem} >
-                        <Icon name={'ios-arrow-forward'} size={28} />
+                    {
+                        numArray.map((data, index) => {
+                            return (
+                                <TouchableOpacity style={styles.PaginationItem} onPress={() => setPageNumber(index + 1)}>
+                                    <Text style={styles.PageNumbers}>{data}</Text>
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                    <TouchableOpacity style={styles.PaginationItem} onPress={() => nextPage()}>
+                        <Icon name={'ios-arrow-forward'} size={24} />
                     </TouchableOpacity>
+                </View>
+            )
+        } else {
+            return (
+                <View style={styles.PaginationForm}>
+                    <Text>검색 결과가 없습니다.</Text>
                 </View>
             )
         }
@@ -70,32 +118,35 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
                     <View style={styles.SearchBox}>
                         <View style={styles.SearchInput}>
                             <TextInput
+                                value={keyword}
                                 placeholder={'예) 배민동'}
                                 placeholderTextColor='#B4B4B4'
+                                onChangeText={(text) => setKeywords(text)}
                             />
                         </View>
-                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => SEARCH_DETAIL_ADDRESS(1)}>
+                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => SEARCH_DETAIL_ADDRESS()}>
                             <Icon name={'ios-search'} size={32} />
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
-            <SafeAreaView>
+            <SafeAreaView style={styles.SafeAreaView}>
                 <ScrollView>
                     {
-                        addressList.map((data, index) => {
+                        address.map((data, index) => {
                             return (
-                                <TouchableOpacity key={JSON.stringify(index)}>
+                                <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList} onPress={() => SetAddress()}>
                                     <Text>{data.address_name}</Text>
-                                    <Text>{data.road_address_name}</Text>
+                                    <Text>{data.road_address_name} {data.place_name == undefined ? null : (data.place_name)}</Text>
                                 </TouchableOpacity>
                             )
                         })
                     }
+                    {
+                        componentJSX()
+                    }
                 </ScrollView>
-                {
-                    componentJSX()
-                }
+
             </SafeAreaView>
         </Modal>
     )
@@ -104,6 +155,7 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
 const styles = StyleSheet.create({
     ModalView: {
         width: width,
+        height : height * 0.15,
         zIndex: 5,
         backgroundColor: "white",
         alignItems: "center",
@@ -192,6 +244,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    SafeAreaView: {
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+    },
     PaginationForm: {
         width: width,
         flexDirection: 'row',
@@ -200,6 +255,16 @@ const styles = StyleSheet.create({
         marginTop: 1,
         backgroundColor: 'rgba(255, 255, 255, 1)'
     },
+    PaginationItem: {
+        padding: 5,
+    },
+    PageNumbers: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    AddressList: {
+        padding: 20,
+    }
 })
 
 
