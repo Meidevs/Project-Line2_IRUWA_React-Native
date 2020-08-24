@@ -292,7 +292,7 @@ function RegisterScreen({ route, navigation }) {
             <TouchableOpacity style={styles.RegisterBtn} onPress={() => Register()}>
                 <Text style={styles.RegisterBtnStyle}>회원등록</Text>
             </TouchableOpacity>
-            <LocationSearchBox visible={modalVisible} callback={ReturnVisible}/>
+            <LocationSearchBox visible={modalVisible} location={user_location} callback={ReturnVisible}/>
         </SafeAreaView>
     )
 }
