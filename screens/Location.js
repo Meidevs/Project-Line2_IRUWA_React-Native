@@ -43,7 +43,7 @@ function LocationScreen({ route, navigation }) {
             }
         }, []);
     });
-    
+
     useEffect(() => {
         const GET_ALL_KEYS = async () => {
             const allKeys = await AsyncStorage.getAllKeys();
@@ -74,7 +74,6 @@ function LocationScreen({ route, navigation }) {
     }, [keys])
 
     const UPDATE_CURRENT_LOCATION = async () => {
-        console.log(currentLocation)
         var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
         if (UPDATE_RESULT) {
             var object = {
@@ -102,9 +101,9 @@ function LocationScreen({ route, navigation }) {
         var SEARCH_RESULT = await ROADAPI.SEARCH_ADDRESS(address);
         console.log(SEARCH_RESULT.meta)
         if (SEARCH_RESULT.meta.is_end == true)
-        navigation.navigate('SearchLocation', {
-            search_locations : SEARCH_RESULT
-        })
+            navigation.navigate('SearchLocation', {
+                search_locations: SEARCH_RESULT
+            })
     }
 
     return (

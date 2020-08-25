@@ -37,12 +37,12 @@ const CategoryListUp = ({ navigation }) => {
                         if (index <= 7) {
                             if (data.category_seq == undefined) {
                                 return (
-                                    <View style={styles.CategoryContent}>
+                                    <View style={styles.CategoryContent} key={JSON.stringify(index+'a')}>
                                     </View>
                                 )
                             } else {
                                 return (
-                                    <TouchableOpacity style={styles.CategoryContent}>
+                                    <TouchableOpacity style={styles.CategoryContent} key={JSON.stringify(data.category_seq)}>
                                         <View style={styles.IconArea}>
                                             <Text>{data.category_seq}</Text>
                                         </View>

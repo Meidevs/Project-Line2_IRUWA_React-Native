@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useReducer } from 'react';
 import {
     View,
     Text,
@@ -9,54 +9,116 @@ import {
     SafeAreaView,
     ScrollView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/AntDesign';
 import CategoryListUp from '../assets/components/CategoryListUp';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
-function SearchScreen({ navigation }) {
-    const [findStatus, findItemStatus] = useState(false);
-    const [touchStatus, setInputStatus] = useState(false);
+const initialState = {
+    prevData: [
 
-    const PrevSearchList = async () => {
+    ]
+};
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'update':
+            return {
+                prevData: [
+                    ...state.prevData,
+                    action.data
+                ]
+            }
+        case 'read':
+            return {
+                prevData: action.data
+            }
+        case 'delete':
+            return {
+                prevData : [
+                    ...state.prevData.filter(item => item.keyword != action.data.keyword)
+                ]
+            }
+    }
+}
+
+function SearchScreen({ navigation }) {
+    const [searchStatus, setSearchStatus] = useState(false);
+    const [text, setSearchText] = useState(null);
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const showSearchHistory = () => {
+        if (state.prevData[0] != undefined) {
+            setSearchStatus(!searchStatus)
+        }
+    }
+
+    const UPDATE_PREV_SEARCH = async () => {
         try {
-            await DATA_SOURCE.GET_PREV_SEARCH_LIST();
+            var SAVE_RESPONSE = await DATA_SOURCE.SAVE_PREV_SEARCH_LIST(text);
+            if (SAVE_RESPONSE.flags == 0) {
+                var obj = new Object();
+                obj = text;
+                dispatch({ type: 'update', data: { keyword: obj } })
+            }
         } catch (err) {
             console.log(err);
         }
-        setInputStatus(!touchStatus);
     }
-    const SET_PREV_SEARCH = async () => {
-        try {
 
+    const DELETE_PREV_SEARCH = async (keyword) => {
+        try {
+            var DELETE_RESPONSE = await DATA_SOURCE.DELETE_PREV_SEARCH_LIST(keyword);
+            if (DELETE_RESPONSE.flags == 0) {
+                var obj = new Object();
+                obj = keyword;
+                dispatch({ type: 'delete', data: { keyword: obj } })
+            }
         } catch (err) {
-            
+            console.log(err)
         }
     }
+
+    useEffect(() => {
+        const GET_PREV_SEARCH = async () => {
+            try {
+                var PREV_RESPONSE = await DATA_SOURCE.GET_PREV_SEARCH_LIST();
+                dispatch({ type: 'read', data: PREV_RESPONSE })
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        showSearchHistory();
+        GET_PREV_SEARCH();
+    }, [dispatch])
+
+
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
                 <View style={styles.SearchBox}>
-                    <TouchableOpacity style={styles.SearchContent}>
+                    <View style={styles.SearchContent}>
                         <TextInput
                             style={styles.SeachInput}
+                            value={text}
                             placeholder={'인근 지역 검색'}
                             placeholderTextColor='#B4B4B4'
                             pointerEvents='none'
-                            onTouchStart={() => PrevSearchList()}
+                            onTouchStart={() => showSearchHistory()}
+                            onChangeText={(text) => setSearchText(text)}
                         />
-                    </TouchableOpacity>
+                    </View>
                 </View>
             ),
             headerRight: () => (
-                <TouchableOpacity style={styles.SearchBtn}>
-                    <Icon name={'ios-search'} size={30} />
+                <TouchableOpacity style={styles.SearchBtn} onPress={() => UPDATE_PREV_SEARCH()}>
+                    <Icon name={'search1'} size={22} />
                 </TouchableOpacity>
             )
         })
-    })
+    });
+
     const componentJSX = () => {
-        if (touchStatus)
+        if (searchStatus)
             return (
                 <View style={styles.PrevSearch}>
                     <View style={styles.PrevContent}>
@@ -65,6 +127,23 @@ function SearchScreen({ navigation }) {
                             <Text>전체 삭제</Text>
                         </TouchableOpacity>
                     </View>
+                    {
+                        state.prevData.map((data, index) => {
+                            return (
+                                <View style={styles.PrevContentList} key={JSON.stringify(index)}>
+                                    <View style={styles.PrevContentLeft}>
+                                        <TouchableOpacity style={styles.PrevIconBack}>
+                                            <Icon name={'tago'} size={24} />
+                                        </TouchableOpacity>
+                                        <Text>{data.keyword}</Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.PrevCancel} onPress={() => DELETE_PREV_SEARCH(data.keyword)}>
+                                        <Icon name={'close'} size={18} />
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        })
+                    }
                 </View>
             )
     }
@@ -76,11 +155,11 @@ function SearchScreen({ navigation }) {
             }
             <ScrollView
                 onTouchStart={() => {
-                    if(touchStatus) {
-                        setInputStatus(!touchStatus)
+                    if (searchStatus) {
+                        setSearchStatus(!searchStatus)
                     }
                 }}
-                >
+            >
                 <View style={styles.CategoryBox}>
                     <View style={styles.CategoryTitle}>
                         <Text style={styles.CategoryTitleTxtStyle}>카테고리</Text>
@@ -143,6 +222,32 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
+    },
+    PrevContentList: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    PrevContentLeft: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
+    PrevIconBack: {
+        margin: 10,
+        width: width * 0.08,
+        height: width * 0.08,
+        borderRadius: 50,
+        borderColor: 'rgba(80, 80, 80, 1)',
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    PrevCancel: {
+        margin: 10,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     CategoryBox: {
         flex: 1,
