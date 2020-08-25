@@ -67,7 +67,6 @@ function LoginScreen({ navigation }) {
         const response = await AUTHENTICATION.LOGIN(user_id, user_pw);
         switch (response.flags) {
             case 0:
-                alert(response.message);
                 navigation.replace('Main');
                 break;
             case 1:

@@ -6,7 +6,7 @@ class DATA_SORUCE {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials : 'include',
+                credentials: 'include',
                 body: JSON.stringify({ user_location: user_location })
             });
             var json = await response.json();
@@ -45,8 +45,8 @@ class DATA_SORUCE {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                credentials : 'include',
-                body: formData, 
+                credentials: 'include',
+                body: formData,
             });
             var json = await response.json();
             if (response.ok) {
@@ -54,6 +54,23 @@ class DATA_SORUCE {
             }
         } catch (err) {
             console.log(err)
+        }
+    }
+    GET_PREV_SEARCH_LIST = async () => {
+        try {
+            var response = await fetch('http://localhost:8888/api/alarm/prevsearch', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 }

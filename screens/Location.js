@@ -43,6 +43,7 @@ function LocationScreen({ route, navigation }) {
             }
         }, []);
     });
+    
     useEffect(() => {
         const GET_ALL_KEYS = async () => {
             const allKeys = await AsyncStorage.getAllKeys();
