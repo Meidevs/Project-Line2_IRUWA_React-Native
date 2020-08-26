@@ -42,7 +42,9 @@ const CategoryListUp = ({ navigation }) => {
                                 )
                             } else {
                                 return (
-                                    <TouchableOpacity style={styles.CategoryContent} key={JSON.stringify(data.category_seq)}>
+                                    <TouchableOpacity style={styles.CategoryContent} key={JSON.stringify(data.category_seq)} onPress={() => navigation.navigate('CateList', {
+                                        category_name : data.category_name
+                                    })}>
                                         <View style={styles.IconArea}>
                                             <Text>{data.category_seq}</Text>
                                         </View>

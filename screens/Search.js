@@ -35,22 +35,35 @@ const reducer = (state, action) => {
             }
         case 'delete':
             return {
-                prevData : [
-                    ...state.prevData.filter(item => item.keyword != action.data.keyword)
+                prevData: [
+                    ...state.prevData.filter(
+                        item => item.keyword != action.data.keyword
+                    )
                 ]
             }
     }
 }
 
-function SearchScreen({ navigation }) {
+function SearchScreen({ navigation, route }) {
+    console.log(navigation)
     const [searchStatus, setSearchStatus] = useState(false);
     const [text, setSearchText] = useState(null);
     const [state, dispatch] = useReducer(reducer, initialState);
-    const showSearchHistory = () => {
-        if (state.prevData[0] != undefined) {
+
+    const toggleSearchHistory = () => {
+        if (state.prevData.length != 0) {
             setSearchStatus(!searchStatus)
         }
     }
+    const closeSearchHistory = useCallback(() => {
+        if (state.prevData.length == 0) {
+            setSearchStatus(false);
+        }
+    }, [state])
+
+    useEffect(() => {
+        closeSearchHistory();
+    }, [closeSearchHistory]);
 
     const UPDATE_PREV_SEARCH = async () => {
         try {
@@ -58,7 +71,7 @@ function SearchScreen({ navigation }) {
             if (SAVE_RESPONSE.flags == 0) {
                 var obj = new Object();
                 obj = text;
-                dispatch({ type: 'update', data: { keyword: obj } })
+                dispatch({ type: 'update', data: { keyword: obj } });
             }
         } catch (err) {
             console.log(err);
@@ -87,10 +100,8 @@ function SearchScreen({ navigation }) {
                 console.log(err);
             }
         }
-        showSearchHistory();
         GET_PREV_SEARCH();
-    }, [dispatch])
-
+    }, []);
 
     useEffect(() => {
         navigation.setOptions({
@@ -103,7 +114,7 @@ function SearchScreen({ navigation }) {
                             placeholder={'인근 지역 검색'}
                             placeholderTextColor='#B4B4B4'
                             pointerEvents='none'
-                            onTouchStart={() => showSearchHistory()}
+                            onTouchStart={() => toggleSearchHistory()}
                             onChangeText={(text) => setSearchText(text)}
                         />
                     </View>
@@ -123,7 +134,7 @@ function SearchScreen({ navigation }) {
                 <View style={styles.PrevSearch}>
                     <View style={styles.PrevContent}>
                         <Text>최근 검색</Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => DELETE_ALL()}>
                             <Text>전체 삭제</Text>
                         </TouchableOpacity>
                     </View>
@@ -148,23 +159,20 @@ function SearchScreen({ navigation }) {
             )
     }
     return (
-
         <SafeAreaView style={styles.Container}>
             {
                 componentJSX()
             }
             <ScrollView
                 onTouchStart={() => {
-                    if (searchStatus) {
-                        setSearchStatus(!searchStatus)
-                    }
+                    toggleSearchHistory()
                 }}
             >
                 <View style={styles.CategoryBox}>
                     <View style={styles.CategoryTitle}>
                         <Text style={styles.CategoryTitleTxtStyle}>카테고리</Text>
                     </View>
-                    <CategoryListUp />
+                    <CategoryListUp navigation={navigation} route={route} />
                 </View>
             </ScrollView>
         </SafeAreaView>

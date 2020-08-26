@@ -175,6 +175,10 @@ const MainStackScreens = () => {
           headerShown: false,
         }}
       />
+      <CateStack.Screen
+        name='CateList'
+        component={CateListScreen}
+      />
     </MainStack.Navigator>
   )
 }
@@ -230,21 +234,21 @@ const App = () => {
         <AuthStack.Screen
           name="Register"
           component={RegisterScreen}
-          options={{ 
-            headerShown: true ,
+          options={{
+            headerShown: true,
             headerTransparent: true
           }}
         />
         <AuthStack.Screen
           name="Main"
           component={MainTabs}
-          options={{ headerShown: false }} 
-          />
+          options={{ headerShown: false }}
+        />
         <AuthStack.Screen
           name="SearchUser"
           component={SearchUserScreen}
-          options={{ headerShown: true }} 
-          />
+          options={{ headerShown: true }}
+        />
       </AuthStack.Navigator>
     </NavigationContainer>
   );
