@@ -281,7 +281,7 @@ function RegisterScreen({ route, navigation }) {
                                             <Text style={styles.ContentTextStyle}>카테고리</Text>
                                         </View>
                                         <View style={styles.ContentInput}>
-                                            <CategoryPicker callback={ReturnCategory} />
+                                            {/* <CategoryPicker callback={ReturnCategory} /> */}
                                         </View>
                                     </View>
                                 </View>

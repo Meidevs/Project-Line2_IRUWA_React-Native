@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     SafeAreaView
 } from 'react-native';
+import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ROADAPI from '../../assets/dataSource/roadAPI';
 const { width, height } = Dimensions.get('window');
@@ -24,15 +25,7 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
 
     const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
         var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(currentPage, keyword);
-        // if (DETAIL_SEARCH_RESPONSE.documents.length == 0) {
-        //     var SEARCH_RESPONSE = await ROADAPI.SEARCH_ADDRESS(keyword);
-        //     setAddressList(SEARCH_RESPONSE.documents);
-        //     setTotalPage(Math.ceil(SEARCH_RESPONSE.meta.pageable_count / 10));
-        // } else {
-        //     setAddressList(DETAIL_SEARCH_RESPONSE.documents);
-        //     setTotalPage(Math.ceil(DETAIL_SEARCH_RESPONSE.meta.pageable_count / 10));
-        // }
-
+        console.log(DETAIL_SEARCH_RESPONSE)
         setIsLoaded(true)
     }, [currentPage]);
 
