@@ -21,15 +21,17 @@ class ROADAPI {
             console.log(err);
         }
     }
-    SEARCH_DETAIL_ADDRESS = async (pageNum, location) => {
+    SEARCH_DETAIL_ADDRESS = async (keyword) => {
         try {
-            let response = await fetch (`http://www.juso.go.kr/addrlink/addrLinkApi.do?currentPage=1&countPerPage=100&keyword=구로동 1132-34&confmKey=U01TX0FVVEgyMDIwMDgyNzA0MTc0NzExMDExMTc=&resultType=json`,{
+            var keyword = '시흥대로161가길';
+            let response = await fetch (`http://www.juso.go.kr/addrlink/addrLinkApi.do?currentPage=1&countPerPage=100&keyword=${keyword}&confmKey=U01TX0FVVEgyMDIwMDgyNzA0MTc0NzExMDExMTc=&resultType=json`,{
             method : 'POST',
             headers : {
                 'Content-Type' : 'application/json',
             }
         });
         let json = await response.json();
+        console.log(json)
         if (response.ok) {
             return json
         }

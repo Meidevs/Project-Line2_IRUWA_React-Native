@@ -10,9 +10,9 @@ import {
     TouchableOpacity,
     SafeAreaView
 } from 'react-native';
-import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ROADAPI from '../../assets/dataSource/roadAPI';
+import AddressFilter from './AddressFilter';
 const { width, height } = Dimensions.get('window');
 
 const LocationSearchFunction = ({ visible, location, callback }) => {
@@ -21,13 +21,18 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [keyword, setKeywords] = useState(null);
     const [address, setAddressList] = useState([]);
+    const [searchBtn, setSearchStart] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
     const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
-        var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(currentPage, keyword);
-        console.log(DETAIL_SEARCH_RESPONSE)
+        console.log('a')
+        if (AddressFilter(keyword) && keyword != null) {
+            var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(keyword);
+            setAddressList(DETAIL_SEARCH_RESPONSE.results.juso)
+        }
         setIsLoaded(true)
-    }, [currentPage]);
+        setSearchStart(false)
+    }, [searchBtn]);
 
     useEffect(() => {
         SEARCH_DETAIL_ADDRESS()
@@ -38,57 +43,11 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
     }, [visible]);
 
     const onChangeVisible = (visibility) => {
+        if (visibility == false) {
+            setKeywords(null)
+        }
         setModalVisible(visibility);
         callback(visibility)
-    }
-    const prevPage = async () => {
-        if (currentPage > 1)
-            setCurrentPage(currentPage - 1)
-        SEARCH_DETAIL_ADDRESS();
-    }
-    const nextPage = async () => {
-        if (currentPage < totalPage)
-            setCurrentPage(currentPage + 1)
-        SEARCH_DETAIL_ADDRESS();
-    }
-
-    const setPageNumber = async (number) => {
-        setCurrentPage(number);
-        SEARCH_DETAIL_ADDRESS();
-    }
-
-    const componentJSX = () => {
-        var numArray = new Array();
-        for (var i = 1; i <= totalPage; i++) {
-            numArray.push(i)
-        }
-        if (isLoaded && totalPage > 0) {
-            return (
-                <View style={styles.PaginationForm}>
-                    <TouchableOpacity style={styles.PaginationItem} onPress={() => prevPage()}>
-                        <Icon name={'ios-arrow-back'} size={24} />
-                    </TouchableOpacity>
-                    {
-                        numArray.map((data, index) => {
-                            return (
-                                <TouchableOpacity style={styles.PaginationItem} onPress={() => setPageNumber(index + 1)}>
-                                    <Text style={styles.PageNumbers}>{data}</Text>
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
-                    <TouchableOpacity style={styles.PaginationItem} onPress={() => nextPage()}>
-                        <Icon name={'ios-arrow-forward'} size={24} />
-                    </TouchableOpacity>
-                </View>
-            )
-        } else {
-            return (
-                <View style={styles.PaginationForm}>
-                    <Text>검색 결과가 없습니다.</Text>
-                </View>
-            )
-        }
     }
     return (
         <Modal
@@ -106,7 +65,7 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
             <View style={styles.ModalView}>
                 <View style={styles.ComponentForm}>
                     <View style={styles.TitleBox}>
-                        <Text style={styles.TitleText}>지역의 읍, 면, 동을</Text>
+                        <Text style={styles.TitleText}>업체 주소를</Text>
                         <Text style={styles.TitleText}>입력하세요</Text>
                     </View>
                     <View style={styles.SearchBox}>
@@ -118,7 +77,7 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
                                 onChangeText={(text) => setKeywords(text)}
                             />
                         </View>
-                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => SEARCH_DETAIL_ADDRESS()}>
+                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setSearchStart(true)}>
                             <Icon name={'ios-search'} size={32} />
                         </TouchableOpacity>
                     </View>
@@ -130,14 +89,12 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
                         address.map((data, index) => {
                             return (
                                 <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList} onPress={() => SetAddress()}>
-                                    <Text>{data.address_name}</Text>
-                                    <Text>{data.road_address_name} {data.place_name == undefined ? null : (data.place_name)}</Text>
+                                    <Text>{data.zipNo}</Text>
+                                    <Text>{data.jibunAddr}</Text>
+                                    <Text>{data.roadAddr}</Text>
                                 </TouchableOpacity>
                             )
                         })
-                    }
-                    {
-                        componentJSX()
                     }
                 </ScrollView>
 
@@ -149,7 +106,7 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
 const styles = StyleSheet.create({
     ModalView: {
         width: width,
-        height : height * 0.15,
+        height: height * 0.15,
         zIndex: 5,
         backgroundColor: "white",
         alignItems: "center",
@@ -240,6 +197,8 @@ const styles = StyleSheet.create({
     },
     SafeAreaView: {
         backgroundColor: 'rgba(255, 255, 255, 1)',
+        width : width,
+        height : '70%'
     },
     PaginationForm: {
         width: width,
