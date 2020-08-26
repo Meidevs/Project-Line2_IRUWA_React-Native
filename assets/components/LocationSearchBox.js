@@ -24,14 +24,14 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
 
     const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
         var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(currentPage, keyword);
-        if (DETAIL_SEARCH_RESPONSE.documents.length == 0) {
-            var SEARCH_RESPONSE = await ROADAPI.SEARCH_ADDRESS(keyword);
-            setAddressList(SEARCH_RESPONSE.documents);
-            setTotalPage(Math.ceil(SEARCH_RESPONSE.meta.pageable_count / 10));
-        } else {
-            setAddressList(DETAIL_SEARCH_RESPONSE.documents);
-            setTotalPage(Math.ceil(DETAIL_SEARCH_RESPONSE.meta.pageable_count / 10));
-        }
+        // if (DETAIL_SEARCH_RESPONSE.documents.length == 0) {
+        //     var SEARCH_RESPONSE = await ROADAPI.SEARCH_ADDRESS(keyword);
+        //     setAddressList(SEARCH_RESPONSE.documents);
+        //     setTotalPage(Math.ceil(SEARCH_RESPONSE.meta.pageable_count / 10));
+        // } else {
+        //     setAddressList(DETAIL_SEARCH_RESPONSE.documents);
+        //     setTotalPage(Math.ceil(DETAIL_SEARCH_RESPONSE.meta.pageable_count / 10));
+        // }
 
         setIsLoaded(true)
     }, [currentPage]);
