@@ -119,6 +119,7 @@ function RegisterScreen({ route, navigation }) {
         setModalVisible(ChildFrom)
     }
     const ReturnLocation = (ChildFrom) => {
+        console.log(ChildFrom)
         setCompanyLocation(ChildFrom)
     }
     return (

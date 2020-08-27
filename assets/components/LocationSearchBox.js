@@ -17,8 +17,6 @@ const { width, height } = Dimensions.get('window');
 
 const LocationSearchFunction = ({ visible, location, callback }) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [totalPage, setTotalPage] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
     const [keyword, setKeywords] = useState(null);
     const [address, setAddressList] = useState([]);
     const [searchBtn, setSearchStart] = useState(false);
@@ -50,8 +48,12 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
 
     const SetAddress = async (cmp_location) => {
         var SEARCH_ADDRESS = await ROADAPI.SEARCH_ADDRESS(cmp_location);
-        console.log(SEARCH_ADDRESS)
-        location(cmp_location)
+        var locationString = SEARCH_ADDRESS.documents[0].address.region_1depth_name;
+        locationString += ' ' + SEARCH_ADDRESS.documents[0].address.region_2depth_name;
+        locationString += ' ' + SEARCH_ADDRESS.documents[0].address.region_3depth_h_name;
+        var lon = SEARCH_ADDRESS.documents[0].address.y;
+        var lat = SEARCH_ADDRESS.documents[0].address.x;
+        location([cmp_location, locationString, lon, lat])
         callback(false)
     }
 
