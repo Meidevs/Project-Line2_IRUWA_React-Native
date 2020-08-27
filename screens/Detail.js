@@ -7,7 +7,7 @@ import {
     SafeAreaView,
     StyleSheet,
     Dimensions,
-    ScrollView,
+    Image,
     StatusBar
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -135,43 +135,52 @@ function DetailScreen({ route, navigation }) {
     const [ybColor, setBorderColor] = useState(null);
     const [yiColor, setIconColor] = useState('rgba(255,255,255, 1)');
     const [yPosition, setYposition] = useState(null);
-    const [iteminfos, setItemInfos] = useState({
+    const [itemsArray, setOtherItem] = useState([]);
+    const [itemInfos, setItemInfos] = useState({
         item_title: null,
         item_image_url: null,
         cmp_name: null,
         cmp_location: null,
         item_content: null,
-        item_reg: null,
-        item_cate: null,
+        reg_date: null,
+        pick_status: false,
+        time_avg: null,
+        view_coount: null,
     });
-    const [adslist, setAdsList] = useState([]);
-    const item_code = route.params.item_code;
-    const cmp_code = route.params.cmp_code;
-
+    const [isLoaded, setIsLoaded] = useState(false);
+    const items_seq = route.params.items_seq;
+    const cmp_seq = route.params.cmp_seq;
     useEffect(() => {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
-
         setBorderColor(BorderColor)
         setColor(Color)
     }, [])
-    const ITEM_INFOs = useCallback(async () => {
-        const data = await DATA_SOURCE.GetItemInfos(item_code);
-        setItemInfos(data)
-    }, [item_code])
 
-    const ADS_LIST = useCallback(async () => {
-        const data = await DATA_SOURCE.GetAdsList(cmp_code);
-        setAdsList(data)
-    }, [cmp_code])
 
     useEffect(() => {
-        ITEM_INFOs();
-    }, [ITEM_INFOs]);
-
-    useEffect(() => {
-        ADS_LIST();
-    }, [ADS_LIST]);
+        const GET_ITEM_INFOs = async () => {
+            try {
+                var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
+                var data = ITEM_INFOs.SELECTED[0];
+                setItemInfos({
+                    item_image_url: data.uri,
+                    item_title: data.item_name,
+                    item_content: data.item_content,
+                    item_reg: data.reg_date,
+                    cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
+                    cmp_location: ITEM_INFOs.CMP_INFOs.cmp_location,
+                    pick_status: ITEM_INFOs.PICK_STATUS,
+                    time_avg: ITEM_INFOs.TIME_AVG,
+                    view_coount: ITEM_INFOs.VIEW_COUNT,
+                })
+                setOtherItem(ITEM_INFOs.NonSELECTED)
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        GET_ITEM_INFOs()
+    }, [])
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -188,8 +197,8 @@ function DetailScreen({ route, navigation }) {
                 <View style={styles.HeaderTitle}>
                     <Text style={styles.HeaderTitleTxtStyle}>
                         {yPosition > 300 ?
-                            iteminfos != null ?
-                                iteminfos.item_title : null
+                            itemInfos != null ?
+                                itemInfos.item_title : null
                             : null}</Text>
                 </View>
             </Animated.View>
@@ -218,8 +227,8 @@ function DetailScreen({ route, navigation }) {
                         <View style={styles.SellerBox}>
                             <Text>Image</Text>
                             <View style={styles.SellerTxtBox}>
-                                <Text>{iteminfos.cmp_name}</Text>
-                                <Text>{iteminfos.cmp_location}</Text>
+                                <Text>{itemInfos.cmp_name}</Text>
+                                <Text>{itemInfos.cmp_location}</Text>
                             </View>
                         </View>
                         <View style={styles.SellerInfoBox}>
@@ -229,35 +238,35 @@ function DetailScreen({ route, navigation }) {
                     <View style={styles.ItemBox}>
                         <View style={styles.TitleBox}>
                             <View>
-                                <Text style={styles.ItemTitleTxtStyle}>{iteminfos.item_title}</Text>
+                                <Text style={styles.ItemTitleTxtStyle}>{itemInfos.item_title}</Text>
                             </View>
                             <View style={styles.ItemSimpleInfo}>
-                                <Text>{iteminfos.item_cate}</Text>
-                                <Text>{iteminfos.item_reg}</Text>
+                                <Text>{itemInfos.item_cate}</Text>
+                                <Text>{itemInfos.item_reg}</Text>
                             </View>
                         </View>
                         <View>
                             <View>
-                                <Text>{iteminfos.item_content}{iteminfos.item_content}{iteminfos.item_content}{iteminfos.item_content}{iteminfos.item_content}{iteminfos.item_content}{iteminfos.item_content}{iteminfos.item_content}</Text>
+                                <Text>{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}</Text>
                             </View>
                         </View>
                     </View>
                     <View style={styles.ItemBox}>
                         <View style={styles.TitleBox}>
                             <View style={styles.TitleBorder}>
-                                <Text style={styles.ItemTitleTxtStyle}>{iteminfos.cmp_name}의 광고 목록</Text>
+                                <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 광고 목록</Text>
                             </View>
                         </View>
                         <View style={styles.ADSBox}>
                             {
-                                adslist.map((data) => {
+                                itemsArray.map((data) => {
                                     return (
                                         <View style={styles.ADSContent}>
                                             <View style={styles.ImageArea}>
-                                                <Text>이미지</Text>
+                                                <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
                                             </View>
                                             <View style={styles.NameArea}>
-                                                <Text>서비스 명</Text>
+                                                <Text>{data.item_name}</Text>
                                             </View>
                                         </View>
                                     )
@@ -327,7 +336,7 @@ const styles = StyleSheet.create({
         height: 300,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor : 'pink'
+        backgroundColor: 'pink'
     },
     ContentBox: {
         flexDirection: 'column',
@@ -431,7 +440,7 @@ const styles = StyleSheet.create({
     },
     ADSContent: {
         margin: 10,
-        padding : 5,
+        padding: 5,
         width: width * 0.4,
         height: width * 0.4,
         borderRadius: 10,
@@ -440,17 +449,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
     },
-    ImageArea : {
-        flex : 3,
-        width : width * 0.37,
-        justifyContent : 'center',
-        alignItems : 'center',
-        backgroundColor : 'rgba(238, 238, 238, 1)'
+    ImageArea: {
+        flex: 3,
+        width: width * 0.4,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    NameArea : {
+    NameArea: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    ItemsImages : {
         flex : 1,
-        justifyContent : 'center',
-        alignItems : 'center'
+        width : width * 0.4,
+        height : width * 0.4,
+        resizeMode : 'contain'
     }
 })
 

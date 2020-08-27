@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import CategoryListUp from '../assets/components/CategoryListUp';
+import SEARCH_API from '../assets/dataSource/searchModel';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
@@ -41,11 +42,17 @@ const reducer = (state, action) => {
                     )
                 ]
             }
+        case 'delete_all':
+            return {
+                prevData: [
+                ]
+            }
     }
 }
 
 function SearchScreen({ navigation, route }) {
     const [searchStatus, setSearchStatus] = useState(false);
+    const [contentStatus, changeContentStatus] = useState(false);
     const [text, setSearchText] = useState(null);
     const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -65,13 +72,19 @@ function SearchScreen({ navigation, route }) {
     }, [closeSearchHistory]);
 
     const UPDATE_PREV_SEARCH = async () => {
+        changeContentStatus(true)
         try {
-            var SAVE_RESPONSE = await DATA_SOURCE.SAVE_PREV_SEARCH_LIST(text);
-            if (SAVE_RESPONSE.flags == 0) {
-                var obj = new Object();
-                obj = text;
-                dispatch({ type: 'update', data: { keyword: obj } });
-            }
+            // if (text !== null) {
+                // var SAVE_RESPONSE = await SEARCH_API.SAVE_PREV_SEARCH_LIST(text);
+                // if (SAVE_RESPONSE.flags == 0) {
+                //     var obj = new Object();
+                //     obj = text;
+                //     dispatch({ type: 'update', data: { keyword: obj } });
+                // }
+
+                var ITEM_LIST = await DATA_SOURCE.GET_ITEMS_ON_KEYWORD(text);
+            // }
+            setSearchText(null);
         } catch (err) {
             console.log(err);
         }
@@ -79,21 +92,32 @@ function SearchScreen({ navigation, route }) {
 
     const DELETE_PREV_SEARCH = async (keyword) => {
         try {
-            var DELETE_RESPONSE = await DATA_SOURCE.DELETE_PREV_SEARCH_LIST(keyword);
+            var DELETE_RESPONSE = await SEARCH_API.DELETE_PREV_SEARCH_LIST(keyword);
             if (DELETE_RESPONSE.flags == 0) {
                 var obj = new Object();
                 obj = keyword;
                 dispatch({ type: 'delete', data: { keyword: obj } })
             }
+            setSearchText(null);
         } catch (err) {
             console.log(err)
         }
     }
-
+    const DELETE_ALL = async () => {
+        try {
+            var DELETE_ALL_RESPONSE = await SEARCH_API.DELETE_PREV_ALL();
+            if (DELETE_ALL_RESPONSE.flags == 0) {
+                dispatch({ type: 'delete_all' })
+            }
+            setSearchText(null);
+        } catch (err) {
+            console.log(err);
+        }
+    }
     useEffect(() => {
         const GET_PREV_SEARCH = async () => {
             try {
-                var PREV_RESPONSE = await DATA_SOURCE.GET_PREV_SEARCH_LIST();
+                var PREV_RESPONSE = await SEARCH_API.GET_PREV_SEARCH_LIST();
                 dispatch({ type: 'read', data: PREV_RESPONSE })
             } catch (err) {
                 console.log(err);
@@ -127,7 +151,7 @@ function SearchScreen({ navigation, route }) {
         })
     });
 
-    const componentJSX = () => {
+    const prevSearchList = () => {
         if (searchStatus)
             return (
                 <View style={styles.PrevSearch}>
@@ -157,22 +181,39 @@ function SearchScreen({ navigation, route }) {
                 </View>
             )
     }
-    return (
-        <SafeAreaView style={styles.Container}>
-            {
-                componentJSX()
-            }
-            <ScrollView
-                onTouchStart={() => {
-                    toggleSearchHistory()
-                }}
-            >
+
+    const componentChange = () => {
+        if (!contentStatus) {
+            return (
                 <View style={styles.CategoryBox}>
                     <View style={styles.CategoryTitle}>
                         <Text style={styles.CategoryTitleTxtStyle}>카테고리</Text>
                     </View>
                     <CategoryListUp navigation={navigation} route={route} />
                 </View>
+            )
+        } else {
+            <View>
+                <Text>hi</Text>
+            </View>
+        }
+    }
+    return (
+        <SafeAreaView style={styles.Container}>
+            {
+                prevSearchList()
+            }
+            <ScrollView
+                onTouchStart={() => {
+                    toggleSearchHistory()
+                }}
+            >{
+
+                }
+                {
+                    componentChange()
+                }
+
             </ScrollView>
         </SafeAreaView>
     )

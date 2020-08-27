@@ -112,7 +112,7 @@ function MainScreen({ route, navigation }) {
             <VirtualizedList
                 data={data}
                 initialNumToRender={10}
-                renderItem={({ item }) => <Item data={item} />}
+                renderItem={({ item }) => <Item data={item} navigation={navigation}/>}
                 keyExtractor={(item, index) => index}
                 getItemCount={getItemCount}
                 getItem={getItem}

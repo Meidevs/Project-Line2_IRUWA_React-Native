@@ -18,6 +18,25 @@ class DATA_SORUCE {
         }
     }
 
+    GET_ITEM_DETAIL = async (items_seq, cmp_seq) => {
+        try {
+            var response = await fetch('http://localhost:8888/api/item/list/detail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items_seq: items_seq, cmp_seq : cmp_seq })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     GET_CATEGORIES = async () => {
         try {
             var response = await fetch('http://localhost:8888/api/category/all', {
@@ -38,7 +57,6 @@ class DATA_SORUCE {
     }
 
     SAVE_IMAGES = async (formData) => {
-        console.log(formData)
         try {
             var response = await fetch('http://localhost:8888/api/item/create', {
                 method: 'POST',
@@ -57,60 +75,22 @@ class DATA_SORUCE {
         }
     }
 
-    SAVE_PREV_SEARCH_LIST = async (data) => {
-        console.log('dadadad', data)
+    GET_ITEMS_ON_KEYWORD = async (keyword) => {
         try {
-            var response = await fetch('http://localhost:8888/api/search/history/update', {
+            var response = await fetch('http://localhost:8888/api/item/search', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body: JSON.stringify({ keyword: data })
+                body: JSON.stringify({ keyword: keyword }),
             });
             var json = await response.json();
             if (response.ok) {
                 return json;
             }
         } catch (err) {
-
-        }
-    }
-
-    GET_PREV_SEARCH_LIST = async () => {
-        try {
-            var response = await fetch('http://localhost:8888/api/search/history/read', {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: 'include',
-            });
-            var json = await response.json();
-            if (response.ok) {
-                return json;
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-    DELETE_PREV_SEARCH_LIST = async (keyword) => {
-        try {
-            var response = await fetch('http://localhost:8888/api/search/history/delete', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: 'include',
-                body : JSON.stringify({keyword : keyword})
-            });
-            var json = await response.json();
-            if (response.ok) {
-                return json;
-            }
-        } catch (err) {
-            console.log(err);
+            console.log(err)
         }
     }
 }
