@@ -15,7 +15,6 @@ import MyinfoScreen from './screens/Myinfo';
 import SearchScreen from './screens/Search';
 import AlarmScreen from './screens/Alarm';
 import LocationScreen from './screens/Location';
-import SearchLocationScreen from './screens/SearchLocation';
 import InviteScreen from './screens/Invite';
 import NotificationScreen from './screens/Notification';
 import CateListScreen from './screens/CateList';
@@ -54,10 +53,6 @@ const LocationStackScreens = () => {
         options={{
           headerShown: false,
         }}
-      />
-      <LocationStack.Screen
-        name='SearchLocation'
-        component={SearchLocationScreen}
       />
     </LocationStack.Navigator>
   )

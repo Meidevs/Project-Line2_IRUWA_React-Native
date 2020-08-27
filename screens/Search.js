@@ -45,7 +45,6 @@ const reducer = (state, action) => {
 }
 
 function SearchScreen({ navigation, route }) {
-    console.log(navigation)
     const [searchStatus, setSearchStatus] = useState(false);
     const [text, setSearchText] = useState(null);
     const [state, dispatch] = useReducer(reducer, initialState);

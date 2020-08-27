@@ -15,7 +15,7 @@ import ROADAPI from '../../assets/dataSource/roadAPI';
 import AddressFilter from './AddressFilter';
 const { width, height } = Dimensions.get('window');
 
-const LocationSearchFunction = ({ visible, location, callback }) => {
+const CmpAddrSearchBox = ({ visible, location, callback }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [keyword, setKeywords] = useState(null);
     const [address, setAddressList] = useState([]);
@@ -219,4 +219,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default LocationSearchFunction;
+export default CmpAddrSearchBox;

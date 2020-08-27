@@ -15,8 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-
-import Constants from "expo-constants";
+import AddressSearchBox from '../assets/components/AddressSearchBox';
 import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
@@ -34,6 +33,7 @@ function LocationScreen({ route, navigation }) {
     const [prevLocate, setPrevLocate] = useState([[]]);
     const [currentLocation, setUserLocation] = useState('');
     const [isLoaded, setIsLoading] = useState(false);
+    const [visible, setModalVisible] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -42,18 +42,11 @@ function LocationScreen({ route, navigation }) {
                 setErrorMsg('Permission to access location was denied');
             }
         }, []);
-    });
-
-    useEffect(() => {
         const GET_ALL_KEYS = async () => {
             const allKeys = await AsyncStorage.getAllKeys();
             var filtered = allKeys.filter(key => key != "@my_Key");
             setAllKeys(filtered);
         }
-        GET_ALL_KEYS();
-    }, []);
-
-    useEffect(() => {
         const GET_CURRENT_LOCATION = async () => {
             let position = await Location.getCurrentPositionAsync({
                 accuracy: Location.Accuracy.Highest
@@ -61,30 +54,39 @@ function LocationScreen({ route, navigation }) {
             var response = await ROADAPI.GET_CURRENT_LOCATION(position);
             setUserLocation(response);
         };
+        GET_ALL_KEYS();
         GET_CURRENT_LOCATION();
+        setIsLoading(true);
     }, []);
 
     useEffect(() => {
         const READ_PREVIOUSE_LOCATION = async () => {
-            const prevLocations = await AsyncStorage.multiGet(keys);
-            setPrevLocate(prevLocations);
-            setIsLoading(true)
+            try {
+                const prevLocations = await AsyncStorage.multiGet(keys);
+                setPrevLocate(prevLocations);
+            } catch (err) {
+                console.log(err);
+            }
         };
         READ_PREVIOUSE_LOCATION();
     }, [keys])
 
-    const UPDATE_CURRENT_LOCATION = async () => {
-        var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
-        if (UPDATE_RESULT) {
-            var object = {
-                id: keys.length + 1,
-                location_name: currentLocation,
+    const UPDATE_LOCATION = async () => {
+        try {
+            var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
+            if (UPDATE_RESULT) {
+                var object = {
+                    id: keys.length + 1,
+                    location_name: currentLocation,
+                }
+                var key = '@my_prev_location_' + (keys.length + 1);
+                setAllKeys([...keys, key])
+                await AsyncStorage.setItem(key, JSON.stringify(object));
             }
-            var key = '@my_prev_location_' + (keys.length + 1);
-            await AsyncStorage.setItem(key, JSON.stringify(object));
-            navigation.popToTop('Main');
+        } catch (err) {
+            console.log(err);
         }
-    }
+    };
 
     const DELETE_PREV_LOCATION = async (index) => {
         try {
@@ -95,17 +97,29 @@ function LocationScreen({ route, navigation }) {
             console.log(err)
         }
     }
-
-    const SEARCH_LOCATIONS = async () => {
-        var address = location;
-        var SEARCH_RESULT = await ROADAPI.SEARCH_ADDRESS(address);
-        console.log(SEARCH_RESULT.meta)
-        if (SEARCH_RESULT.meta.is_end == true)
-            navigation.navigate('SearchLocation', {
-                search_locations: SEARCH_RESULT
-            })
+    const ClearAll = async () => {
+        await AsyncStorage.multiRemove(keys);
+        setAllKeys([])
     }
-
+    const Callback = (ChildFrom) => {
+        setModalVisible(ChildFrom)
+    }
+    const LocateCallback = async (ChildFrom) => {
+        try {
+            var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(ChildFrom);
+            if (UPDATE_RESULT) {
+                var object = {
+                    id: keys.length + 1,
+                    location_name: ChildFrom,
+                }
+                var key = '@my_prev_location_' + (keys.length + 1);
+                setAllKeys([...keys, key])
+                await AsyncStorage.setItem(key, JSON.stringify(object));
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
     return (
         <SafeAreaView style={styles.Container}>
             <StatusBar />
@@ -114,7 +128,7 @@ function LocationScreen({ route, navigation }) {
                     <Icon name={'ios-close'} size={40} />
                     {yPosition >= height * 0.06 ? (
                         <View style={styles.HeaderTitle}>
-                            <Text style={styles.HeaderText}>배달 받을 주소</Text>
+                            <Text style={styles.HeaderText}>{currentLocation}</Text>
                         </View>
                     ) : (
                             null
@@ -154,12 +168,12 @@ function LocationScreen({ route, navigation }) {
                                 onChangeText={(text) => setLocation(text)}
                             />
                         </View>
-                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => SEARCH_LOCATIONS()}>
+                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setModalVisible(true)}>
                             <Icon name={'ios-search'} size={32} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.CurrentLocate}>
-                        <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_CURRENT_LOCATION()}>
+                        <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_LOCATION()}>
                             <Icon name={'ios-locate'} size={20} />
                             <Text>현 위치로 주소 설정</Text>
                         </TouchableOpacity>
@@ -168,6 +182,9 @@ function LocationScreen({ route, navigation }) {
                 <View style={styles.LocationList}>
                     <View style={styles.PrevSearchTitle}>
                         <Text style={styles.PrevSearchText}>최근 주소</Text>
+                        <TouchableOpacity onPress={() => ClearAll()}>
+                            <Text>전체 삭제</Text>
+                        </TouchableOpacity>
                     </View>
                     {
                         prevLocate.map((data, index) => {
@@ -192,6 +209,7 @@ function LocationScreen({ route, navigation }) {
                     }
                 </View>
             </Animated.ScrollView>
+            <AddressSearchBox data={location} visible={visible} location={LocateCallback} callback={Callback} />
         </SafeAreaView >
     )
 }
@@ -303,9 +321,9 @@ const styles = StyleSheet.create({
     PrevSearchTitle: {
         height: 20,
         padding: 20,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     PrevSearchText: {
         fontSize: 16,

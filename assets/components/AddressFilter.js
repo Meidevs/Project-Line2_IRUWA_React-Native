@@ -2,7 +2,6 @@ const addressFilter = (keyword) => {
     if (keyword !== null) {
         // 특수문자 제거
         var expText = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"+]/gi;
-        console.log(expText.test(keyword))
         if (expText.test(keyword) == true) {
             alert('특수 문자를 입력 할수 없습니다.')
             keyword = keyword.split(expText).join("");

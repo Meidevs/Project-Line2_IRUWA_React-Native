@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoryPicker from '../assets/components/CategoryPicker';
-import LocationSearchBox from '../assets/components/LocationSearchBox';
+import CmpAddressSearchBox from '../assets/components/CmpAddressSearchBox';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import PASSWORD_CHECK from '../assets/components/PasswordMatch';
@@ -124,6 +124,7 @@ function RegisterScreen({ route, navigation }) {
     const ReturnVisible = (ChildFrom) => {
         setModalVisible(ChildFrom)
     }
+    
     const ReturnLocation = (ChildFrom) => {
         setCompanyDLocation(ChildFrom[0]);
         setCompanyLocation(ChildFrom[1]);
@@ -311,7 +312,7 @@ function RegisterScreen({ route, navigation }) {
             <TouchableOpacity style={styles.RegisterBtn} onPress={() => Register()}>
                 <Text style={styles.RegisterBtnStyle}>회원등록</Text>
             </TouchableOpacity>
-            <LocationSearchBox visible={modalVisible} location={ReturnLocation} callback={ReturnVisible} />
+            <CmpAddressSearchBox visible={modalVisible} location={ReturnLocation} callback={ReturnVisible} />
         </SafeAreaView>
     )
 }
