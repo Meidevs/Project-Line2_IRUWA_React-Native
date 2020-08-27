@@ -31,7 +31,6 @@ class ROADAPI {
             }
         });
         let json = await response.json();
-        console.log(json)
         if (response.ok) {
             return json
         }

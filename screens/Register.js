@@ -118,6 +118,9 @@ function RegisterScreen({ route, navigation }) {
     const ReturnVisible = (ChildFrom) => {
         setModalVisible(ChildFrom)
     }
+    const ReturnLocation = (ChildFrom) => {
+        setCompanyLocation(ChildFrom)
+    }
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
@@ -220,8 +223,10 @@ function RegisterScreen({ route, navigation }) {
                         <View style={styles.ContentText}>
                             <Text style={styles.ContentTextStyle}>내 위치</Text>
                         </View>
-                        <View style={styles.ContentInput}>
-                            <Text>{user_location}</Text>
+                        <View style={styles.ContentInput_sub}>
+                            <View style={styles.TextAndBtn}>
+                                <Text>{user_location}</Text>
+                            </View>
                         </View>
                     </View>
                     {
@@ -259,9 +264,14 @@ function RegisterScreen({ route, navigation }) {
                                         <View style={styles.ContentText}>
                                             <Text style={styles.ContentTextStyle}>업체 위치</Text>
                                         </View>
-                                        <TouchableOpacity style={styles.ContentInput} onPress={() => setModalVisible(true)}>
-                                            <Text>{cmp_location}</Text>
-                                        </TouchableOpacity>
+                                        <View style={styles.ContentInput_sub}>
+                                            <View style={styles.TextAndBtn}>
+                                                <Text>{cmp_location}</Text>
+                                            </View>
+                                            <TouchableOpacity style={styles.AddressBtn} onPress={() => setModalVisible(true)}>
+                                                <Text>주소 검색</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                     <View style={styles.ContentBox}>
                                         <View style={styles.ContentText}>
@@ -292,7 +302,7 @@ function RegisterScreen({ route, navigation }) {
             <TouchableOpacity style={styles.RegisterBtn} onPress={() => Register()}>
                 <Text style={styles.RegisterBtnStyle}>회원등록</Text>
             </TouchableOpacity>
-            <LocationSearchBox visible={modalVisible} location={user_location} callback={ReturnVisible}/>
+            <LocationSearchBox visible={modalVisible} location={ReturnLocation} callback={ReturnVisible} />
         </SafeAreaView>
     )
 }
@@ -362,13 +372,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     ContentInput: {
+        flex: 3,
         borderWidth: 1,
         borderColor: 'rgba(220, 220, 220, 1)',
         borderRadius: 5,
         padding: 5,
         margin: 10,
         backgroundColor: 'rgba(255, 255, 255, 1)',
+    },
+    ContentInput_sub: {
         flex: 3,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 220, 220, 1)',
+        borderRadius: 5,
+        padding: 5,
+        margin: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     ContentTextStyle: {
         fontSize: 16,
@@ -386,6 +406,20 @@ const styles = StyleSheet.create({
         color: 'rgba(255, 255, 255, 1)',
         fontWeight: '800',
         fontSize: 18,
+    },
+    TextAndBtn: {
+        flex: 3,
+        padding: 5,
+    },
+    AddressBtn: {
+        flex: 1,
+        padding: 5,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 220, 220, 1)',
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 

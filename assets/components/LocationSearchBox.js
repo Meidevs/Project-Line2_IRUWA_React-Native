@@ -25,7 +25,6 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
     const [isLoaded, setIsLoaded] = useState(false);
 
     const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
-        console.log('a')
         if (AddressFilter(keyword) && keyword != null) {
             var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(keyword);
             setAddressList(DETAIL_SEARCH_RESPONSE.results.juso)
@@ -46,9 +45,30 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
         if (visibility == false) {
             setKeywords(null)
         }
-        setModalVisible(visibility);
-        callback(visibility)
+        callback(false)
     }
+
+    const SetAddress = async (cmp_location) => {
+        var SEARCH_ADDRESS = await ROADAPI.SEARCH_ADDRESS(cmp_location);
+        console.log(SEARCH_ADDRESS)
+        location(cmp_location)
+        callback(false)
+    }
+
+    const componentJSX = () => {
+        return (
+            address.map((data, index) => {
+                return (
+                    <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList} onPress={() => SetAddress(data.jibunAddr)}>
+                        <Text>{data.zipNo}</Text>
+                        <Text>{data.jibunAddr}</Text>
+                        <Text>{data.roadAddr}</Text>
+                    </TouchableOpacity>
+                )
+            })
+        )
+    }
+
     return (
         <Modal
             animationType="slide"
@@ -63,7 +83,7 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
                 </View>
             </View>
             <View style={styles.ModalView}>
-                <View style={styles.ComponentForm}>
+                <View>
                     <View style={styles.TitleBox}>
                         <Text style={styles.TitleText}>업체 주소를</Text>
                         <Text style={styles.TitleText}>입력하세요</Text>
@@ -86,18 +106,9 @@ const LocationSearchFunction = ({ visible, location, callback }) => {
             <SafeAreaView style={styles.SafeAreaView}>
                 <ScrollView>
                     {
-                        address.map((data, index) => {
-                            return (
-                                <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList} onPress={() => SetAddress()}>
-                                    <Text>{data.zipNo}</Text>
-                                    <Text>{data.jibunAddr}</Text>
-                                    <Text>{data.roadAddr}</Text>
-                                </TouchableOpacity>
-                            )
-                        })
+                        componentJSX()
                     }
                 </ScrollView>
-
             </SafeAreaView>
         </Modal>
     )
@@ -197,23 +208,8 @@ const styles = StyleSheet.create({
     },
     SafeAreaView: {
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        width : width,
-        height : '70%'
-    },
-    PaginationForm: {
         width: width,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
-    },
-    PaginationItem: {
-        padding: 5,
-    },
-    PageNumbers: {
-        fontSize: 16,
-        fontWeight: 'bold'
+        height: '70%'
     },
     AddressList: {
         padding: 20,
