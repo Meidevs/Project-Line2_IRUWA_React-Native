@@ -55,6 +55,9 @@ class AUTHENTICATION {
                     cmp_name: data.cmp_name,
                     cmp_phone: data.cmp_phone,
                     cmp_location: data.cmp_location,
+                    cmp_detail_location : data.cmp_detail_location,
+                    lat : data.lat,
+                    lon : data.lon,
                     cmp_certificates: data.cmp_certificates,
                 })
             });

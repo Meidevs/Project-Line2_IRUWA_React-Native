@@ -37,6 +37,9 @@ function RegisterScreen({ route, navigation }) {
     const [cmp_name, setCompanyName] = useState('');
     const [cmp_phone, setCompanyPhone] = useState('');
     const [cmp_location, setCompanyLocation] = useState('');
+    const [cmp_detail_location, setCompanyDLocation] = useState('');
+    const [lat, setCompanyLat] = useState('');
+    const [lon, setCompanyLon] = useState('');
     const [cmp_certificates, setCompanyCerti] = useState('');
     const [category_seq, setCompanyCate] = useState('');
 
@@ -99,6 +102,9 @@ function RegisterScreen({ route, navigation }) {
             data.cmp_name = cmp_name;
             data.cmp_phone = cmp_phone;
             data.cmp_location = cmp_location;
+            data.cmp_detail_location = cmp_detail_location;
+            data.lat = lat;
+            data.lon = lon;
             data.cmp_certificates = cmp_certificates;
             var response = await AUTHENTICATION.REGISTER(data);
             if (response.flags == 0) {
@@ -119,8 +125,10 @@ function RegisterScreen({ route, navigation }) {
         setModalVisible(ChildFrom)
     }
     const ReturnLocation = (ChildFrom) => {
-        console.log(ChildFrom)
-        setCompanyLocation(ChildFrom)
+        setCompanyDLocation(ChildFrom[0]);
+        setCompanyLocation(ChildFrom[1]);
+        setCompanyLat(ChildFrom[2]);
+        setCompanyLon(ChildFrom[3]);
     }
     return (
         <SafeAreaView style={styles.Container}>
@@ -292,7 +300,7 @@ function RegisterScreen({ route, navigation }) {
                                             <Text style={styles.ContentTextStyle}>카테고리</Text>
                                         </View>
                                         <View style={styles.ContentInput}>
-                                            {/* <CategoryPicker callback={ReturnCategory} /> */}
+                                            <CategoryPicker callback={ReturnCategory} />
                                         </View>
                                     </View>
                                 </View>
