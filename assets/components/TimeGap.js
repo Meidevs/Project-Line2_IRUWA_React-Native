@@ -7,7 +7,9 @@ const TimeGap = (data) => {
     var Seconds = parseInt((time % 3600) / 100);
     var timeGapString;
 
-    if (Hour != 0) {
+    if (Hour >= 24) {
+        timeGapString = parseInt(Hour / 24) + '일 전';
+    } else if (Hour != 0) {
         timeGapString = Hour + '시간 전';
     } else if (Minute != 0) {
         timeGapString = Minute + '분 전';

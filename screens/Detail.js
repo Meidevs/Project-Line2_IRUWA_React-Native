@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
-
+import TimeGap from '../assets/components/TimeGap';
+import FlatListSlider from '../assets/components/FlatListSlider';
 const { width, height } = Dimensions.get('window');
 
 const _getHeaderBackgroundColor = (scrollY) => {
@@ -141,6 +142,7 @@ function DetailScreen({ route, navigation }) {
         item_image_url: null,
         cmp_name: null,
         cmp_location: null,
+        cmp_category_name: null,
         item_content: null,
         reg_date: null,
         pick_status: false,
@@ -150,6 +152,7 @@ function DetailScreen({ route, navigation }) {
     const [isLoaded, setIsLoaded] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
+    // console.log(itemInfos)
     useEffect(() => {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
@@ -163,16 +166,18 @@ function DetailScreen({ route, navigation }) {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
                 var data = ITEM_INFOs.SELECTED[0];
+                var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
                     item_image_url: data.uri,
                     item_title: data.item_name,
                     item_content: data.item_content,
-                    item_reg: data.reg_date,
+                    item_reg: time_avg,
                     cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
                     cmp_location: ITEM_INFOs.CMP_INFOs.cmp_location,
+                    cmp_category_name: ITEM_INFOs.CMP_INFOs.category_name,
                     pick_status: ITEM_INFOs.PICK_STATUS,
                     time_avg: ITEM_INFOs.TIME_AVG,
-                    view_coount: ITEM_INFOs.VIEW_COUNT,
+                    view_count: ITEM_INFOs.VIEW_COUNT,
                 })
                 setOtherItem(ITEM_INFOs.NonSELECTED)
             } catch (err) {
@@ -197,9 +202,10 @@ function DetailScreen({ route, navigation }) {
                 <View style={styles.HeaderTitle}>
                     <Text style={styles.HeaderTitleTxtStyle}>
                         {yPosition > 300 ?
-                            itemInfos != null ?
+                            itemInfos.item_title != null ?
                                 itemInfos.item_title : null
-                            : null}</Text>
+                            : null}
+                    </Text>
                 </View>
             </Animated.View>
             <Animated.ScrollView style={styles.ScrollView}
@@ -219,9 +225,16 @@ function DetailScreen({ route, navigation }) {
                         }
                     }
                 )}>
-                <View style={styles.ImageBox}>
-                    <Text>Image Area</Text>
-                </View>
+                <FlatListSlider
+                    data={itemInfos.item_image_url}
+                    timer={5000}
+                    onPress={item => alert(JSON.stringify(item))}
+                    indicatorContainerStyle={{ position: 'absolute', bottom: 20 }}
+                    indicatorActiveColor={'#8e44ad'}
+                    indicatorInActiveColor={'#ffffff'}
+                    indicatorActiveWidth={30}
+                    animation
+                />
                 <View style={styles.ContentBox}>
                     <View style={styles.SellerContent}>
                         <View style={styles.SellerBox}>
@@ -232,7 +245,7 @@ function DetailScreen({ route, navigation }) {
                             </View>
                         </View>
                         <View style={styles.SellerInfoBox}>
-                            <Text>Empty</Text>
+                            <Text>{itemInfos.time_avg}</Text>
                         </View>
                     </View>
                     <View style={styles.ItemBox}>
@@ -241,14 +254,17 @@ function DetailScreen({ route, navigation }) {
                                 <Text style={styles.ItemTitleTxtStyle}>{itemInfos.item_title}</Text>
                             </View>
                             <View style={styles.ItemSimpleInfo}>
-                                <Text>{itemInfos.item_cate}</Text>
+                                <Text>{itemInfos.cmp_category_name}</Text>
                                 <Text>{itemInfos.item_reg}</Text>
                             </View>
                         </View>
                         <View>
                             <View>
-                                <Text>{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}</Text>
+                                <Text>{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}</Text>
                             </View>
+                        </View>
+                        <View>
+                            <Text>조회 {itemInfos.view_count}</Text>
                         </View>
                     </View>
                     <View style={styles.ItemBox}>
@@ -259,9 +275,9 @@ function DetailScreen({ route, navigation }) {
                         </View>
                         <View style={styles.ADSBox}>
                             {
-                                itemsArray.map((data) => {
+                                itemsArray.map((data, index) => {
                                     return (
-                                        <View style={styles.ADSContent}>
+                                        <View style={styles.ADSContent} key={data.items_seq}>
                                             <View style={styles.ImageArea}>
                                                 <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
                                             </View>
@@ -332,12 +348,7 @@ const styles = StyleSheet.create({
     },
     ScrollView: {
     },
-    ImageBox: {
-        height: 300,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'pink'
-    },
+
     ContentBox: {
         flexDirection: 'column',
         alignItems: 'center',
@@ -432,26 +443,20 @@ const styles = StyleSheet.create({
     },
     ADSBox: {
         height: width,
-
         flexWrap: 'wrap',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
     ADSContent: {
-        margin: 10,
         padding: 5,
-        width: width * 0.4,
         height: width * 0.4,
-        borderRadius: 10,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 1,
     },
     ImageArea: {
         flex: 3,
-        width: width * 0.4,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -460,11 +465,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    ItemsImages : {
-        flex : 1,
-        width : width * 0.4,
-        height : width * 0.4,
-        resizeMode : 'contain'
+    ItemsImages: {
+        margin: 5,
+        width: width * 0.30,
+        height: width * 0.30,
+        borderRadius: 5,
+        resizeMode: 'cover'
     }
 })
 

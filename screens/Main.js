@@ -113,7 +113,7 @@ function MainScreen({ route, navigation }) {
                 data={data}
                 initialNumToRender={10}
                 renderItem={({ item }) => <Item data={item} navigation={navigation}/>}
-                keyExtractor={(item, index) => index}
+                keyExtractor={(item, index) => JSON.stringify(index)}
                 getItemCount={getItemCount}
                 getItem={getItem}
             />
