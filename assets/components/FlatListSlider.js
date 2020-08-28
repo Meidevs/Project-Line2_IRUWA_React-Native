@@ -4,72 +4,33 @@ import {
     View,
     Image,
     StyleSheet,
-    LayoutAnimation,
-    Platform,
-    UIManager,
     Dimensions,
+    TouchableOpacity
 } from 'react-native';
-// import Indicator from './Indicator';
-// import ChildItem from './ChildItem';
+import ImageSlider from '../components/ImageSlider';
 const { width, height } = Dimensions.get('window');
 
 const FlatListSlider = ({ data }) => {
-    const [imgUri, setImageUri] = useState([]);
     const [fromData, setFromData] = useState({
         index: 0,
         images: []
     });
-    const defaultProps = {
-        data: [],
-        imageKey: 'image',
-        local: false,
-        width: Math.round(Dimensions.get('window').width),
-        height: 230,
-        separatorWidth: 0,
-        loop: true,
-        indicator: true,
-        indicatorStyle: {},
-        indicatorContainerStyle: {},
-        indicatorActiveColor: '#3498db',
-        indicatorInActiveColor: '#bdc3c7',
-        indicatorActiveWidth: 6,
-        animation: true,
-        autoscroll: true,
-        timer: 3000,
-        onPress: {},
-        contentContainerStyle: {},
-    }
+    const [visibility, modalVisible] = useState(false);
+
     useEffect(() => {
         setFromData({ images: data })
     }, [data])
 
     const _renderItem = ({ item }) => {
         return (
-            <View style={styles.Slide}>
+            <TouchableOpacity style={styles.Slide} onPress={() => modalVisible(true)}>
                 <Image source={{ uri: item }} style={styles.SildeImages} />
-            </View>
+            </TouchableOpacity>
         )
     }
-    const onViewableItemsChanged = useRef((viewableItems) => {
-        if (viewableItems.length > 0) {
-            let currentIndex = viewableItems[0].index;
-            if (
-                currentIndex % defaultProps.data.length === defaultProps.data.length - 1 &&
-                defaultProps.loop
-            ) {
-                setFromData({
-                    index: currentIndex,
-                    images: [...images, ...defaultProps.data],
-                });
-            } else {
-                setFromData({ index: currentIndex });
-            }
-        }
-    });
-    const viewabilityConfig = useRef({
-        viewAreaPercentThreshold: 50,
-    });
-
+    const ReturnVisible = (ReturnValue) => {
+        modalVisible(ReturnValue)
+    }
     return (
         <View>
             <FlatList
@@ -81,13 +42,8 @@ const FlatListSlider = ({ data }) => {
                 showsHorizontalScrollIndicator={false}
                 renderItem={_renderItem}
                 keyExtractor={index => JSON.stringify(index)}
-                windowSize={1}
-                initialNumToRender={1}
-                maxToRenderPerBatch={1}
-                removeClippedSubviews={true}
-                onViewableItemsChanged={(info) => console.log(info)}
-                viewabilityConfig={viewabilityConfig.current}
             />
+            <ImageSlider visible={visibility} data={fromData} callback={ReturnVisible} />
         </View>
     )
 }
@@ -97,6 +53,7 @@ const styles = StyleSheet.create({
         height: 400,
         justifyContent: 'center',
         alignItems: 'center',
+        resizeMode : 'cover'
     },
     SildeImages: {
         resizeMode: 'cover',
