@@ -139,7 +139,7 @@ function DetailScreen({ route, navigation }) {
     const [itemsArray, setOtherItem] = useState([]);
     const [itemInfos, setItemInfos] = useState({
         item_title: null,
-        item_image_url: null,
+        item_image_url: [],
         cmp_name: null,
         cmp_location: null,
         cmp_category_name: null,
