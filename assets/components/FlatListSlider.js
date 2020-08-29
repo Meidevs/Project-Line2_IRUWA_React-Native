@@ -11,13 +11,9 @@ import ImageSlider from '../components/ImageSlider';
 import FlatListIndicator from './FlatListIndicator';
 const { width, height } = Dimensions.get('window');
 
-const initialValue = {
-    viewAreaCoveragePercentThreshold: 50,
-}
 
 const FlatListSlider = ({ data, navigation }) => {
-    const ref = useRef(initialValue);
-    console.log(ref)
+    const ref = createRef();
     const [fromData, setFromData] = useState({
         index: 0,
         images: []
@@ -36,23 +32,14 @@ const FlatListSlider = ({ data, navigation }) => {
     const ReturnVisible = (ReturnValue) => {
         modalVisible(ReturnValue)
     }
-    const onViewableItemsChanged = ({ viewableItems, changed }) => {
-        if (viewableItems.length > 0) {
-            let currentIndex = viewableItems[0].index;
-            if (
-                currentIndex % fromData.images.length === fromData.images.length - 1
-            ) {
-                setFromData({
-                    index: currentIndex,
-                });
-            } else {
-                setFromData({ index: currentIndex });
-            }
-        }
-    };
+    const onViewableItemsChanged = useRef(() => {
+        console.log(ref);
 
+    });
     const viewabilityConfig = useRef({
+        waitForInteraction: true,
         viewAreaCoveragePercentThreshold: 50,
+        index : 0,
     });
     return (
         <View>
@@ -66,8 +53,8 @@ const FlatListSlider = ({ data, navigation }) => {
                 showsHorizontalScrollIndicator={false}
                 renderItem={_renderItem}
                 keyExtractor={index => JSON.stringify(index)}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={ref.current}
+                onViewableItemsChanged={onViewableItemsChanged.current}
+                viewabilityConfig={viewabilityConfig.current}
             />
             <FlatListIndicator
                 itemCount={fromData.images.length}
