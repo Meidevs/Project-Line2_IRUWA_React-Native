@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 const { width, height } = Dimensions.get('window');
 
-const FullScreenSilder = ({ visible, data, callback }) => {
+const FullScreenSilder = ({ data, visible, callback }) => {
     const [fromData, setFromData] = useState({
         index: 0,
         images: []
@@ -20,7 +20,7 @@ const FullScreenSilder = ({ visible, data, callback }) => {
 
     useEffect(() => {
         setModalVisible(visible);
-        setFromData({ images: data.images })
+        setFromData({ images: data })
     }, [visible]);
 
     const ReturnVisible = (ReturnValue) => {

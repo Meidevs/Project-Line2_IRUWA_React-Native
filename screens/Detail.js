@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import TimeGap from '../assets/components/TimeGap';
-import FlatListSlider from '../assets/components/FlatListSlider';
+import Carousel from '../assets/components/Carousel';
 const { width, height } = Dimensions.get('window');
 
 const _getHeaderBackgroundColor = (scrollY) => {
@@ -225,15 +225,9 @@ function DetailScreen({ route, navigation }) {
                         }
                     }
                 )}>
-                <FlatListSlider
+                <Carousel
                     data={itemInfos.item_image_url}
-                    timer={5000}
-                    onPress={item => alert(JSON.stringify(item))}
-                    indicatorContainerStyle={{ position: 'absolute', bottom: 20 }}
-                    indicatorActiveColor={'#8e44ad'}
-                    indicatorInActiveColor={'#ffffff'}
-                    indicatorActiveWidth={30}
-                    animation
+                    navigation={navigation}
                 />
                 <View style={styles.ContentBox}>
                     <View style={styles.SellerContent}>
@@ -314,7 +308,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
-
     HeaderStyle: {
         height: height * 0.06,
         position: 'absolute',
