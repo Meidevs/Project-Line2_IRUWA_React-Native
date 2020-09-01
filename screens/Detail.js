@@ -152,7 +152,6 @@ function DetailScreen({ route, navigation }) {
     const [isLoaded, setIsLoaded] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
-    // console.log(itemInfos)
     useEffect(() => {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
@@ -179,13 +178,33 @@ function DetailScreen({ route, navigation }) {
                     time_avg: ITEM_INFOs.TIME_AVG,
                     view_count: ITEM_INFOs.VIEW_COUNT,
                 })
-                setOtherItem(ITEM_INFOs.NonSELECTED)
+                setOtherItem(ITEM_INFOs.NonSELECTED);
+                setIsLoaded(true);
             } catch (err) {
                 console.log(err);
             }
         }
         GET_ITEM_INFOs()
-    }, [])
+    }, []);
+
+    const ComponentExp = useCallback(() => {
+        var textString = itemInfos.item_content;
+        console.log(textString)
+        // var Text = String.replace(/^(\r\n)|(\n)/, '');
+        // console.log(Text)
+        if (isLoaded) {
+            return (
+                <View>
+                    <Text>{String}</Text>
+                </View>
+            )
+        }
+    },[itemInfos.item_content]);
+
+    useEffect(() => {
+        ComponentExp();
+    }, [ComponentExp])
+
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -212,11 +231,7 @@ function DetailScreen({ route, navigation }) {
                 overScrollMode={'never'}
                 scrollEventThrottle={26}
                 onScroll={Animated.event(
-                    [
-                        {
-                            nativeEvent: { contentOffset: { y: scrollY } }
-                        }
-                    ],
+                    [{ nativeEvent: { contentOffset: { y: scrollY }}}],
                     {
                         useNativeDriver: false,
                         listener: event => {
@@ -254,7 +269,9 @@ function DetailScreen({ route, navigation }) {
                         </View>
                         <View>
                             <View>
-                                <Text>{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}{itemInfos.item_content}</Text>
+                                {
+                                    ComponentExp()
+                                }
                             </View>
                         </View>
                         <View>

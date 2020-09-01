@@ -25,7 +25,11 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
     const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
         if (AddressFilter(keyword) && keyword != null) {
             var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(keyword);
-            setAddressList(DETAIL_SEARCH_RESPONSE.results.juso)
+            if (DETAIL_SEARCH_RESPONSE.results.juso != null) {
+                setAddressList(DETAIL_SEARCH_RESPONSE.results.juso);
+            } else {
+                alert(DETAIL_SEARCH_RESPONSE.results.common.errorMessage);
+            }
         }
         setIsLoaded(true)
         setSearchStart(false)

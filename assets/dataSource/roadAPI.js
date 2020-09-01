@@ -16,7 +16,6 @@ class ROADAPI {
                 var locationString;
                 var data = json.documents[1].address_name.split(' ');
                 if (data.length == 3) {
-                    console.log(data[0])
                     switch (data[0]) {
                         case "서울특별시":
                             locationString = '서울';
@@ -209,7 +208,7 @@ class ROADAPI {
     }
     SEARCH_DETAIL_ADDRESS = async (keyword) => {
         try {
-            var keyword = '청주시 사직1동';
+            var keyword = keyword;
             let response = await fetch(`http://www.juso.go.kr/addrlink/addrLinkApi.do?currentPage=1&countPerPage=100&keyword=${keyword}&confmKey=U01TX0FVVEgyMDIwMDgyNzA0MTc0NzExMDExMTc=&resultType=json`, {
                 method: 'POST',
                 headers: {
@@ -218,7 +217,7 @@ class ROADAPI {
             });
             let json = await response.json();
             if (response.ok) {
-                return json
+                return json; 
             }
         } catch (err) {
             console.log(err);

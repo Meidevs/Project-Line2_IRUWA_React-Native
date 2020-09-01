@@ -17,6 +17,7 @@ import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
+import { useScreens } from 'react-native-screens';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,6 +34,7 @@ function AddScreen({ route, navigation }) {
     const [images, setImage] = useState([]);
     const [title, setItemTitle] = useState('');
     const [content, setItemContent] = useState('');
+    const [adsType, setAdsType] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
 
@@ -87,10 +89,10 @@ function AddScreen({ route, navigation }) {
     }
 
     const SaveImages = async (images) => {
-        setIsLoading(true);
         var formData = new FormData();
-        formData.append('item_name', title)
-        formData.append('item_content', content)
+        formData.append('item_name', title);
+        formData.append('item_content', content);
+        formData.append('ads_type', adsType);
         for (var i = 0; i < images.length; i++) {
             formData.append('image', {
                 uri: images[i].uri,
@@ -111,6 +113,10 @@ function AddScreen({ route, navigation }) {
             console.log(err)
         }
     }
+    const SelectAdsType = (num) => {
+        setAdsType(num);
+    }
+
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
@@ -137,11 +143,26 @@ function AddScreen({ route, navigation }) {
                 <View style={styles.ItemTitleBox}>
                     <TextInput
                         value={title}
-                        placeholder={'제목'}
+                        placeholder={'제목을 입력해 주세요.'}
                         placeholderTextColor='#B4B4B4'
                         style={styles.ItemTitleTxt}
                         onChangeText={(text) => setItemTitle(text)}
                     />
+                </View>
+                <View style={styles.SwitchBtnForm}>
+                    <View style={styles.SwitchTitle}>
+                        <Text style={styles.TitleTxt}>게시물 광고 타입을 선택해 주세요.</Text>
+                    </View>
+                    <View style={styles.SwitchBtnArea}>
+                        <TouchableOpacity onPress={() => SelectAdsType(0)} style={styles.SwitchBtnContent}>
+                            <View style={adsType == 0 ? styles.SwitchBtn : styles.NonSwitchBtn} />
+                            <Text style={adsType == 0 ? styles.SwitchBtnTxt : styles.NonSwitchBtnTxt}>일반</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => SelectAdsType(1)} style={styles.SwitchBtnContent}>
+                            <View style={adsType == 1 ? styles.SwitchBtn : styles.NonSwitchBtn} />
+                            <Text style={adsType == 1 ? styles.SwitchBtnTxt : styles.NonSwitchBtnTxt}>프리미엄</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.ItemTextArea}>
                     <TextInput
@@ -246,6 +267,54 @@ const styles = StyleSheet.create({
         zIndex: 5,
         top: -1,
         left: 30,
+    },
+    SwitchBtnForm: {
+        padding: 10,
+    },
+    SwitchTitle : {
+        marginBottom : 10,
+    },
+    TitleTxt : {
+        fontSize : 16,
+        fontWeight : 'bold'
+    },
+    SwitchBtnArea: {
+        width: width,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    SwitchBtnContent: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    SwitchBtn: {
+        margin: 10,
+        borderRadius: 10,
+        width: 15,
+        height: 15,
+        borderWidth: 3,
+        backgroundColor: 'red',
+        borderColor: 'red'
+    },
+    NonSwitchBtn: {
+        margin: 10,
+        borderRadius: 10,
+        width: 15,
+        height: 15,
+        borderWidth: 3,
+        borderColor: 'black'
+    },
+    SwitchBtnTxt: {
+        fontSize: 16,
+        fontWeight: '800',
+        color: 'red'
+    },
+    NonSwitchBtnTxt: {
+        fontSize: 16,
+        fontWeight: '800',
+        color: 'black'
     }
 })
 
