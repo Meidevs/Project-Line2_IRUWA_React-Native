@@ -10,6 +10,7 @@ class DATA_SORUCE {
                 body: JSON.stringify({ user_location: user_location })
             });
             var json = await response.json();
+            console.log('a', json)
             if (response.ok) {
                 return json;
             }

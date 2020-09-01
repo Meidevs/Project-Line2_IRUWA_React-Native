@@ -73,17 +73,18 @@ function MainScreen({ route, navigation }) {
                 try {
                     const data = await AUTHENTICATION.GET_USER_LOCATION();
                     const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+                    console.log('ITEMS', ITEMS)
                     setData(ITEMS.content);
                     setUserLocation(data.user_location);
                 } catch (err) {
-                    setIsError(true)
+                    setIsError(true);
                 }
                 setIsLoading(false);
             }
             GET_MAIN_INFOs();
         }, [user_location])
     );
-
+        
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (

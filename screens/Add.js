@@ -37,7 +37,7 @@ function AddScreen({ route, navigation }) {
     const [adsType, setAdsType] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
-
+    console.log('adsType', adsType);
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -64,9 +64,11 @@ function AddScreen({ route, navigation }) {
         try {
             let IMAGE_INFOs = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
+                aspect :[400, 400],
                 allowsEditing: true,
                 quality: 1,
             });
+            
             if (!IMAGE_INFOs.cancelled) {
                 setImage([
                     ...images,

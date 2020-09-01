@@ -188,14 +188,12 @@ function DetailScreen({ route, navigation }) {
     }, []);
 
     const ComponentExp = useCallback(() => {
-        var textString = itemInfos.item_content;
-        console.log(textString)
         // var Text = String.replace(/^(\r\n)|(\n)/, '');
         // console.log(Text)
         if (isLoaded) {
             return (
                 <View>
-                    <Text>{String}</Text>
+                    <Text>{itemInfos.item_content}</Text>
                 </View>
             )
         }
