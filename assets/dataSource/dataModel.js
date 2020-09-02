@@ -18,6 +18,26 @@ class DATA_SORUCE {
         }
     }
 
+    GET_PREMIUM_ITEMS = async () => {
+        try {
+            var response = await fetch('http://localhost:8888/api/item/premiums', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items_seq: items_seq, cmp_seq: cmp_seq })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+
+        }
+    }
+
+
     GET_ITEM_DETAIL = async (items_seq, cmp_seq) => {
         try {
             var response = await fetch('http://localhost:8888/api/item/list/detail', {
@@ -26,7 +46,7 @@ class DATA_SORUCE {
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify({ items_seq: items_seq, cmp_seq : cmp_seq })
+                body: JSON.stringify({ items_seq: items_seq, cmp_seq: cmp_seq })
             });
             var json = await response.json();
             if (response.ok) {

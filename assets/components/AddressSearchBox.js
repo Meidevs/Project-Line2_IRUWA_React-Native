@@ -21,9 +21,14 @@ const AddrSearchBox = ({ data, visible, location, callback }) => {
 
     useEffect(() => {
         const SEARCH_DETAIL_ADDRESS = async () => {
+            
             if (AddressFilter(data) && data != null) {
                 var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(data);
-                setAddressList(DETAIL_SEARCH_RESPONSE.results.juso)
+                if (DETAIL_SEARCH_RESPONSE.results.juso != null) {
+                    setAddressList(DETAIL_SEARCH_RESPONSE.results.juso);
+                } else {
+                    alert(DETAIL_SEARCH_RESPONSE.results.common.errorMessage);
+                }
             }
         };
         SEARCH_DETAIL_ADDRESS();

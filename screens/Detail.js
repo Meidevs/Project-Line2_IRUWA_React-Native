@@ -197,12 +197,11 @@ function DetailScreen({ route, navigation }) {
                 </View>
             )
         }
-    },[itemInfos.item_content]);
+    },[isLoaded]);
 
     useEffect(() => {
         ComponentExp();
     }, [ComponentExp])
-
 
     return (
         <SafeAreaView style={styles.Container}>

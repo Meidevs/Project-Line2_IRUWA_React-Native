@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
-
+import PremiumBanner from '../assets/components/PremiumBanner';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 
@@ -107,6 +107,7 @@ function MainScreen({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.Container}>
+            <PremiumBanner />
             <VirtualizedList
                 data={data}
                 initialNumToRender={10}

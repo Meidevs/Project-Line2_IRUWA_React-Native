@@ -17,6 +17,7 @@ import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import AddressSearchBox from '../assets/components/AddressSearchBox';
 import * as Location from 'expo-location';
+import { preventAutoHide } from 'expo/build/launch/SplashScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,8 +25,18 @@ const scrollHandle = (event) => {
     var yPosition = event.nativeEvent.contentOffset.y;
     return yPosition;
 }
+const prevLocationExistence = async (location) => {
+    var preArray = new Array();
+    const allKeys = await AsyncStorage.getAllKeys();
+    var prevKeys = allKeys.filter(item => item != "@my_Key");
+    const prevLocations = await AsyncStorage.multiGet(prevKeys);
+    for (var i = 0; i < prevLocations.length; i++) {
+        preArray.push(JSON.parse(prevLocations[i][1]).location_name);
+    }
+    return preArray.includes(location);
+}
 
-function LocationScreen({ route, navigation }) {
+function LocationScreen({ navigation }) {
     const scrollY = useRef(new Animated.Value(0)).current;
     const [keys, setAllKeys] = useState([]);
     const [yPosition, setYposition] = useState(null);
@@ -46,7 +57,8 @@ function LocationScreen({ route, navigation }) {
             const allKeys = await AsyncStorage.getAllKeys();
             var filtered = allKeys.filter(key => key != "@my_Key");
             setAllKeys(filtered);
-        }
+        };
+
         const GET_CURRENT_LOCATION = async () => {
             let position = await Location.getCurrentPositionAsync({
                 accuracy: Location.Accuracy.Highest
@@ -69,9 +81,9 @@ function LocationScreen({ route, navigation }) {
             }
         };
         READ_PREVIOUSE_LOCATION();
-    }, [keys])
+    }, [keys]);
 
-    const UPDATE_LOCATION = async () => {
+    const UPDATE_CURRENT_LOCATION = async () => {
         try {
             var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
             if (UPDATE_RESULT) {
@@ -79,9 +91,34 @@ function LocationScreen({ route, navigation }) {
                     id: keys.length + 1,
                     location_name: currentLocation,
                 }
-                var key = '@my_prev_location_' + (keys.length + 1);
-                setAllKeys([...keys, key])
-                await AsyncStorage.setItem(key, JSON.stringify(object));
+                var existence = await prevLocationExistence(currentLocation);
+                if (!existence) {
+                    var key = '@my_prev_location_' + (keys.length + 1);
+                    setAllKeys([...keys, key]);
+                    await AsyncStorage.setItem(key, JSON.stringify(object));
+                    navigation.goBack();
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const LocateCallback = async (ChildFrom) => {
+        try {
+            var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(ChildFrom);
+            if (UPDATE_RESULT) {
+                var object = {
+                    id: keys.length + 1,
+                    location_name: ChildFrom,
+                }
+                var existence = await prevLocationExistence(ChildFrom);
+                if (!existence) {
+                    var key = '@my_prev_location_' + (keys.length + 1);
+                    setAllKeys([...keys, key]);
+                    await AsyncStorage.setItem(key, JSON.stringify(object));
+                    navigation.goBack();
+                }
             }
         } catch (err) {
             console.log(err);
@@ -96,30 +133,17 @@ function LocationScreen({ route, navigation }) {
         } catch (err) {
             console.log(err)
         }
-    }
+    };
+
     const ClearAll = async () => {
         await AsyncStorage.multiRemove(keys);
         setAllKeys([])
-    }
+    };
+
     const Callback = (ChildFrom) => {
         setModalVisible(ChildFrom)
     }
-    const LocateCallback = async (ChildFrom) => {
-        try {
-            var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(ChildFrom);
-            if (UPDATE_RESULT) {
-                var object = {
-                    id: keys.length + 1,
-                    location_name: ChildFrom,
-                }
-                var key = '@my_prev_location_' + (keys.length + 1);
-                setAllKeys([...keys, key])
-                await AsyncStorage.setItem(key, JSON.stringify(object));
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
+
     return (
         <SafeAreaView style={styles.Container}>
             <StatusBar />
@@ -173,7 +197,7 @@ function LocationScreen({ route, navigation }) {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.CurrentLocate}>
-                        <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_LOCATION()}>
+                        <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_CURRENT_LOCATION()}>
                             <Icon name={'ios-locate'} size={20} />
                             <Text>현 위치로 주소 설정</Text>
                         </TouchableOpacity>
@@ -191,7 +215,7 @@ function LocationScreen({ route, navigation }) {
                             if (data[0] != undefined) {
                                 return (
                                     <View style={styles.Locations}>
-                                        <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter}>
+                                        <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter} onPress={() => setUserLocation(JSON.parse(data[1]).location_name)}>
                                             <Text style={{ textAlignVertical: 'center' }}>
                                                 {JSON.parse(data[1]).location_name}
                                             </Text>

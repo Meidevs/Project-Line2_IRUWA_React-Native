@@ -74,16 +74,16 @@ function SearchScreen({ navigation, route }) {
     const UPDATE_PREV_SEARCH = async () => {
         changeContentStatus(true)
         try {
-            // if (text !== null) {
-                // var SAVE_RESPONSE = await SEARCH_API.SAVE_PREV_SEARCH_LIST(text);
-                // if (SAVE_RESPONSE.flags == 0) {
-                //     var obj = new Object();
-                //     obj = text;
-                //     dispatch({ type: 'update', data: { keyword: obj } });
-                // }
+            if (text !== null) {
+                var SAVE_RESPONSE = await SEARCH_API.SAVE_PREV_SEARCH_LIST(text);
+                if (SAVE_RESPONSE.flags == 0) {
+                    var obj = new Object();
+                    obj = text;
+                    dispatch({ type: 'update', data: { keyword: obj } });
+                }
 
                 var ITEM_LIST = await DATA_SOURCE.GET_ITEMS_ON_KEYWORD(text);
-            // }
+            }
             setSearchText(null);
         } catch (err) {
             console.log(err);
