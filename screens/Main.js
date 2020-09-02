@@ -30,7 +30,7 @@ const getItem = (data, index) => {
             cmp_location: items.cmp_location,
             reg_date: items.reg_date,
             cmp_seq: items.cmp_seq,
-            uri : items.uri
+            uri: items.uri
         }
     }
 }
@@ -48,7 +48,7 @@ const Item = ({ data, navigation }) => {
             cmp_seq: data.cmp_seq
         })}>
             <View style={styles.LeftArea}>
-                <Image source={{ uri : data.uri[0]}} style={styles.ImageContent}/>
+                <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
             </View>
             <View style={styles.RightArea}>
                 <Text>{data.item_name}</Text>
@@ -64,27 +64,6 @@ function MainScreen({ route, navigation }) {
     const [user_location, setUserLocation] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(true);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            const GET_MAIN_INFOs = async () => {
-                setIsError(false);
-                setIsLoading(true);
-                try {
-                    const data = await AUTHENTICATION.GET_USER_LOCATION();
-                    const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
-                    console.log('ITEMS', ITEMS)
-                    setData(ITEMS.content);
-                    setUserLocation(data.user_location);
-                } catch (err) {
-                    setIsError(true);
-                }
-                setIsLoading(false);
-            }
-            GET_MAIN_INFOs();
-        }, [user_location])
-    );
-        
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -100,20 +79,38 @@ function MainScreen({ route, navigation }) {
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <Icon name="ios-search" size={28} color={'#000000'} style={{ padding: 10, }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Alarm')}>
-                        <Icon name="ios-notifications-outline" size={32} color={'#000000'} style={{ padding: 10, }} />
-                    </TouchableOpacity>
                 </View>
             )
         })
     }, [user_location]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const GET_MAIN_INFOs = async () => {
+                setIsError(false);
+                setIsLoading(true);
+                try {
+                    const data = await AUTHENTICATION.GET_USER_LOCATION();
+                    const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+                    setData(ITEMS.content);
+                    setUserLocation(data.user_location);
+                } catch (err) {
+                    setIsError(true);
+                }
+                setIsLoading(false);
+            }
+            GET_MAIN_INFOs();
+        }, [user_location])
+    );
+
+
 
     return (
         <SafeAreaView style={styles.Container}>
             <VirtualizedList
                 data={data}
                 initialNumToRender={10}
-                renderItem={({ item }) => <Item data={item} navigation={navigation}/>}
+                renderItem={({ item }) => <Item data={item} navigation={navigation} />}
                 keyExtractor={(item, index) => JSON.stringify(index)}
                 getItemCount={getItemCount}
                 getItem={getItem}
@@ -157,10 +154,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    ImageContent : {
-        resizeMode : 'contain',
-        width : 100,
-        height : 100,
+    ImageContent: {
+        resizeMode: 'contain',
+        width: 100,
+        height: 100,
     }
 })
 

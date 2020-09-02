@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,8 @@ import {
     StyleSheet,
     Image,
     Dimensions,
-    SafeAreaView
+    SafeAreaView,
+    Platform
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -37,7 +38,6 @@ function AddScreen({ route, navigation }) {
     const [adsType, setAdsType] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
-    console.log('adsType', adsType);
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -46,12 +46,12 @@ function AddScreen({ route, navigation }) {
                 </View>
             ),
             headerRight: () => (
-                <TouchableOpacity style={styles.RightHeader} onPress={() => SaveImages(images)}>
+                <TouchableOpacity style={styles.RightHeader} onPress={() => SaveImages()}>
                     <Text style={styles.TitleHeaderTxtStyle}>완료</Text>
                 </TouchableOpacity>
             )
         })
-    }, [images]);
+    }, [images, title, content, adsType]);
 
     useEffect(() => {
         const REQUEST_PERMISSIONS = async () => {
@@ -64,16 +64,16 @@ function AddScreen({ route, navigation }) {
         try {
             let IMAGE_INFOs = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
-                aspect :[400, 400],
+                aspect: [400, 400],
                 allowsEditing: true,
                 quality: 1,
             });
-            
+
             if (!IMAGE_INFOs.cancelled) {
                 setImage([
                     ...images,
                     {
-                        id: 'images' + images.length,
+                        id: 'images',
                         uri: IMAGE_INFOs.uri
                     }
                 ])
@@ -90,7 +90,7 @@ function AddScreen({ route, navigation }) {
         ])
     }
 
-    const SaveImages = async (images) => {
+    const SaveImages = async () => {
         var formData = new FormData();
         formData.append('item_name', title);
         formData.append('item_content', content);
@@ -115,6 +115,7 @@ function AddScreen({ route, navigation }) {
             console.log(err)
         }
     }
+
     const SelectAdsType = (num) => {
         setAdsType(num);
     }
@@ -273,12 +274,12 @@ const styles = StyleSheet.create({
     SwitchBtnForm: {
         padding: 10,
     },
-    SwitchTitle : {
-        marginBottom : 10,
+    SwitchTitle: {
+        marginBottom: 10,
     },
-    TitleTxt : {
-        fontSize : 16,
-        fontWeight : 'bold'
+    TitleTxt: {
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     SwitchBtnArea: {
         width: width,

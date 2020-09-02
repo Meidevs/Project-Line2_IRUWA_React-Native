@@ -10,7 +10,6 @@ class DATA_SORUCE {
                 body: JSON.stringify({ user_location: user_location })
             });
             var json = await response.json();
-            console.log('a', json)
             if (response.ok) {
                 return json;
             }
@@ -58,6 +57,7 @@ class DATA_SORUCE {
     }
 
     SAVE_IMAGES = async (formData) => {
+        console.log(formData)
         try {
             var response = await fetch('http://localhost:8888/api/item/create', {
                 method: 'POST',
