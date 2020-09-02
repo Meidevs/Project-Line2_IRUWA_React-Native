@@ -16,7 +16,8 @@ const Carousel = ({ data, navigation }) => {
     if (data && data.length) {
         return (
             <View>
-                <FlatList data={data}
+                <FlatList
+                    data={data}
                     keyExtractor={(item, index) => 'key' + index.toString()}
                     horizontal
                     pagingEnabled
@@ -26,7 +27,7 @@ const Carousel = ({ data, navigation }) => {
                     decelerationRate={'fast'}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item }) => {
-                        return <CarouselItem item={item} data={data}/>
+                        return <CarouselItem item={item} data={data} />
                     }}
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -51,7 +52,7 @@ const Carousel = ({ data, navigation }) => {
                         return (
                             <Animated.View
                                 key={i}
-                                style={{ opacity, height: 10, width : width, backgroundColor: 'rgba(180, 180, 180, 1)', margin: 8, borderRadius: 5 }}
+                                style={{ opacity, height: 10, width: width, backgroundColor: 'rgba(180, 180, 180, 1)', margin: 8, borderRadius: 5 }}
                             />
                         )
                     })}
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 320,
         width: width,
-        zIndex : 10,
+        zIndex: 10,
     }
 })
 

@@ -10,17 +10,13 @@ import FullScreenSlider from './FullScreenSlider'
 
 const { width, height } = Dimensions.get('window');
 
-const CarouselItem = ({ item, data, navigation }) => {
-    const [modalisible, setModalVisible] = useState(false);
-    const ReturnVisible = (ChildFrom) => {
-        setModalVisible(ChildFrom)
-    }
+const PremiumBannerItem = ({ item, navigation }) => {
+    console.log('items!', item)
     return (
         <View>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Image source={{ uri: item }} style={styles.ImageView} />
+            <TouchableOpacity>
+                <Image source={{ uri: item.uri }} style={styles.ImageView} />
             </TouchableOpacity>
-            <FullScreenSlider data={data} visible={modalisible} callback={ReturnVisible}/>
         </View>
     )
 }
@@ -33,4 +29,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default CarouselItem;
+export default PremiumBannerItem;

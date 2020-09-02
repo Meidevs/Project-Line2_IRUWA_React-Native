@@ -102,12 +102,9 @@ function MainScreen({ route, navigation }) {
             GET_MAIN_INFOs();
         }, [user_location])
     );
-
-
-
     return (
         <SafeAreaView style={styles.Container}>
-            <PremiumBanner />
+            <PremiumBanner data={user_location}/>
             <VirtualizedList
                 data={data}
                 initialNumToRender={10}

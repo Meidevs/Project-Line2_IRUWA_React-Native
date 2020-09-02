@@ -18,7 +18,7 @@ class DATA_SORUCE {
         }
     }
 
-    GET_PREMIUM_ITEMS = async () => {
+    GET_PREMIUM_ITEMS = async (user_location) => {
         try {
             var response = await fetch('http://localhost:8888/api/item/premiums', {
                 method: 'POST',
@@ -26,7 +26,7 @@ class DATA_SORUCE {
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify({ items_seq: items_seq, cmp_seq: cmp_seq })
+                body: JSON.stringify({ user_location : user_location })
             });
             var json = await response.json();
             if (response.ok) {
