@@ -58,7 +58,7 @@ const PremiumBanner = ({ data, navigation }) => {
                     decelerationRate={'fast'}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item, index }) => {
-                        return <PremiumBannerItem item={item} index={index} />
+                        return <PremiumBannerItem item={item} navigation={navigation}/>
                     }}
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { x: scrollX } } }],

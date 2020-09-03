@@ -66,12 +66,10 @@ function MainScreen({ route, navigation }) {
     const [isError, setIsError] = useState(true);
     useEffect(() => {
         navigation.setOptions({
+            headerLeft: () => <View></View>,
             headerTitle: () => (
                 <View style={styles.HeaderTitleBox}>
-                    <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location')}>
-                        <Text>{user_location}</Text>
-                        <Icon name={'ios-arrow-dropdown-circle'} size={24} />
-                    </TouchableOpacity>
+                    <Text style={styles.HeaderTitleTxt}>IRUWA</Text>
                 </View>
             ),
             headerRight: () => (
@@ -104,7 +102,15 @@ function MainScreen({ route, navigation }) {
     );
     return (
         <SafeAreaView style={styles.Container}>
-            <PremiumBanner data={user_location}/>
+            <View>
+                <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location')} activeOpacity={0.6}>
+                    <View style={styles.LocationBtn}>
+                        <Text style={styles.CurrentLocationTxt}>{user_location}</Text>
+                        <Icon name={'ios-arrow-dropdown-circle'} size={24} />
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <PremiumBanner data={user_location} navigation={navigation} />
             <VirtualizedList
                 data={data}
                 initialNumToRender={10}
@@ -145,12 +151,29 @@ const styles = StyleSheet.create({
     },
     HeaderTitleBox: {
         justifyContent: 'center',
-        alignItems: 'flex-start'
+        alignItems: 'center'
+    },
+    HeaderTitleTxt: {
+        fontSize: 18,
+        fontWeight: 'bold'
     },
     HeaderTitle: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: width,
+        height: width * 0.15,
+    },
+    LocationBtn : {
+        flexDirection : 'row',
+        alignItems : 'center',
+        justifyContent : 'flex-start',
+        padding : 15,
+    },
+    CurrentLocationTxt : {
+        fontSize : 18,
+        fontWeight : '800',
+        marginRight : 10,
     },
     ImageContent: {
         resizeMode: 'contain',
