@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import {
     View,
     StyleSheet,
-    Image,
+    Text,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    ImageBackground
 } from 'react-native';
-import FullScreenSlider from './FullScreenSlider'
 
 const { width, height } = Dimensions.get('window');
 
-const PremiumBannerItem = ({ item, navigation }) => {
-    console.log('items!', item)
+const PremiumBannerItem = ({ item, index, navigation }) => {
     return (
-        <View>
-            <TouchableOpacity>
-                <Image source={{ uri: item.uri }} style={styles.ImageView} />
+        <View style={styles.ImageView}>
+            <TouchableOpacity style={styles.ImageBox}>
+                <ImageBackground source={{ uri: item.uri[0] }} style={styles.ImageSlider}>
+                    <Text>{item.item_name}</Text>
+                </ImageBackground>
             </TouchableOpacity>
         </View>
     )
@@ -24,9 +25,20 @@ const PremiumBannerItem = ({ item, navigation }) => {
 const styles = StyleSheet.create({
     ImageView: {
         width: width,
-        height: 350,
-        resizeMode: 'cover'
+        height: height * 0.26,
     },
+    ImageBox: {
+        margin: 15,
+        borderRadius: 15,
+        width: width * 0.9,
+        height: height * 0.23,
+        backgroundColor : 'rgba(0, 0, 0, 0.8)',
+    },
+    ImageSlider: {
+        width: width * 0.9,
+        height: height * 0.20,
+        alignSelf: 'center',
+    }
 })
 
 export default PremiumBannerItem;

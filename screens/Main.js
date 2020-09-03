@@ -120,7 +120,7 @@ function MainScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(238, 238, 238, 1)'
+        backgroundColor: 'rgba(255, 255, 255, 1)'
     },
     ContentBox: {
         height: 120,
