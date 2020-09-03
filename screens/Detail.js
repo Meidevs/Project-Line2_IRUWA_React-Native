@@ -131,6 +131,7 @@ const iconColorHandle = (event) => {
     return iconColor;
 }
 function DetailScreen({ route, navigation }) {
+    console.log(route)
     const scrollY = useRef(new Animated.Value(0)).current;
     const [yColor, setColor] = useState(null);
     const [ybColor, setBorderColor] = useState(null);
@@ -164,6 +165,7 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
+                console.log('ITEM_INFOs', ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
@@ -171,6 +173,7 @@ function DetailScreen({ route, navigation }) {
                     item_title: data.item_name,
                     item_content: data.item_content,
                     item_reg: time_avg,
+                    cmp_seq : ITEM_INFOs.CMP_INFOs.cmp_seq,
                     cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
                     cmp_location: ITEM_INFOs.CMP_INFOs.cmp_location,
                     cmp_category_name: ITEM_INFOs.CMP_INFOs.category_name,
@@ -188,8 +191,6 @@ function DetailScreen({ route, navigation }) {
     }, []);
 
     const ComponentExp = useCallback(() => {
-        // var Text = String.replace(/^(\r\n)|(\n)/, '');
-        // console.log(Text)
         if (isLoaded) {
             return (
                 <View>
@@ -285,14 +286,21 @@ function DetailScreen({ route, navigation }) {
                             {
                                 itemsArray.map((data, index) => {
                                     return (
-                                        <View style={styles.ADSContent} key={data.items_seq}>
+                                        <TouchableOpacity 
+                                        style={styles.ADSContent} 
+                                        key={data.items_seq}
+                                        onPress={() => navigation.replace('Detail', {
+                                            cmp_seq : itemInfos.cmp_seq,
+                                            items_seq : data.items_seq
+                                        })}
+                                        >
                                             <View style={styles.ImageArea}>
                                                 <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
                                             </View>
                                             <View style={styles.NameArea}>
                                                 <Text>{data.item_name}</Text>
                                             </View>
-                                        </View>
+                                        </TouchableOpacity>
                                     )
                                 })
                             }
@@ -305,9 +313,6 @@ function DetailScreen({ route, navigation }) {
                     <Icon name={'ios-heart-empty'} size={30} />
                 </TouchableOpacity>
                 <View style={styles.ChatContent}>
-                    <TouchableOpacity style={styles.ChatBtn}>
-                        <Text style={styles.ChatTxtStyle}>띵동</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.ChatBtn}>
                         <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
