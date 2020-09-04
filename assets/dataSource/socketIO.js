@@ -7,18 +7,36 @@ const connectionConfig = {
     reconnectionAttempts: 5000,
     transports: ['websocket']/// you need to explicitly tell it to use websockets
 };
-const socket = io('http://192.168.0.40:8888/api', connectionConfig);
+const socket = io('http://192.168.0.40:8888', connectionConfig);
 class SOCKETIO {
-    startSocket = () => {
-        console.log('11')
-        socket.on('connect', () => {
-            console.log('Connected!')
-        })
+    sendMessage = async (message) => {
+        return new Promise(
+            async (resolve, reject) => {
+                try {
+                    await socket.emit('sendMessage', message);
+                    resolve(true);
+                } catch (err) {
+                    reject(err);
+                }
+            }
+        )
     }
 
-    sendMessage = (message) => {
-        console.log('Message : ', message)
-        socket.emit('sendMessage', message)
+    receiveMessage = async () => {
+        return new Promise(
+            async (resolve, reject) => {
+                try {
+                    var resReturn = await socket.on('receiveMessage', message => {
+                        console.log('a', message)
+                        return message;
+                    });
+                    console.log(resReturn)
+                    resolve(resReturn);
+                } catch (err) {
+                    reject(err);
+                }
+            }
+        )
     }
 }
 

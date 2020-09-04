@@ -10,12 +10,11 @@ import {
     SafeAreaView
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
-// import socketIO from '../assets/dataSource/socketIO';
+import socketIO from '../assets/dataSource/socketIO';
 
-let socket;
 const { width, height } = Dimensions.get('window');
 
 const ChatDetailScreen =({ route, navigation }) => {
@@ -105,17 +104,19 @@ const ChatDetailScreen =({ route, navigation }) => {
     const sendMessage = async () => {
         try {
             var sendMessage = message;
-            // socketIO.sendMessage(sendMessage);
-            const connectionConfig = {
-                jsonp: false,
-                reconnection: true,
-                reconnectionDelay: 100,
-                reconnectionAttempts: 5000,
-                transports: ['websocket']/// you need to explicitly tell it to use websockets
-            };
-            var socket = io('http://192.168.0.40:8888', connectionConfig);
-            socket.emit('sendMessage', sendMessage);
-            // setMessage(null);
+            socketIO.sendMessage(sendMessage);
+            // const connectionConfig = {
+            //     jsonp: false,
+            //     reconnection: true,
+            //     reconnectionDelay: 100,
+            //     reconnectionAttempts: 5000,
+            //     transports: ['websocket']/// you need to explicitly tell it to use websockets
+            // };
+            // var socket = io('http://192.168.0.40:8888', connectionConfig);
+            // socket.emit('sendMessage', sendMessage);
+            var returnMessage = socketIO.receiveMessage();
+            console.log('returnMessage : ', returnMessage)
+            setMessage(null);
         } catch (err) {
             console.log(err);
         }
