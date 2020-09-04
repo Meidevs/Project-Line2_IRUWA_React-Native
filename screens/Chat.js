@@ -12,7 +12,6 @@ import {
     SafeAreaView
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import io from 'socket.io-client';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
@@ -31,17 +30,6 @@ function ChatScreen({ route, navigation }) {
     }, []);
 
     const CHAT_LIST = useCallback(async () => {
-        const socket = io('http://localhost:8888/api');
-        var fileDirectory = await FileSystem.documentDirectory;
-        var fileUri = await FileSystem.documentDirectory + 'user_seq_1';
-        // await FileSystem.makeDirectoryAsync(fileDirectory + 'user_seq_1', {
-        //     intermediates : false
-        // });
-        // await FileSystem.writeAsStringAsync(fileUri, "Hello World asdas", { encoding : FileSystem.EncodingType.UTF8})
-        var Directory = await FileSystem.readDirectoryAsync(fileDirectory);
-        console.log('Directory', Directory);
-        var readFile = await FileSystem.readAsStringAsync(fileUri);
-        console.log('File', readFile);
         
     }, []);
 

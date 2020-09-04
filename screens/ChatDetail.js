@@ -4,20 +4,33 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    StatusBar,
     StyleSheet,
-    Image,
     Dimensions,
     ScrollView,
     SafeAreaView
 } from 'react-native';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
+import * as FileSystem from 'expo-file-system';
+import io from 'socket.io-client';
+import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
+// import socketIO from '../assets/dataSource/socketIO';
 
+let socket;
 const { width, height } = Dimensions.get('window');
 
-function ChatDetailScreen({ route, navigation }) {
-    const [chatlist, setChatList] = useState([]);
+const ChatDetailScreen =({ route, navigation }) => {
+    const [infos, setInfos] = useState({
+        user_seq: null,
+        user_name: null,
+        cmp_seq: null,
+        cmp_name: null,
+        items_seq: null,
+        item_name: null,
+    });
+    const [message, setMessage] = useState(null);
+    const cmp_seq = route.params.cmp_seq;
+    const items_seq = route.params.items_seq;
+
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
@@ -28,7 +41,9 @@ function ChatDetailScreen({ route, navigation }) {
                             <Icon name={'arrowleft'} size={24} />
                         </TouchableOpacity>
                         <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={styles.TitleHeaderTxtStyle}>(주)이루와님과의 채팅</Text>
+                            <Text style={styles.TitleHeaderTxtStyle}>
+                                {infos.cmp_name}님과의 채팅
+                            </Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', height: 50 }}>
@@ -36,7 +51,7 @@ function ChatDetailScreen({ route, navigation }) {
                             <Text>Image</Text>
                         </View>
                         <View style={{ padding: 10 }}>
-                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>맥주 2병 무료 서비스</Text>
+                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>{infos.item_name}</Text>
                         </View>
                     </View>
                 </View>
@@ -45,15 +60,66 @@ function ChatDetailScreen({ route, navigation }) {
                 height: 110,
             }
         })
-    }, []);
+    }, [infos]);
 
-    const CHAT_LIST = useCallback(async () => {
-        const data = await DATA_SOURCE.GetChatList();
-    }, [])
+    // const Chatting = useCallback(async () => {
+
+    // }, [])
+
+    // useEffect(() => {
+    //     Chatting();
+    // }, [Chatting]);
 
     useEffect(() => {
-        CHAT_LIST()
-    }, [CHAT_LIST])
+        const INFOs = async () => {
+            try {
+                var USER_INFOs = await CHATTING.USER_INFO();
+                var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
+                var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
+                setInfos({
+                    user_seq: USER_INFOs.user_seq,
+                    user_name: USER_INFOs.user_name,
+                    cmp_seq: CMP_INFOs.cmp_seq,
+                    cmp_name: CMP_INFOs.cmp_name,
+                    items_seq: ITEMS_INFOs.items_seq,
+                    item_name: ITEMS_INFOs.item_name,
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        const CHAT_DIRECTORY = async () => {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var chatDirectory = 'CHAT/';
+            var rootDirectory = fileDirectory + chatDirectory;
+            var chatDirectoryInfo = await FileSystem.getInfoAsync(rootDirectory)
+            if (!chatDirectoryInfo.exists) {
+                await FileSystem.makeDirectoryAsync(rootDirectory);
+            }
+        }
+        INFOs();
+        CHAT_DIRECTORY();
+    }, [route]);
+
+
+    const sendMessage = async () => {
+        try {
+            var sendMessage = message;
+            // socketIO.sendMessage(sendMessage);
+            const connectionConfig = {
+                jsonp: false,
+                reconnection: true,
+                reconnectionDelay: 100,
+                reconnectionAttempts: 5000,
+                transports: ['websocket']/// you need to explicitly tell it to use websockets
+            };
+            var socket = io('http://192.168.0.40:8888', connectionConfig);
+            socket.emit('sendMessage', sendMessage);
+            // setMessage(null);
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -75,20 +141,25 @@ function ChatDetailScreen({ route, navigation }) {
                     </View>
                 </View>
                 <View style={styles.ReceiverBox}>
-                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight : 10, }}>
+                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
                         <Text style={{ fontSize: 12, }}>11:21 오후</Text>
                     </View>
                     <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
                         <Text style={{ fontSize: 16, }}>네, 바로 이용 가능합니다.</Text>
                     </View>
-
                 </View>
             </ScrollView>
             <View style={styles.MessageInputBox}>
                 <View style={styles.InputBox}>
-                    <TextInput placeholder={'메세지를 입력해주세요'} placeholderTextColor='#B4B4B4' />
+                    <TextInput
+                        value={message}
+                        placeholder={'메세지를 입력해주세요'}
+                        placeholderTextColor='#B4B4B4'
+                        onChangeText={(text) => setMessage(text)}
+
+                    />
                 </View>
-                <TouchableOpacity style={styles.SendBtn}>
+                <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>
                     <Icon name={'caretright'} size={28} />
                 </TouchableOpacity>
             </View>
@@ -140,14 +211,14 @@ const styles = StyleSheet.create({
 
     },
     SenderBox: {
-        margin : 15,
+        margin: 15,
         height: 70,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: 'flex-start'
     },
     ReceiverBox: {
-        margin : 15,
+        margin: 15,
         height: 70,
         flexDirection: "row",
         alignItems: 'center',

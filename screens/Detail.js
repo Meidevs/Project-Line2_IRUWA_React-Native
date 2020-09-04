@@ -32,13 +32,12 @@ const _getHeaderBorderColor = (scrollY) => {
         outputRange: ['rgba(238, 238, 238, 0.0)', 'rgba(238, 238, 238, 1)'],
         extrapolate: 'clamp',
         useNativeDriver: false
-    })
+    });
     return variable;
 }
 
 const scrollHandle = (event) => {
     var yPosition = event.nativeEvent.contentOffset.y;
-
     return yPosition;
 }
 
@@ -168,6 +167,7 @@ function DetailScreen({ route, navigation }) {
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
+                    items_seq : data.items_seq,
                     item_image_url: data.uri,
                     item_title: data.item_name,
                     item_content: data.item_content,
@@ -312,7 +312,10 @@ function DetailScreen({ route, navigation }) {
                     <Icon name={'ios-heart-empty'} size={30} />
                 </TouchableOpacity>
                 <View style={styles.ChatContent}>
-                    <TouchableOpacity style={styles.ChatBtn} onPress={() => navigation.navigate('ChatDetail')}>
+                    <TouchableOpacity style={styles.ChatBtn} onPress={() => navigation.navigate('ChatDetail',{
+                        cmp_seq : itemInfos.cmp_seq,
+                        items_seq : itemInfos.items_seq,
+                    })}>
                         <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
                 </View>

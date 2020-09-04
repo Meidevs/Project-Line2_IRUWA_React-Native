@@ -174,6 +174,10 @@ const MainStackScreens = () => {
         name='CateList'
         component={CateListScreen}
       />
+      <ChatStack.Screen
+        name='ChatDetail'
+        component={ChatDetailScreen}
+      />
     </MainStack.Navigator>
   )
 }
