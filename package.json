@@ -17,6 +17,7 @@
     "expo": "~38.0.8",
     "expo-cli": "^3.24.2",
     "expo-constants": "^9.1.1",
+    "expo-file-system": "^9.1.0",
     "expo-image-picker": "^8.3.0",
     "expo-location": "^8.2.1",
     "expo-permissions": "^9.0.1",
@@ -28,7 +29,8 @@
     "react-native-screens": "^2.9.0",
     "react-native-vector-icons": "^7.0.0",
     "react-native-web": "~0.11.7",
-    "react-native-webview": "^9.4.0"
+    "react-native-webview": "^9.4.0",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

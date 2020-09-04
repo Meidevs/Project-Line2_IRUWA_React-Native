@@ -11,6 +11,8 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import io from 'socket.io-client';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
@@ -29,19 +31,23 @@ function ChatScreen({ route, navigation }) {
     }, []);
 
     const CHAT_LIST = useCallback(async () => {
-        const data = await DATA_SOURCE.GetChatList();
-        var dummyData = [
-            { id: 'Chat_1', item_name: 'Our Chat', user_name: '이루와1', location : '구로구 구로3동' },
-            { id: 'Chat_1', item_name: 'Our Chat', user_name: '이루와2', location : '구로구 구로3동' },
-            { id: 'Chat_1', item_name: 'Our Chat', user_name: '이루와3', location : '구로구 구로1동' },
-            { id: 'Chat_1', item_name: 'Our Chat', user_name: '이루와4', location : '구로구 구로3동' }
-        ]
-        setChatList(dummyData)
-    }, [])
+        const socket = io('http://localhost:8888/api');
+        var fileDirectory = await FileSystem.documentDirectory;
+        var fileUri = await FileSystem.documentDirectory + 'user_seq_1';
+        // await FileSystem.makeDirectoryAsync(fileDirectory + 'user_seq_1', {
+        //     intermediates : false
+        // });
+        // await FileSystem.writeAsStringAsync(fileUri, "Hello World asdas", { encoding : FileSystem.EncodingType.UTF8})
+        var Directory = await FileSystem.readDirectoryAsync(fileDirectory);
+        console.log('Directory', Directory);
+        var readFile = await FileSystem.readAsStringAsync(fileUri);
+        console.log('File', readFile);
+        
+    }, []);
 
     useEffect(() => {
         CHAT_LIST()
-    }, [CHAT_LIST])
+    }, [CHAT_LIST]);
 
     return (
         <SafeAreaView style={styles.Container}>

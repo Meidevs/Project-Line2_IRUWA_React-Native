@@ -131,7 +131,6 @@ const iconColorHandle = (event) => {
     return iconColor;
 }
 function DetailScreen({ route, navigation }) {
-    console.log(route)
     const scrollY = useRef(new Animated.Value(0)).current;
     const [yColor, setColor] = useState(null);
     const [ybColor, setBorderColor] = useState(null);
@@ -141,6 +140,7 @@ function DetailScreen({ route, navigation }) {
     const [itemInfos, setItemInfos] = useState({
         item_title: null,
         item_image_url: [],
+        cmp_seq : null,
         cmp_name: null,
         cmp_location: null,
         cmp_category_name: null,
@@ -165,7 +165,6 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
-                console.log('ITEM_INFOs', ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
@@ -313,7 +312,7 @@ function DetailScreen({ route, navigation }) {
                     <Icon name={'ios-heart-empty'} size={30} />
                 </TouchableOpacity>
                 <View style={styles.ChatContent}>
-                    <TouchableOpacity style={styles.ChatBtn}>
+                    <TouchableOpacity style={styles.ChatBtn} onPress={() => navigation.navigate('ChatDetail')}>
                         <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
                 </View>
