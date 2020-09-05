@@ -9,20 +9,25 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-// import io from 'socket.io-client';
+
+import CHECK_ROOTDIRECTORY from '../assets/components/CheckDirectory';
+import CREATE_LOGS_DIRECTORY from '../assets/components/CreateLogsDirectory';
+import DateFunction from '../assets/components/DateFunction';
+import UPDATE_LOGS_DIRECTORY from '../assets/components/UpdateLogs';
+import io from 'socket.io-client';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
-import socketIO from '../assets/dataSource/socketIO';
 
 const { width, height } = Dimensions.get('window');
 
-const ChatDetailScreen =({ route, navigation }) => {
+const ChatDetailScreen = ({ route, navigation }) => {
     const [infos, setInfos] = useState({
         user_seq: null,
         user_name: null,
         cmp_seq: null,
         cmp_name: null,
+        host_seq: null,
+        host_name: null,
         items_seq: null,
         item_name: null,
     });
@@ -80,6 +85,8 @@ const ChatDetailScreen =({ route, navigation }) => {
                     user_name: USER_INFOs.user_name,
                     cmp_seq: CMP_INFOs.cmp_seq,
                     cmp_name: CMP_INFOs.cmp_name,
+                    host_seq: CMP_INFOs.host_seq,
+                    host_name: CMP_INFOs.host_name,
                     items_seq: ITEMS_INFOs.items_seq,
                     item_name: ITEMS_INFOs.item_name,
                 });
@@ -88,12 +95,10 @@ const ChatDetailScreen =({ route, navigation }) => {
             }
         }
         const CHAT_DIRECTORY = async () => {
-            var fileDirectory = await FileSystem.documentDirectory;
-            var chatDirectory = 'CHAT/';
-            var rootDirectory = fileDirectory + chatDirectory;
-            var chatDirectoryInfo = await FileSystem.getInfoAsync(rootDirectory)
-            if (!chatDirectoryInfo.exists) {
-                await FileSystem.makeDirectoryAsync(rootDirectory);
+            try {
+                await CHECK_ROOTDIRECTORY();
+            } catch (err) {
+                console.log(err)
             }
         }
         INFOs();
@@ -102,24 +107,45 @@ const ChatDetailScreen =({ route, navigation }) => {
 
 
     const sendMessage = async () => {
-        try {
-            var sendMessage = message;
-            socketIO.sendMessage(sendMessage);
-            // const connectionConfig = {
-            //     jsonp: false,
-            //     reconnection: true,
-            //     reconnectionDelay: 100,
-            //     reconnectionAttempts: 5000,
-            //     transports: ['websocket']/// you need to explicitly tell it to use websockets
-            // };
-            // var socket = io('http://192.168.0.40:8888', connectionConfig);
-            // socket.emit('sendMessage', sendMessage);
-            var returnMessage = socketIO.receiveMessage();
-            console.log('returnMessage : ', returnMessage)
-            setMessage(null);
-        } catch (err) {
-            console.log(err);
+
+        var dateTime = await DateFunction();
+        console.log(dateTime)
+        var sendMessage = message;
+
+        const connectionConfig = {
+            jsonp: false,
+            reconnection: true,
+            reconnectionDelay: 100,
+            reconnectionAttempts: 5000,
+            transports: ['websocket']/// you need to explicitly tell it to use websockets
+        };
+        var socket = io('http://192.168.0.40:8888', connectionConfig);
+        var form = {
+            sender: {
+                sender_seq: infos.user_seq,
+                sender_name: infos.user_name,
+            },
+            receiver: {
+                receiver_seq: infos.host_seq,
+                receiver_name: infos.host_name,
+            },
+            item : {
+                items_seq : infos.items_seq,
+            },
+            message: sendMessage,
+            reg_date : dateTime,
         }
+        socket.emit('sendMessage', form);
+        socket.on('receiveMessage', async receiveMessage => {
+            var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
+            var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
+            if (resReturn) {
+                await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
+            } else {
+                alert('메세지 전송에 실패하였습니다.');
+            }
+        });
+        setMessage(null);
     }
 
     return (
