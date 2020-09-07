@@ -2,6 +2,8 @@ import io from 'socket.io-client';
 
 class GLOBE {
     constructor () {
+        this.GLOBE_SEND_MESSAGE = null;
+        this.GLOBE_RECEIVE_MESSAGE = null;
     }
     static GLOBE_SOCKET;
 
@@ -19,6 +21,19 @@ class GLOBE {
 
     GET_SOCKET_IO = () => {
         return this.GLOBE_SOCKET;
+    }
+
+    SEND_SOCKET_MESSAGE = (form) => {
+        this.GLOBE_SEND_MESSAGE = form;
+        this.GLOBE_SOCKET.emit('sendMessage', form);
+    }
+
+    RECEIVE_SOCKET_MESSAGE = () => {
+        this.GLOBE_SOCKET.on('receiveMessage', (message) => {
+            this.GLOBE_RECEIVE_MESSAGE = message;
+            return this.GLOBE_RECEIVE_MESSAGE;
+        });
+        
     }
 }
 

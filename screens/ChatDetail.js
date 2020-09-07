@@ -95,7 +95,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
                     item_name: ITEMS_INFOs.item_name,
                 });
                 var socket = await GLOBAL.GET_SOCKET_IO();
-                socket.emit('connection', { userID : USER_INFOs.user_seq });
+                socket.emit('connection', { userID: USER_INFOs.user_seq });
                 setSocketIO(socket);
             } catch (err) {
                 console.log(err);
@@ -119,31 +119,27 @@ const ChatDetailScreen = ({ route, navigation }) => {
         var rndString = await RANDOM_STRING(roomCode);
         var sendMessage = message;
         var form = {
-            sender: {
-                sender_seq: infos.user_seq,
-                sender_name: infos.user_name,
-            },
-            receiver: {
-                receiver_seq: infos.host_seq,
-                receiver_name: infos.host_name,
-            },
-            item: {
-                items_seq: infos.items_seq,
-            },
+            sender_seq: infos.user_seq,
+            receiver_seq: infos.host_seq,
+            items_seq: infos.items_seq,
             roomCode: JSON.stringify(rndString),
             message: sendMessage,
             reg_date: dateTime,
         }
+        // socket.emit('sendMessage', form);
 
-        socket.emit('sendMessage', { form: form });
-        socket.on('receiveMessage', (receiveMessage) => {
+        await GLOBAL.SEND_SOCKET_MESSAGE(form);
+        var receiveMessage = await GLOBAL.RECEIVE_SOCKET_MESSAGE();
+        console.log(receiveMessage)
+        // socket.on('receiveMessage', async (receiveMessage) => {
+        //     console.log('receiveMessage', receiveMessage)
             // var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
             // if (resReturn) {
             //     await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
             // } else {
             //     alert('메세지 전송에 실패하였습니다.');
             // }
-        });
+        // });
 
         setMessage(null);
     }
