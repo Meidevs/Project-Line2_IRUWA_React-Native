@@ -1,7 +1,7 @@
 class CHATTING {
     USER_INFO = async () => {
         try {
-            let response = await fetch('http://localhost:8888/api/chat/user/infos', {
+            let response = await fetch('http://127.0.0.1:8888/api/chat/user/infos', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ class CHATTING {
 
     CMP_INFO = async (cmp_seq) => {
         try {
-            let response = await fetch('http://localhost:8888/api/chat/company/infos', {
+            let response = await fetch('http://127.0.0.1:8888/api/chat/company/infos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ class CHATTING {
 
     ITEM_INFO = async (items_seq) => {
         try {
-            let response = await fetch('http://localhost:8888/api/chat/items/infos', {
+            let response = await fetch('http://127.0.0.1:8888/api/chat/items/infos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

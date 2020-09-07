@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useReducer } from 'react'
 import {
     View,
     Text,
@@ -16,8 +16,7 @@ import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
 import PremiumBanner from '../assets/components/PremiumBanner';
-import * as Permissions from 'expo-permissions';
-import * as Location from 'expo-location';
+import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
 
@@ -100,6 +99,13 @@ function MainScreen({ route, navigation }) {
             GET_MAIN_INFOs();
         }, [user_location])
     );
+
+    useEffect( () => {
+        const SET_GLOBAL_SOCKET = async () => {
+            await GLOBAL.SET_SOCKET_IO();
+        }
+        SET_GLOBAL_SOCKET();
+    }, [])
     return (
         <SafeAreaView style={styles.Container}>
             <View>

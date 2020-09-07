@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system';
-
+var index = 0;
 const CreateLogsDirectory = async (roomCode) => {
     try {
         var fileDirectory = await FileSystem.documentDirectory;
@@ -8,7 +8,6 @@ const CreateLogsDirectory = async (roomCode) => {
         var subDirectory = fileDirectory + chatDirectory + roomCode;
         var directories = await FileSystem.readDirectoryAsync(rootDirectory);
         var EXISTENCE = directories.includes(roomCode);
-        console.log(EXISTENCE)
         if (!EXISTENCE) {
             await FileSystem.makeDirectoryAsync(subDirectory);
         }

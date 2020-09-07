@@ -14,11 +14,13 @@ import CHECK_ROOTDIRECTORY from '../assets/components/CheckDirectory';
 import CREATE_LOGS_DIRECTORY from '../assets/components/CreateLogsDirectory';
 import DateFunction from '../assets/components/DateFunction';
 import UPDATE_LOGS_DIRECTORY from '../assets/components/UpdateLogs';
-import io from 'socket.io-client';
+import RANDOM_STRING from '../assets/components/RandomString';
+import GLOBAL from '../assets/dataSource/globalModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 const { width, height } = Dimensions.get('window');
+
 
 const ChatDetailScreen = ({ route, navigation }) => {
     const [infos, setInfos] = useState({
@@ -32,8 +34,10 @@ const ChatDetailScreen = ({ route, navigation }) => {
         item_name: null,
     });
     const [message, setMessage] = useState(null);
+    const [socket, setSocketIO] = useState(null);
     const cmp_seq = route.params.cmp_seq;
     const items_seq = route.params.items_seq;
+
 
     useEffect(() => {
         navigation.setOptions({
@@ -90,6 +94,9 @@ const ChatDetailScreen = ({ route, navigation }) => {
                     items_seq: ITEMS_INFOs.items_seq,
                     item_name: ITEMS_INFOs.item_name,
                 });
+                var socket = await GLOBAL.GET_SOCKET_IO();
+                socket.emit('connection', { userID : USER_INFOs.user_seq });
+                setSocketIO(socket);
             } catch (err) {
                 console.log(err);
             }
@@ -101,25 +108,16 @@ const ChatDetailScreen = ({ route, navigation }) => {
                 console.log(err)
             }
         }
+
         INFOs();
         CHAT_DIRECTORY();
     }, [route]);
 
-
     const sendMessage = async () => {
-
         var dateTime = await DateFunction();
-        console.log(dateTime)
+        var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
+        var rndString = await RANDOM_STRING(roomCode);
         var sendMessage = message;
-
-        const connectionConfig = {
-            jsonp: false,
-            reconnection: true,
-            reconnectionDelay: 100,
-            reconnectionAttempts: 5000,
-            transports: ['websocket']/// you need to explicitly tell it to use websockets
-        };
-        var socket = io('http://192.168.0.40:8888', connectionConfig);
         var form = {
             sender: {
                 sender_seq: infos.user_seq,
@@ -129,22 +127,24 @@ const ChatDetailScreen = ({ route, navigation }) => {
                 receiver_seq: infos.host_seq,
                 receiver_name: infos.host_name,
             },
-            item : {
-                items_seq : infos.items_seq,
+            item: {
+                items_seq: infos.items_seq,
             },
+            roomCode: JSON.stringify(rndString),
             message: sendMessage,
-            reg_date : dateTime,
+            reg_date: dateTime,
         }
-        socket.emit('sendMessage', form);
-        socket.on('receiveMessage', async receiveMessage => {
-            var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
-            var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
-            if (resReturn) {
-                await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
-            } else {
-                alert('메세지 전송에 실패하였습니다.');
-            }
+
+        socket.emit('sendMessage', { form: form });
+        socket.on('receiveMessage', (receiveMessage) => {
+            // var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
+            // if (resReturn) {
+            //     await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
+            // } else {
+            //     alert('메세지 전송에 실패하였습니다.');
+            // }
         });
+
         setMessage(null);
     }
 
