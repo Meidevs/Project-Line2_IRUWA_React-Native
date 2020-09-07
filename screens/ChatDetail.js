@@ -10,11 +10,9 @@ import {
     SafeAreaView
 } from 'react-native';
 
-import CHECK_ROOTDIRECTORY from '../assets/components/CheckDirectory';
-import CREATE_LOGS_DIRECTORY from '../assets/components/CreateLogsDirectory';
 import DateFunction from '../assets/components/DateFunction';
-import UPDATE_LOGS_DIRECTORY from '../assets/components/UpdateLogs';
-import RANDOM_STRING from '../assets/components/RandomString';
+import Directory from '../assets/components/Directory';
+import KeyGenerator from '../assets/components/KeyGenerator';
 import GLOBAL from '../assets/dataSource/globalModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -103,7 +101,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
         }
         const CHAT_DIRECTORY = async () => {
             try {
-                await CHECK_ROOTDIRECTORY();
+                await Directory.CheckRootDirectory();
             } catch (err) {
                 console.log(err)
             }
@@ -116,7 +114,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
     const sendMessage = async () => {
         var dateTime = await DateFunction();
         var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
-        var rndString = await RANDOM_STRING(roomCode);
+        var rndString = await KeyGenerator(roomCode);
         var sendMessage = message;
         var form = {
             sender_seq: infos.user_seq,
@@ -127,27 +125,11 @@ const ChatDetailScreen = ({ route, navigation }) => {
             reg_date: dateTime,
         }
         // socket.emit('sendMessage', form);
-
         await GLOBAL.SEND_SOCKET_MESSAGE(form);
-        await GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (data) => {
-            var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
-            if (resReturn) {
-                await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
-            } else {
-                alert('메세지 전송에 실패하였습니다.');
-            }
+        await GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
+            await Directory.DeleteDirectory();
+            // await Directory.UpdateDirectory(rndString, message);
         });
-        // console.log('receiveMessage', receiveMessage)
-        // socket.on('receiveMessage', async (receiveMessage) => {
-        //     console.log('receiveMessage', receiveMessage)
-            // var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
-            // if (resReturn) {
-            //     await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
-            // } else {
-            //     alert('메세지 전송에 실패하였습니다.');
-            // }
-        // });
-
         setMessage(null);
     }
 
