@@ -129,8 +129,15 @@ const ChatDetailScreen = ({ route, navigation }) => {
         // socket.emit('sendMessage', form);
 
         await GLOBAL.SEND_SOCKET_MESSAGE(form);
-        var receiveMessage = await GLOBAL.RECEIVE_SOCKET_MESSAGE();
-        console.log(receiveMessage)
+        await GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (data) => {
+            var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);
+            if (resReturn) {
+                await UPDATE_LOGS_DIRECTORY(roomCode, receiveMessage)
+            } else {
+                alert('메세지 전송에 실패하였습니다.');
+            }
+        });
+        // console.log('receiveMessage', receiveMessage)
         // socket.on('receiveMessage', async (receiveMessage) => {
         //     console.log('receiveMessage', receiveMessage)
             // var resReturn = await CREATE_LOGS_DIRECTORY(roomCode);

@@ -1,11 +1,11 @@
 import io from 'socket.io-client';
 
 class GLOBE {
-    constructor () {
-        this.GLOBE_SEND_MESSAGE = null;
-        this.GLOBE_RECEIVE_MESSAGE = null;
+    constructor() {
+        this.GLOBE_RECEIVE_MESSAGE;
+        this.GLOBE_SEND_MESSAGE;
     }
-    static GLOBE_SOCKET;
+    static GLOBE_SOCKET
 
     SET_SOCKET_IO = () => {
         const connectionConfig = {
@@ -23,17 +23,23 @@ class GLOBE {
         return this.GLOBE_SOCKET;
     }
 
-    SEND_SOCKET_MESSAGE = (form) => {
-        this.GLOBE_SEND_MESSAGE = form;
-        this.GLOBE_SOCKET.emit('sendMessage', form);
+    SEND_SOCKET_MESSAGE = async (form) => {
+        try {
+            this.GLOBE_SOCKET.emit('sendMessage', form);
+            this.GLOBE_SOCKET.once('receiveMessage', (message) => {
+                this.GLOBE_RECEIVE_MESSAGE = message;
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
-    RECEIVE_SOCKET_MESSAGE = () => {
-        this.GLOBE_SOCKET.on('receiveMessage', (message) => {
-            this.GLOBE_RECEIVE_MESSAGE = message;
-            return this.GLOBE_RECEIVE_MESSAGE;
+    RECEIVE_SOCKET_MESSAGE = async () => {
+        let promise = new Promise((resolve, reject) => {
+            setTimeout(() => resolve(this.GLOBE_RECEIVE_MESSAGE), 100);
         });
-        
+        let result = await promise;
+        return result;
     }
 }
 
