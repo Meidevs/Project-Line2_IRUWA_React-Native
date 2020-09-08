@@ -5,7 +5,6 @@ const KeyGenerator = async (roomCode) => {
         Crypto.CryptoDigestAlgorithm.SHA1,
         roomCode
     );
-    console.log(digest)
     return digest;
 }
 

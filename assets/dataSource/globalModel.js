@@ -19,6 +19,10 @@ class GLOBE {
         this.GLOBE_SOCKET = socket;
     }
 
+    CONNECT_TO_SOCKET_IO = (data) => {
+        this.GLOBE_SOCKET.emit('connection', {userID : data});
+    }
+
     GET_SOCKET_IO = () => {
         return this.GLOBE_SOCKET;
     }

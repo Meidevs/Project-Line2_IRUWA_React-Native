@@ -16,6 +16,8 @@ import KeyGenerator from '../assets/components/KeyGenerator';
 import GLOBAL from '../assets/dataSource/globalModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { useScreens } from 'react-native-screens';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,12 +32,15 @@ const ChatDetailScreen = ({ route, navigation }) => {
         host_name: null,
         items_seq: null,
         item_name: null,
+        roomCode: null,
     });
     const [message, setMessage] = useState(null);
-    const [receiveCheck, setReceiveMessage] = useState(null);
+    const [receiveMessage, setReceiveMessage] = useState(null);
+    const [chattings, setChattings] = useState([]);
+    const [chatIsLoaded, isChatLoaded] = useState(false);
+    const [initialLoaded, setInitialValue] = useState(false);
     const cmp_seq = route.params.cmp_seq;
     const items_seq = route.params.items_seq;
-
 
     useEffect(() => {
         navigation.setOptions({
@@ -69,11 +74,14 @@ const ChatDetailScreen = ({ route, navigation }) => {
     }, [infos]);
 
     useEffect(() => {
-        const INFOs = async () => {
+        const INITIAL_SETTINGS = async () => {
             try {
                 var USER_INFOs = await CHATTING.USER_INFO();
                 var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
                 var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
+                var roomCode = 'RoomU' + USER_INFOs.user_seq + 'H' + CMP_INFOs.host_seq + 'C' + CMP_INFOs.cmp_seq + 'I' + ITEMS_INFOs.items_seq;
+                var rndString = await KeyGenerator(roomCode);
+
                 setInfos({
                     user_seq: USER_INFOs.user_seq,
                     user_name: USER_INFOs.user_name,
@@ -83,36 +91,62 @@ const ChatDetailScreen = ({ route, navigation }) => {
                     host_name: CMP_INFOs.host_name,
                     items_seq: ITEMS_INFOs.items_seq,
                     item_name: ITEMS_INFOs.item_name,
+                    roomCode: rndString
                 });
-                var socket = await GLOBAL.GET_SOCKET_IO();
-                socket.emit('connection', { userID: USER_INFOs.user_seq });
-                setSocketIO(socket);
+                await Directory.CheckRootDirectory();
+                GLOBAL.CONNECT_TO_SOCKET_IO(USER_INFOs.user_seq)
+                setInitialValue(true);
             } catch (err) {
                 console.log(err);
             }
         }
-        const CHAT_DIRECTORY = async () => {
-            try {
-                await Directory.CheckRootDirectory();
-            } catch (err) {
-                console.log(err)
+        INITIAL_SETTINGS();
+    }, [route]);
+
+    const INSERT_LOCAL_DIRECTORY = useCallback(async () => {
+        // await Directory.DeleteDirectory(infos.roomCode);
+        if (initialLoaded) {
+            await Directory.UpdateDirectory(infos.roomCode, receiveMessage);
+            var RAW_CHAT_HISTORY = await Directory.ReadDirectory(infos.roomCode);
+            if (RAW_CHAT_HISTORY != undefined) {
+                var rawArray = RAW_CHAT_HISTORY.split('/&/');
+                setChattings(rawArray);
+                isChatLoaded(true);
             }
         }
+    }, [receiveMessage]);
 
-        INFOs();
-        CHAT_DIRECTORY();
-    }, [route]);
+    useEffect(() => {
+        INSERT_LOCAL_DIRECTORY()
+    }, [INSERT_LOCAL_DIRECTORY]);
+
+    // const READ_LOCAL_DIRECTORY = useCallback(async () => {
+    //     if (initialLoaded) {
+    //         var RAW_CHAT_HISTORY = await Directory.ReadDirectory(infos.roomCode);
+    //         if (RAW_CHAT_HISTORY != undefined) {
+    //             var rawArray = RAW_CHAT_HISTORY.split('/&/');
+    //             setChattings(rawArray);
+    //             isChatLoaded(true);
+    //         }
+    //     }
+    // }, [initialLoaded]);
+
+    // useEffect(() => {
+    //     READ_LOCAL_DIRECTORY()
+    // }, [READ_LOCAL_DIRECTORY]);
+
+    GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
+        setReceiveMessage(message)
+    });
 
     const sendMessage = async () => {
         var dateTime = await DateFunction();
-        var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
-        var rndString = await KeyGenerator(roomCode);
         var sendMessage = message;
         var form = {
             sender_seq: infos.user_seq,
             receiver_seq: infos.host_seq,
             items_seq: infos.items_seq,
-            roomCode: JSON.stringify(rndString),
+            roomCode: infos.roomCode,
             message: sendMessage,
             reg_date: dateTime,
         }
@@ -120,54 +154,54 @@ const ChatDetailScreen = ({ route, navigation }) => {
         setMessage(null);
     }
 
-    GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
-        // await Directory.DeleteDirectory();
-        setReceiveMessage(message)
-    });
+    const componentJSX_Chat = () => {
+        if (chatIsLoaded)
+            return (
+                chattings.map((data, index) => {
+                    if (data.sender_seq == infos.user_seq) {
+                        return (
+                            <View>
+                                <View style={styles.DateSeparator}>
+                                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                    <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
+                                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                </View>
+                                <View style={styles.SenderBox}>
+                                    <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
 
-    const RECEIVE_SOCKET_MESSAGE = useCallback(async () => {
-        if (receiveCheck) {
-            var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
-            var rndString = await KeyGenerator(roomCode);
-            // await Directory.DeleteDirectory();
-            var newString = await Directory.UpdateDirectory(rndString, message);//
-            var jsons = newString.split('//&//');
-            console.log(jsons)
-            console.log(JSON.parse(jsons[0]));
-        }
-    }, [receiveCheck])
-
-    useEffect(() => {
-        RECEIVE_SOCKET_MESSAGE()
-    }, [RECEIVE_SOCKET_MESSAGE])
-
+                                    </View>
+                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+                                        <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
+                                        <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    } else {
+                        return (
+                            <View>
+                                <View style={styles.ReceiverBox}>
+                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
+                                        <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+                                    </View>
+                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+                                        <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    }
+                })
+            )
+    }
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
-                <View style={styles.DateSeparator}>
-                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                    <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
-                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                </View>
-                <View style={styles.SenderBox}>
-                    <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
-
-                    </View>
-                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-                        <Text style={{ fontSize: 16, }}>지금 바로 가면 되나요?</Text>
-                    </View>
-                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
-                        <Text style={{ fontSize: 12, }}>11:20 오후</Text>
-                    </View>
-                </View>
-                <View style={styles.ReceiverBox}>
-                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
-                        <Text style={{ fontSize: 12, }}>11:21 오후</Text>
-                    </View>
-                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-                        <Text style={{ fontSize: 16, }}>네, 바로 이용 가능합니다.</Text>
-                    </View>
-                </View>
+                {
+                    componentJSX_Chat()
+                }
             </ScrollView>
             <View style={styles.MessageInputBox}>
                 <View style={styles.InputBox}>

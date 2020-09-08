@@ -1,5 +1,4 @@
 import * as FileSystem from 'expo-file-system';
-var index = 0;
 
 class Directory {
     constructor() {
@@ -21,19 +20,18 @@ class Directory {
     UpdateDirectory = async (rndString, message) => {
         try {
             var rawString;
+            var rawArray = new Array();
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
             var rootDirectory = fileDirectory + chatDirectory;
             var subDirectory = fileDirectory + chatDirectory + rndString;
-
-            // roomCode 로 작성된 .txt 파일이 있는지 확인한다.
-            // 1) 파일이 있을 경우 파일을 읽어 온다. 
-            // 2) 파일이 없으면 파일을 생성하고 내용을 기입한다.
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
             var EXISTENCE = directories.includes(rndString);
+            console.log('EXISTENCE', EXISTENCE)
             if (EXISTENCE) {
                 var prevString = await FileSystem.readAsStringAsync(subDirectory);
-                rawString = JSON.stringify(message)  + '//&//' + prevString;
+                rawString = prevString + '/&/' + JSON.stringify(message);
+                console.log('rawString', rawString)
             } else {
                 rawString = JSON.stringify(message);
             }
@@ -46,16 +44,26 @@ class Directory {
             console.log('Insert', err)
         }
     }
-
+    ReadDirectory = async (rndString) => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var chatDirectory = 'CHAT/';
+            var subDirectory = fileDirectory + chatDirectory + rndString;
+            var newString = await FileSystem.readAsStringAsync(subDirectory);
+            return newString;
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     DeleteDirectory = async (roomCode) => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
             var rootDirectory = fileDirectory + chatDirectory;
-            await FileSystem.deleteAsync(rootDirectory + '7bc14991840ae143908525c61f97d13548f1da1f');
+            await FileSystem.deleteAsync(rootDirectory + roomCode);
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
-            console.log(directories)
+            console.log('a', directories)
         } catch (err) {
             console.log('Delete', err);
         }
