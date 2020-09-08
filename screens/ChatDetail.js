@@ -32,7 +32,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
         item_name: null,
     });
     const [message, setMessage] = useState(null);
-    const [socket, setSocketIO] = useState(null);
+    const [receiveCheck, setReceiveMessage] = useState(null);
     const cmp_seq = route.params.cmp_seq;
     const items_seq = route.params.items_seq;
 
@@ -67,14 +67,6 @@ const ChatDetailScreen = ({ route, navigation }) => {
             }
         })
     }, [infos]);
-
-    // const Chatting = useCallback(async () => {
-
-    // }, [])
-
-    // useEffect(() => {
-    //     Chatting();
-    // }, [Chatting]);
 
     useEffect(() => {
         const INFOs = async () => {
@@ -124,14 +116,30 @@ const ChatDetailScreen = ({ route, navigation }) => {
             message: sendMessage,
             reg_date: dateTime,
         }
-        // socket.emit('sendMessage', form);
         await GLOBAL.SEND_SOCKET_MESSAGE(form);
-        await GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
-            await Directory.DeleteDirectory();
-            // await Directory.UpdateDirectory(rndString, message);
-        });
         setMessage(null);
     }
+
+    GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
+        // await Directory.DeleteDirectory();
+        setReceiveMessage(message)
+    });
+
+    const RECEIVE_SOCKET_MESSAGE = useCallback(async () => {
+        if (receiveCheck) {
+            var roomCode = 'RoomU' + infos.user_seq + 'H' + infos.host_seq + 'C' + infos.cmp_seq + 'I' + infos.items_seq;
+            var rndString = await KeyGenerator(roomCode);
+            // await Directory.DeleteDirectory();
+            var newString = await Directory.UpdateDirectory(rndString, message);//
+            var jsons = newString.split('//&//');
+            console.log(jsons)
+            console.log(JSON.parse(jsons[0]));
+        }
+    }, [receiveCheck])
+
+    useEffect(() => {
+        RECEIVE_SOCKET_MESSAGE()
+    }, [RECEIVE_SOCKET_MESSAGE])
 
     return (
         <SafeAreaView style={styles.Container}>

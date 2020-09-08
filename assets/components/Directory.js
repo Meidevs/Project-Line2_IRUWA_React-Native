@@ -20,7 +20,7 @@ class Directory {
 
     UpdateDirectory = async (rndString, message) => {
         try {
-            var rawArray = new Array();
+            var rawString;
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
             var rootDirectory = fileDirectory + chatDirectory;
@@ -30,21 +30,18 @@ class Directory {
             // 1) 파일이 있을 경우 파일을 읽어 온다. 
             // 2) 파일이 없으면 파일을 생성하고 내용을 기입한다.
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
-            console.log('directories', directories)
             var EXISTENCE = directories.includes(rndString);
-            console.log('EXISTENCE', EXISTENCE)
             if (EXISTENCE) {
-                var Datas = await FileSystem.readAsStringAsync(subDirectory);
-                console.log(Datas);
-                console.log(typeof (Datas));
-                rawArray = Datas.push(message);
+                var prevString = await FileSystem.readAsStringAsync(subDirectory);
+                rawString = JSON.stringify(message)  + '//&//' + prevString;
             } else {
-                rawArray.push(message)
+                rawString = JSON.stringify(message);
             }
-            var messageString = JSON.stringify(rawArray);
-            await FileSystem.writeAsStringAsync(subDirectory, messageString, {
+            await FileSystem.writeAsStringAsync(subDirectory, rawString, {
                 encoding: FileSystem.EncodingType.UTF8
             });
+            var newString = await FileSystem.readAsStringAsync(subDirectory);
+            return newString;
         } catch (err) {
             console.log('Insert', err)
         }
@@ -56,7 +53,7 @@ class Directory {
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
             var rootDirectory = fileDirectory + chatDirectory;
-            await FileSystem.deleteAsync(rootDirectory + '3d9b13a3678f6743f35d471f74d3d48050575e04')
+            await FileSystem.deleteAsync(rootDirectory + '7bc14991840ae143908525c61f97d13548f1da1f');
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
             console.log(directories)
         } catch (err) {
