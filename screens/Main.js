@@ -40,12 +40,13 @@ const getItemCount = (data) => {
     return cnt;
 }
 
-const Item = ({ data, navigation }) => {
+const Item = ({ data, user, navigation }) => {
     var time_gap = TimeGap(data.reg_date);
     return (
         <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
             items_seq: data.items_seq,
-            cmp_seq: data.cmp_seq
+            cmp_seq: data.cmp_seq,
+            user_seq : user
         })}>
             <View style={styles.LeftArea}>
                 <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
@@ -62,6 +63,7 @@ const Item = ({ data, navigation }) => {
 function MainScreen({ route, navigation }) {
     const [data, setData] = useState([]);
     const [user_location, setUserLocation] = useState('');
+    const [user_seq, setUserSeq] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(true);
     useEffect(() => {
@@ -88,10 +90,11 @@ function MainScreen({ route, navigation }) {
                 setIsError(false);
                 setIsLoading(true);
                 try {
-                    const data = await AUTHENTICATION.GET_USER_LOCATION();
+                    const data = await AUTHENTICATION.GET_USER_INFOs();
                     const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
                     setData(ITEMS.content);
                     setUserLocation(data.user_location);
+                    setUserSeq(data.user_seq);
                 } catch (err) {
                     setIsError(true);
                 }
@@ -123,7 +126,7 @@ function MainScreen({ route, navigation }) {
             <VirtualizedList
                 data={data}
                 initialNumToRender={10}
-                renderItem={({ item }) => <Item data={item} navigation={navigation} />}
+                renderItem={({ item }) => <Item data={item} user={user_seq} navigation={navigation} />}
                 keyExtractor={(item, index) => JSON.stringify(index)}
                 getItemCount={getItemCount}
                 getItem={getItem}

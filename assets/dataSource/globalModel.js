@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import Directory from '../components/Directory';
 
 class GLOBE {
     constructor() {
@@ -6,8 +7,8 @@ class GLOBE {
         this.GLOBE_SEND_MESSAGE;
         this.GET_MESSAGE_LOGS;
     }
-    static GLOBE_SOCKET
 
+    static GLOBE_SOCKET
     SET_SOCKET_IO = () => {
         const connectionConfig = {
             jsonp: false,
@@ -16,7 +17,7 @@ class GLOBE {
             reconnectionAttempts: 5000,
             transports: ['websocket']/// you need to explicitly tell it to use websockets
         };
-        var socket = io('http://148.72.210.153:8888', connectionConfig);
+        var socket = io('http://192.168.0.40:8888', connectionConfig);
         this.GLOBE_SOCKET = socket;
     }
 
@@ -30,9 +31,9 @@ class GLOBE {
 
     SEND_SOCKET_MESSAGE = (form) => {
         this.GLOBE_SOCKET.emit('sendMessage', form);
-        this.GLOBE_SOCKET.once('receiveMessage', (message) => {
+        this.GLOBE_SOCKET.on('receiveMessage', async (message) => {
             this.GLOBE_RECEIVE_MESSAGE = message;
-        })
+        });
     }
 
     RECEIVE_SOCKET_MESSAGE = async () => {
@@ -45,11 +46,8 @@ class GLOBE {
 
     FIND_MESSAGE_LOGS = (data) => {
         this.GET_MESSAGE_LOGS = null;
-        form = {
-            user_seq : data.user_seq,
-        }
-        this.GLOBE_SOCKET.emit('messageLogs', form);
-        this.GLOBE_SOCKET.once('getMessageLogs', (message) => {
+        this.GLOBE_SOCKET.emit('messageLogs', data);
+        this.GLOBE_SOCKET.on('getMessageLogs', (message) => {
             this.GET_MESSAGE_LOGS = message;
         })
     }

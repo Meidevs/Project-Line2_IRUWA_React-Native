@@ -13,6 +13,7 @@ import CateScreen from './screens/Category';
 import AddScreen from './screens/Add';
 import ChatScreen from './screens/Chat';
 import ChatDetailScreen from './screens/ChatDetail';
+import TempChatDetailScreen from './screens/TempChatDetail';
 import MyinfoScreen from './screens/Myinfo';
 import SearchScreen from './screens/Search';
 import AlarmScreen from './screens/Alarm';

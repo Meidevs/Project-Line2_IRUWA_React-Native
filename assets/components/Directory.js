@@ -17,38 +17,36 @@ class Directory {
         }
     }
 
-    UpdateDirectory = async (rndString, message) => {
+    UpdateDirectory = async (data) => {
         try {
             var rawString;
             var rawArray = new Array();
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
             var rootDirectory = fileDirectory + chatDirectory;
-            var subDirectory = fileDirectory + chatDirectory + rndString;
+            var subDirectory = fileDirectory + chatDirectory + data.roomCode;
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
-            var EXISTENCE = directories.includes(rndString);
-            console.log('EXISTENCE', EXISTENCE)
+            var EXISTENCE = directories.includes(data.roomCode);
             if (EXISTENCE) {
                 var prevString = await FileSystem.readAsStringAsync(subDirectory);
-                rawString = prevString + '/&/' + JSON.stringify(message);
+                rawString = prevString + '/&/' + JSON.stringify(data.message);
                 console.log('rawString', rawString)
             } else {
-                rawString = JSON.stringify(message);
+                rawString = JSON.stringify(data.message);
             }
             await FileSystem.writeAsStringAsync(subDirectory, rawString, {
                 encoding: FileSystem.EncodingType.UTF8
             });
-            var newString = await FileSystem.readAsStringAsync(subDirectory);
-            return newString;
+
         } catch (err) {
             console.log('Insert', err)
         }
     }
-    ReadDirectory = async (rndString) => {
+    ReadDirectory = async (data) => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
-            var subDirectory = fileDirectory + chatDirectory + rndString;
+            var subDirectory = fileDirectory + chatDirectory + data;
             var newString = await FileSystem.readAsStringAsync(subDirectory);
             return newString;
         } catch (err) {
@@ -56,14 +54,15 @@ class Directory {
         }
     }
 
-    DeleteDirectory = async (roomCode) => {
+    DeleteDirectory = async (data) => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var chatDirectory = 'CHAT/';
             var rootDirectory = fileDirectory + chatDirectory;
-            await FileSystem.deleteAsync(rootDirectory + roomCode);
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
             console.log('a', directories)
+            await FileSystem.deleteAsync(rootDirectory + data);
+            
         } catch (err) {
             console.log('Delete', err);
         }

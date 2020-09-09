@@ -12,13 +12,14 @@ import {
 
 import DateFunction from '../assets/components/DateFunction';
 import Directory from '../assets/components/Directory';
-import KeyGenerator from '../assets/components/KeyGenerator';
 import GLOBAL from '../assets/dataSource/globalModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { FileSystemSessionType } from 'expo-file-system';
+import { useScreens } from 'react-native-screens';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
+
 
 const ChatDetailScreen = ({ route, navigation }) => {
     const [infos, setInfos] = useState({
@@ -31,7 +32,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
         items_seq: null,
         item_name: null,
     });
-    const [message, setMessage] = useState(null);
+    const [inputMessage, setMessage] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState(null);
     const [chattings, setChattings] = useState([]);
     const [chatIsLoaded, isChatLoaded] = useState(false);
@@ -39,7 +40,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
     const cmp_seq = route.params.cmp_seq;
     const items_seq = route.params.items_seq;
     const user_seq = route.params.user_seq;
-    const roomCode = route.params.roomCode;
+
 
     useEffect(() => {
         navigation.setOptions({
@@ -77,12 +78,14 @@ const ChatDetailScreen = ({ route, navigation }) => {
             try {
                 var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
                 var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
+
                 setInfos({
-                    cmp_seq: CMP_INFOs.cmp_seq,
+                    user_seq: user_seq,
+                    cmp_seq: cmp_seq,
+                    items_seq: items_seq,
                     cmp_name: CMP_INFOs.cmp_name,
                     host_seq: CMP_INFOs.host_seq,
                     host_name: CMP_INFOs.host_name,
-                    items_seq: ITEMS_INFOs.items_seq,
                     item_name: ITEMS_INFOs.item_name,
                 });
                 await Directory.CheckRootDirectory();
@@ -95,36 +98,35 @@ const ChatDetailScreen = ({ route, navigation }) => {
     }, [route]);
 
     const READ_LOCAL_DIRECTORY = useCallback(async () => {
-        // await Directory.DeleteDirectory(roomCode);
         if (initialLoaded) {
-            var RAW_CHAT_HISTORY = await Directory.ReadDirectory(roomCode);
+            var RAW_CHAT_HISTORY = await Directory.ReadDirectory(receiveMessage);
             if (RAW_CHAT_HISTORY != undefined) {
                 var rawArray = RAW_CHAT_HISTORY.split('/&/');
                 setChattings(rawArray);
                 isChatLoaded(true);
             }
         }
-    }, [initialLoaded, receiveMessage]);
+    }, [receiveMessage]);
 
     useEffect(() => {
         READ_LOCAL_DIRECTORY()
     }, [READ_LOCAL_DIRECTORY]);
 
+
     GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
         if (message) {
-            console.log('Chat Detail', message)
             setReceiveMessage(message)
         }
     });
 
     const sendMessage = async () => {
         var dateTime = await DateFunction();
-        var sendMessage = message;
+        var sendMessage = inputMessage;
         var form = {
             sender_seq: user_seq,
             receiver_seq: infos.host_seq,
-            items_seq: infos.items_seq,
-            roomCode: roomCode,
+            cmp_seq: cmp_seq,
+            items_seq: items_seq,
             message: sendMessage,
             reg_date: dateTime,
         }
@@ -134,7 +136,8 @@ const ChatDetailScreen = ({ route, navigation }) => {
     }
 
     const componentJSX_Chat = () => {
-        // if (chatIsLoaded)
+        if (chatIsLoaded)
+            console.log('chattings', chattings)
         // return (
         //     chattings.map((data, index) => {
         //         if (data.sender_seq == infos.user_seq) {
@@ -185,11 +188,10 @@ const ChatDetailScreen = ({ route, navigation }) => {
             <View style={styles.MessageInputBox}>
                 <View style={styles.InputBox}>
                     <TextInput
-                        value={message}
+                        value={inputMessage}
                         placeholder={'메세지를 입력해주세요'}
                         placeholderTextColor='#B4B4B4'
                         onChangeText={(text) => setMessage(text)}
-
                     />
                 </View>
                 <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>

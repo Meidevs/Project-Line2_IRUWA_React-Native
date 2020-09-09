@@ -16,12 +16,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import CHATTING from '../assets/dataSource/chatModel';
+import AUTHENTICATION from '../assets/dataSource/authModel';
 import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
 
 function ChatScreen({ route, navigation }) {
     const [chatlist, setChatList] = useState([]);
+    const [receiveMessage, setReceiveMessage] = useState([]);
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
@@ -36,12 +38,21 @@ function ChatScreen({ route, navigation }) {
     useFocusEffect(
         React.useCallback(() => {
             const INITIAL_SETTINGS = async () => {
-
+                var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
+                GLOBAL.FIND_MESSAGE_LOGS(USER_INFOs.user_seq);
+                // GLOBAL.RECEIVE_MESSAGE_LOGS().then(async (list) => {
+                //     console.log(list)
+                // });
             }
             INITIAL_SETTINGS();
         }, [])
     );
-
+    GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
+        console.log('a', message)
+        if (message) {
+            setReceiveMessage(message)
+        }
+    });
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
@@ -122,23 +133,23 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: width * 0.10,
         height: width * 0.10,
-        justifyContent : 'center',
-        alignItems : 'center',
-        backgroundColor : 'pink'
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'pink'
     },
-    UserInfo : {
-        flexDirection : 'row',
+    UserInfo: {
+        flexDirection: 'row',
 
     },
-    UserTitle : {
-        paddingRight : 5,
-        fontSize : 15,
-        fontWeight : '800',
+    UserTitle: {
+        paddingRight: 5,
+        fontSize: 15,
+        fontWeight: '800',
     },
-    LocationTitle : {
-        color : 'rgba(140, 140, 140, 1)',
-        fontSize : 14,
-        fontWeight : '600'
+    LocationTitle: {
+        color: 'rgba(140, 140, 140, 1)',
+        fontSize: 14,
+        fontWeight: '600'
     }
 })
 

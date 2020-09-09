@@ -14,6 +14,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import TimeGap from '../assets/components/TimeGap';
 import Carousel from '../assets/components/Carousel';
+import KeyGenerator from '../assets/components/KeyGenerator';
+
 const { width, height } = Dimensions.get('window');
 
 const _getHeaderBackgroundColor = (scrollY) => {
@@ -139,7 +141,7 @@ function DetailScreen({ route, navigation }) {
     const [itemInfos, setItemInfos] = useState({
         item_title: null,
         item_image_url: [],
-        cmp_seq : null,
+        cmp_seq: null,
         cmp_name: null,
         cmp_location: null,
         cmp_category_name: null,
@@ -152,6 +154,7 @@ function DetailScreen({ route, navigation }) {
     const [isLoaded, setIsLoaded] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
+    const user_seq = route.params.user_seq;
     useEffect(() => {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
@@ -167,12 +170,13 @@ function DetailScreen({ route, navigation }) {
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
-                    items_seq : data.items_seq,
+                    user_seq: user_seq,
+                    items_seq: data.items_seq,
                     item_image_url: data.uri,
                     item_title: data.item_name,
                     item_content: data.item_content,
                     item_reg: time_avg,
-                    cmp_seq : ITEM_INFOs.CMP_INFOs.cmp_seq,
+                    cmp_seq: ITEM_INFOs.CMP_INFOs.cmp_seq,
                     cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
                     cmp_location: ITEM_INFOs.CMP_INFOs.cmp_location,
                     cmp_category_name: ITEM_INFOs.CMP_INFOs.category_name,
@@ -197,11 +201,26 @@ function DetailScreen({ route, navigation }) {
                 </View>
             )
         }
-    },[isLoaded]);
+    }, [isLoaded]);
 
     useEffect(() => {
         ComponentExp();
-    }, [ComponentExp])
+    }, [ComponentExp]);
+
+    const setNavigationParams = async () => {
+        var cmp_seq = itemInfos.cmp_seq;
+        var items_seq = itemInfos.items_seq;
+        var user_seq = itemInfos.user_seq;
+        var roomCode = 'RoomU' + user_seq + 'C' + cmp_seq + 'I' + items_seq;
+        const keyString = await KeyGenerator(roomCode);
+        console.log(keyString)
+        navigation.navigate('ChatDetail', {
+            cmp_seq : cmp_seq,
+            items_seq : items_seq,
+            user_seq : user_seq,
+            roomCode : keyString
+        })
+    }
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -228,7 +247,7 @@ function DetailScreen({ route, navigation }) {
                 overScrollMode={'never'}
                 scrollEventThrottle={26}
                 onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY }}}],
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                     {
                         useNativeDriver: false,
                         listener: event => {
@@ -285,13 +304,14 @@ function DetailScreen({ route, navigation }) {
                             {
                                 itemsArray.map((data, index) => {
                                     return (
-                                        <TouchableOpacity 
-                                        style={styles.ADSContent} 
-                                        key={data.items_seq}
-                                        onPress={() => navigation.replace('Detail', {
-                                            cmp_seq : itemInfos.cmp_seq,
-                                            items_seq : data.items_seq
-                                        })}
+                                        <TouchableOpacity
+                                            style={styles.ADSContent}
+                                            key={data.items_seq}
+                                            onPress={() => navigation.replace('Detail', {
+                                                cmp_seq: itemInfos.cmp_seq,
+                                                items_seq: data.items_seq,
+                                                user_seq: itemInfos.user_seq
+                                            })}
                                         >
                                             <View style={styles.ImageArea}>
                                                 <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
@@ -312,16 +332,15 @@ function DetailScreen({ route, navigation }) {
                     <Icon name={'ios-heart-empty'} size={30} />
                 </TouchableOpacity>
                 <View style={styles.ChatContent}>
-                    <TouchableOpacity style={styles.ChatBtn} onPress={() => navigation.navigate('ChatDetail',{
-                        cmp_seq : itemInfos.cmp_seq,
-                        items_seq : itemInfos.items_seq,
-                    })}>
+                    <TouchableOpacity style={styles.ChatBtn} onPress={() => setNavigationParams()}>
                         <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
     )
+
+
 }
 
 const styles = StyleSheet.create({
