@@ -1,13 +1,12 @@
 import io from 'socket.io-client';
-import Directory from '../components/Directory';
 
 class GLOBE {
+
     constructor() {
-        this.GLOBE_RECEIVE_MESSAGE;
+        this.GLOBE_RECEIVE_MESSAGE
         this.GLOBE_SEND_MESSAGE;
         this.GET_MESSAGE_LOGS;
     }
-
     static GLOBE_SOCKET
     SET_SOCKET_IO = () => {
         const connectionConfig = {

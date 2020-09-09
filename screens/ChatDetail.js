@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import {
     View,
     Text,
@@ -12,11 +12,9 @@ import {
 
 import DateFunction from '../assets/components/DateFunction';
 import Directory from '../assets/components/Directory';
-import KeyGenerator from '../assets/components/KeyGenerator';
 import GLOBAL from '../assets/dataSource/globalModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { FileSystemSessionType } from 'expo-file-system';
 
 const { width, height } = Dimensions.get('window');
 
@@ -75,9 +73,12 @@ const ChatDetailScreen = ({ route, navigation }) => {
     useEffect(() => {
         const INITIAL_SETTINGS = async () => {
             try {
+                var USER_INFOs = await CHATTING.USER_INFO(user_seq);
                 var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
                 var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
                 setInfos({
+                    user_seq : USER_INFOs.user_seq,
+                    user_name : USER_INFOs.user_name,
                     cmp_seq: CMP_INFOs.cmp_seq,
                     cmp_name: CMP_INFOs.cmp_name,
                     host_seq: CMP_INFOs.host_seq,
@@ -112,7 +113,6 @@ const ChatDetailScreen = ({ route, navigation }) => {
 
     GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
         if (message) {
-            console.log('Chat Detail', message)
             setReceiveMessage(message)
         }
     });
@@ -121,14 +121,20 @@ const ChatDetailScreen = ({ route, navigation }) => {
         var dateTime = await DateFunction();
         var sendMessage = message;
         var form = {
-            sender_seq: user_seq,
+            sender_seq: infos.user_seq,
+            sender_name : infos.user_name,
             receiver_seq: infos.host_seq,
+            receiver_name: infos.host_name,
             items_seq: infos.items_seq,
+            item_name: infos.item_name,
+            cmp_seq : infos.cmp_seq,
+            cmp_name : infos.cmp_name,
             roomCode: roomCode,
             message: sendMessage,
             reg_date: dateTime,
         }
         await GLOBAL.SEND_SOCKET_MESSAGE(form);
+        await Directory.UpdateChatTitle(form)
         await Directory.UpdateDirectory(form);
         setMessage(null);
     }
