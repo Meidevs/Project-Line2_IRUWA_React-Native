@@ -132,7 +132,10 @@ function AddScreen({ route, navigation }) {
                         {
                             images.map((data, index) => {
                                 return (
-                                    <TouchableOpacity key={data.id} style={styles.ImageListForm} onPress={() => DELETE_IMAGE(index)}>
+                                    <TouchableOpacity
+                                        key={index.toString()}
+                                        style={styles.ImageListForm}
+                                        onPress={() => DELETE_IMAGE(index)}>
                                         <View style={styles.DeleteIcon}>
                                             <Icon name={'ios-close'} size={20} />
                                         </View>

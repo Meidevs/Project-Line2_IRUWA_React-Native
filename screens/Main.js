@@ -17,6 +17,7 @@ import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
 import PremiumBanner from '../assets/components/PremiumBanner';
 import GLOBAL from '../assets/dataSource/globalModel';
+import CHATTING from '../assets/dataSource/chatModel';
 
 const { width, height } = Dimensions.get('window');
 
@@ -102,7 +103,9 @@ function MainScreen({ route, navigation }) {
 
     useEffect( () => {
         const SET_GLOBAL_SOCKET = async () => {
-            await GLOBAL.SET_SOCKET_IO();
+            var USER_INFOs = await CHATTING.USER_INFO();
+            GLOBAL.SET_SOCKET_IO();
+            GLOBAL.CONNECT_TO_SOCKET_IO(USER_INFOs.user_seq)
         }
         SET_GLOBAL_SOCKET();
     }, [])

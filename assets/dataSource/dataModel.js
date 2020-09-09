@@ -1,7 +1,7 @@
 class DATA_SORUCE {
     GET_ITEMS = async (user_location) => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/item/list', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/list', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ class DATA_SORUCE {
 
     GET_PREMIUM_ITEMS = async (user_location) => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/item/premiums', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/premiums', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ class DATA_SORUCE {
 
     GET_ITEM_DETAIL = async (items_seq, cmp_seq) => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/item/list/detail', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/list/detail', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ class DATA_SORUCE {
 
     GET_CATEGORIES = async () => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/category/all', {
+            var response = await fetch('http://148.72.210.153:8888/api/category/all', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ class DATA_SORUCE {
     SAVE_IMAGES = async (formData) => {
         console.log(formData)
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/item/create', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/create', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -98,7 +98,7 @@ class DATA_SORUCE {
 
     GET_ITEMS_ON_KEYWORD = async (keyword) => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/item/search', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/search', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",

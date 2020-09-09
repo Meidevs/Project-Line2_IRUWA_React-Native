@@ -38,13 +38,13 @@ const PremiumBanner = ({ data, navigation }) => {
             const PREMIUM_ITEMS = async () => {
                 var PREMIUM_LIST = await DATA_SOURCE.GET_PREMIUM_ITEMS(data);
                 setPremiumItems(PREMIUM_LIST.data);
-                infiniteScroll(PREMIUM_LIST.data)
             }
             PREMIUM_ITEMS();
         }, [data])
     );
 
     if (items && items.length > 0) {
+        infiniteScroll(items)
         return (
             <View>
                 <FlatList data={items}

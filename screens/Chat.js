@@ -11,8 +11,12 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 import * as FileSystem from 'expo-file-system';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
+import CHATTING from '../assets/dataSource/chatModel';
+import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,13 +33,14 @@ function ChatScreen({ route, navigation }) {
         })
     }, []);
 
-    const CHAT_LIST = useCallback(async () => {
-        
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            const INITIAL_SETTINGS = async () => {
 
-    useEffect(() => {
-        CHAT_LIST()
-    }, [CHAT_LIST]);
+            }
+            INITIAL_SETTINGS();
+        }, [])
+    );
 
     return (
         <SafeAreaView style={styles.Container}>

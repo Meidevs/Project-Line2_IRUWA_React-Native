@@ -1,7 +1,7 @@
 class AUTHENTICATION {
     LOGIN = async (user_id, user_pw) => {
         try {
-            let response = await fetch('http://192.168.0.40:8888/api/auth/login', {
+            let response = await fetch('http://148.72.210.153:8888/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ class AUTHENTICATION {
     }
     LOGOUT = async () => {
         try {
-            let response = await fetch('http://192.168.0.40:8888/api/auth/logout', {
+            let response = await fetch('http://148.72.210.153:8888/api/auth/logout', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ class AUTHENTICATION {
     }
     REGISTER = async (data) => {
         try {
-            let response = await fetch('http://192.168.0.40:8888/api/auth/register', {
+            let response = await fetch('http://148.72.210.153:8888/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ class AUTHENTICATION {
 
     GET_USER_LOCATION = async () => {
         try {
-            let response = await fetch('http://192.168.0.40:8888/api/auth/info', {
+            let response = await fetch('http://148.72.210.153:8888/api/auth/info', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ class AUTHENTICATION {
 
     UPDATE_USER_LOCATION = async (user_location) => {
         try {
-            let response = await fetch('http://192.168.0.40:8888/api/auth/userlocation', {
+            let response = await fetch('http://148.72.210.153:8888/api/auth/userlocation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

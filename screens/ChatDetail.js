@@ -36,6 +36,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
     });
     const [message, setMessage] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState(null);
+    console.log('receiveMessage', receiveMessage)
     const [chattings, setChattings] = useState([]);
     const [chatIsLoaded, isChatLoaded] = useState(false);
     const [initialLoaded, setInitialValue] = useState(false);
@@ -94,7 +95,6 @@ const ChatDetailScreen = ({ route, navigation }) => {
                     roomCode: rndString
                 });
                 await Directory.CheckRootDirectory();
-                GLOBAL.CONNECT_TO_SOCKET_IO(USER_INFOs.user_seq)
                 setInitialValue(true);
             } catch (err) {
                 console.log(err);
@@ -120,20 +120,20 @@ const ChatDetailScreen = ({ route, navigation }) => {
         INSERT_LOCAL_DIRECTORY()
     }, [INSERT_LOCAL_DIRECTORY]);
 
-    // const READ_LOCAL_DIRECTORY = useCallback(async () => {
-    //     if (initialLoaded) {
-    //         var RAW_CHAT_HISTORY = await Directory.ReadDirectory(infos.roomCode);
-    //         if (RAW_CHAT_HISTORY != undefined) {
-    //             var rawArray = RAW_CHAT_HISTORY.split('/&/');
-    //             setChattings(rawArray);
-    //             isChatLoaded(true);
-    //         }
-    //     }
-    // }, [initialLoaded]);
+    const READ_LOCAL_DIRECTORY = useCallback(async () => {
+        if (initialLoaded) {
+            var RAW_CHAT_HISTORY = await Directory.ReadDirectory(infos.roomCode);
+            if (RAW_CHAT_HISTORY != undefined) {
+                var rawArray = RAW_CHAT_HISTORY.split('/&/');
+                setChattings(rawArray);
+                isChatLoaded(true);
+            }
+        }
+    }, [initialLoaded]);
 
-    // useEffect(() => {
-    //     READ_LOCAL_DIRECTORY()
-    // }, [READ_LOCAL_DIRECTORY]);
+    useEffect(() => {
+        READ_LOCAL_DIRECTORY()
+    }, [READ_LOCAL_DIRECTORY]);
 
     GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
         setReceiveMessage(message)
@@ -156,45 +156,46 @@ const ChatDetailScreen = ({ route, navigation }) => {
 
     const componentJSX_Chat = () => {
         if (chatIsLoaded)
-            return (
-                chattings.map((data, index) => {
-                    if (data.sender_seq == infos.user_seq) {
-                        return (
-                            <View>
-                                <View style={styles.DateSeparator}>
-                                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                                    <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
-                                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                                </View>
-                                <View style={styles.SenderBox}>
-                                    <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
+        console.log(chattings)
+            // return (
+            //     chattings.map((data, index) => {
+            //         if (data.sender_seq == infos.user_seq) {
+            //             return (
+            //                 <View>
+            //                     <View style={styles.DateSeparator}>
+            //                         <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+            //                         <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
+            //                         <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+            //                     </View>
+            //                     <View style={styles.SenderBox}>
+            //                         <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
 
-                                    </View>
-                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-                                        <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
-                                        <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        )
-                    } else {
-                        return (
-                            <View>
-                                <View style={styles.ReceiverBox}>
-                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
-                                        <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
-                                    </View>
-                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-                                        <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        )
-                    }
-                })
-            )
+            //                         </View>
+            //                         <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+            //                             <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+            //                         </View>
+            //                         <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
+            //                             <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+            //                         </View>
+            //                     </View>
+            //                 </View>
+            //             )
+            //         } else {
+            //             return (
+            //                 <View>
+            //                     <View style={styles.ReceiverBox}>
+            //                         <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
+            //                             <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+            //                         </View>
+            //                         <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+            //                             <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+            //                         </View>
+            //                     </View>
+            //                 </View>
+            //             )
+            //         }
+            //     })
+            // )
     }
     return (
         <SafeAreaView style={styles.Container}>

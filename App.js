@@ -47,15 +47,6 @@ function getTabBarVisible(route) {
   }
 }
 
-// const connectionConfig = {
-//   jsonp: false,
-//   reconnection: true,
-//   reconnectionDelay: 100,
-//   reconnectionAttempts: 5000,
-//   transports: ['websocket']/// you need to explicitly tell it to use websockets
-// };
-// var socket = io('http://192.168.0.40:8888', connectionConfig);
-// global.SocketIO = socket;
 const LocationStackScreens = () => {
   return (
     <LocationStack.Navigator>
