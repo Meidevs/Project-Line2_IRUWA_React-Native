@@ -12,19 +12,17 @@ import {
     SafeAreaView
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import * as FileSystem from 'expo-file-system';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
-import CHATTING from '../assets/dataSource/chatModel';
+import TimeGap from '../assets/components/TimeGap';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import GLOBAL from '../assets/dataSource/globalModel';
 import Directory from '../assets/components/Directory';
 const { width, height } = Dimensions.get('window');
 
 function ChatScreen({ route, navigation }) {
-    const [chatlist, setChatList] = useState([]);
     const [receiveMessage, setReceiveMessage] = useState([]);
-    const [titles, setTitles] = useState([]);
-    console.log('titles', titles)
+    const [count, setUnreadCount] = useState([]);
+    const [logs, setMessageLogs] = useState([]);
+    console.log('receiveMessage', receiveMessage)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
@@ -38,29 +36,18 @@ function ChatScreen({ route, navigation }) {
 
     useEffect(() => {
         const INITIAL_SETTINGS = async () => {
-
-        }
-        INITIAL_SETTINGS();
-    }, [])
-
-    useEffect(() => {
-        const INITIAL_SETTINGS = async () => {
             try {
                 await Directory.CheckRootDirectory();
+                // await Directory.ReadTitleDirectory();
+                // await Directory.ReadChatDirectory();
                 // await Directory.DeleteTitle();
                 // await Directory.DeleteChat();
-                await Directory.ReadDirectorya();
-
-                var TITLE_LIST = await Directory.ReadDirectoryTitles();
-                console.log('TITLE_LIST', TITLE_LIST);
-                if (TITLE_LIST) {
-                    var rawArr = new Array();
-                    for (var i = 0; i < TITLE_LIST.length; i++) {
-                        var a = await Directory.ReadTitle(TITLE_LIST);
-                        rawArr.push({ title: TITLE_LIST[i], data: JSON.parse(a) });
-                        setTitles(rawArr);
-                    }
-                }
+                var EXISTENCE = await Directory.ReadTitleDirectory();
+                if (!EXISTENCE)
+                    console.log('TITLE DIRECTORY가 없습니다.')
+                var EXISTENCE = await Directory.ReadChatDirectory();
+                if (!EXISTENCE)
+                    console.log('CHAT DIRECTORY가 없습니다.')
             } catch (err) {
                 console.log(err);
             }
@@ -68,40 +55,43 @@ function ChatScreen({ route, navigation }) {
         INITIAL_SETTINGS();
     }, []);
 
+    useEffect(() => {
+        const SET_MESSAGE_LOGS = async () => {
+            var TITLE_LIST = await Directory.ReadDirectoryTitles();
+            var rawArr = new Array();
+            if (TITLE_LIST && TITLE_LIST.length > 0) {
+                TITLE_LIST.map((data) => {
+                    var index = 0;
+                    var rawObj = new Object();
+                    for (var i = 0; i < logs.length; i++) {
+                        if (data == logs[i].roomCode) {
+                            index = index + 1;
+                            rawObj = {
+                                title: logs[i].roomCode,
+                                newCount: index
+                            }
+                        }
+                    }
+                    rawArr.push(rawObj)
+                    setUnreadCount(rawArr);
+                })
+            }
+        }
+        SET_MESSAGE_LOGS();
+    }, [logs]);
+
     useFocusEffect(
         React.useCallback(() => {
             const UPDATE_DIRECTORY = async () => {
                 var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
                 GLOBAL.FIND_MESSAGE_LOGS(USER_INFOs.user_seq);
                 GLOBAL.RECEIVE_MESSAGE_LOGS().then(async (list) => {
-                    console.log('list', list)
                     if (list.length > 0) {
                         for (var j = 0; j < list.length; j++) {
                             await Directory.UpdateChatTitle(list[j]);
                             await Directory.UpdateDirectory(list[j]);
                         }
-                        var TITLE_LIST = await Directory.ReadDirectoryTitles();
-
-                        TITLE_LIST.map((data) => {
-                            for (var i = 0; i < list.length; i++) {
-                                if (data == list[i].roomCode) {
-                                    setTitles([...titles, {
-                                        title: list[i].roomCode,
-                                        data: {
-                                            sender_seq: list[i].sender_seq,
-                                            sender_name: list[i].sender_name,
-                                            receiver_seq: list[i].receiver_seq,
-                                            receiver_name: list[i].receiver_name,
-                                            items_seq: list[i].items_seq,
-                                            item_name: list[i].item_name,
-                                            cmp_seq: list[i].cmp_seq,
-                                            cmp_name: list[i].cmp_name,
-                                            reg_date: list[i].reg_date,
-                                        }
-                                    }])
-                                }
-                            }
-                        })
+                        setMessageLogs(list);
                     }
                 });
             }
@@ -109,33 +99,64 @@ function ChatScreen({ route, navigation }) {
         }, [])
     )
 
+    useEffect(() => {
+        const SET_HISTORY = async () => {
+            var TITLE_LIST = await Directory.ReadDirectoryTitles();
+            if (TITLE_LIST && TITLE_LIST.length > 0) {
+                var rawArr = new Array();
+                for (var i = 0; i < TITLE_LIST.length; i++) {
+                    var ChatHistory = await Directory.ReadChatHistory(TITLE_LIST[i]);
+                    var TitleHistory = await Directory.ReadTitleHistory(TITLE_LIST[i]);
+                    var Chattings = ChatHistory.split('/&/');
+                    var len = parseInt(Chattings.length);
+                    var lastMessage = JSON.parse(Chattings[len - 1]);
+                    rawArr.push({ roomCode: TITLE_LIST[i], title: JSON.parse(TitleHistory), chat: lastMessage });
+                }
+                setReceiveMessage(rawArr)
+            }
+        }
+        SET_HISTORY();
+    }, [logs])
+
+    const componentJSX_CHATLIST = () => {
+        return (
+            receiveMessage.map((data) => {
+                var time_gap = TimeGap(data.title);
+                return (
+                    <TouchableOpacity
+                        key={data.roomCode}
+                        style={styles.ChatBox}
+                        onPress={() => navigation.navigate('ChatDetail')}
+                    >
+                        <View style={styles.ChatItem}>
+                            <View style={styles.ProfileContent}>
+                                <Text>Profile Image</Text>
+                            </View>
+                            <View style={styles.ChatContent}>
+                                <View style={styles.UserInfo}>
+                                    <Text style={styles.UserTitle}>{data.title.sender_name}</Text>
+                                    <Text style={styles.TimeCal}>{time_gap}</Text>
+                                </View>
+                                <View>
+                                    <Text>{data.chat.message}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.ItemContent}>
+                            <Text>Item Image</Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+            })
+        )
+    }
+
+
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
                 {
-                    chatlist.map((data) => {
-                        return (
-                            <TouchableOpacity style={styles.ChatBox} onPress={() => navigation.navigate('ChatDetail')}>
-                                <View style={styles.ChatItem}>
-                                    <View style={styles.ProfileContent}>
-                                        <Text>Profile Image</Text>
-                                    </View>
-                                    <View style={styles.ChatContent}>
-                                        <View style={styles.UserInfo}>
-                                            <Text style={styles.UserTitle}>{data.user_name}</Text>
-                                            <Text style={styles.LocationTitle}>{data.location.length > 10 ? data.location.substring(0, 10) + '...' : data.location}</Text>
-                                        </View>
-                                        <View>
-                                            <Text>네 감사합니다</Text>
-                                        </View>
-                                    </View>
-                                </View>
-                                <View style={styles.ItemContent}>
-                                    <Text>Item Image</Text>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })
+                    componentJSX_CHATLIST()
                 }
             </ScrollView>
         </SafeAreaView>
@@ -202,7 +223,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '800',
     },
-    LocationTitle: {
+    TimeCal: {
         color: 'rgba(140, 140, 140, 1)',
         fontSize: 14,
         fontWeight: '600'

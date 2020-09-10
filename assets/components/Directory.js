@@ -1,5 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import { FileSystemSessionType } from 'expo-file-system';
+import { NavigationContext } from '@react-navigation/native';
 
 class Directory {
     constructor() {
@@ -25,29 +26,33 @@ class Directory {
     }
 
     UpdateChatTitle = async (data) => {
-        var rawString = {
-            sender_seq: data.sender_seq,
-            sender_name: data.sender_name,
-            receiver_seq: data.receiver_seq,
-            receiver_name: data.receiver_name,
-            items_seq: data.items_seq,
-            item_name: data.item_name,
-            cmp_seq: data.cmp_seq,
-            cmp_name: data.cmp_name,
-            reg_date: data.reg_date,
+        try {
+            var rawString = {
+                sender_seq: data.sender_seq,
+                sender_name: data.sender_name,
+                receiver_seq: data.receiver_seq,
+                receiver_name: data.receiver_name,
+                items_seq: data.items_seq,
+                item_name: data.item_name,
+                cmp_seq: data.cmp_seq,
+                cmp_name: data.cmp_name,
+                reg_date: data.reg_date,
+            }
+            var fileDirectory = await FileSystem.documentDirectory;
+            var title = 'TITLE/';
+            var titleDirectory = fileDirectory + title;
+            var subDirectory = fileDirectory + title + data.roomCode;
+            var directories = await FileSystem.readDirectoryAsync(titleDirectory);
+            var EXISTENCE = directories.includes(data.roomCode);
+            if (EXISTENCE) {
+                await FileSystem.deleteAsync(subDirectory);
+            }
+            await FileSystem.writeAsStringAsync(subDirectory, JSON.stringify(rawString), {
+                encoding: FileSystem.EncodingType.UTF8
+            });
+        } catch (err) {
+            return false;
         }
-        var fileDirectory = await FileSystem.documentDirectory;
-        var title = 'TITLE/';
-        var titleDirectory = fileDirectory + title;
-        var subDirectory = fileDirectory + title + data.roomCode;
-        var directories = await FileSystem.readDirectoryAsync(titleDirectory);
-        var EXISTENCE = directories.includes(data.roomCode);
-        if (EXISTENCE) {
-            await FileSystem.deleteAsync(subDirectory);
-        }
-        await FileSystem.writeAsStringAsync(subDirectory, JSON.stringify(rawString), {
-            encoding: FileSystem.EncodingType.UTF8
-        });
     }
 
     UpdateDirectory = async (data) => {
@@ -61,20 +66,19 @@ class Directory {
             var EXISTENCE = directories.includes(data.roomCode);
             if (EXISTENCE) {
                 var prevString = await FileSystem.readAsStringAsync(subDirectory);
-                rawString = prevString + '/&/' + JSON.stringify({sender_seq : data.sender_seq, message : data.message, reg_date : data.reg_date});
-                console.log('rawString', rawString)
+                rawString = prevString + '/&/' + JSON.stringify({ sender_seq: data.sender_seq, message: data.message, reg_date: data.reg_date });
             } else {
-                rawString = JSON.stringify({sender_seq : data.sender_seq, message : data.message, reg_date : data.reg_date});
+                rawString = JSON.stringify({ sender_seq: data.sender_seq, message: data.message, reg_date: data.reg_date });
             }
             await FileSystem.writeAsStringAsync(subDirectory, rawString, {
                 encoding: FileSystem.EncodingType.UTF8
             });
 
         } catch (err) {
-            console.log('Insert', err)
+            return false;
         }
     }
-    ReadDirectory = async (data) => {
+    ReadChatHistory = async (data) => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var chat = 'CHAT/';
@@ -82,11 +86,11 @@ class Directory {
             var newString = await FileSystem.readAsStringAsync(subDirectory);
             return newString;
         } catch (err) {
-            console.log(err);
+            return false;
         }
     }
 
-    ReadTitle = async (data) => {
+    ReadTitleHistory = async (data) => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var chat = 'TITLE/';
@@ -106,7 +110,7 @@ class Directory {
             var directories = await FileSystem.readDirectoryAsync(rootDirectory);
             return directories;
         } catch (err) {
-            console.log(err);
+            return false
         }
     }
     DeleteTitle = async (data) => {
@@ -114,11 +118,9 @@ class Directory {
             var fileDirectory = await FileSystem.documentDirectory;
             var title = 'TITLE/'
             var titleDirectory = fileDirectory + title;
-            // await FileSystem.deleteAsync(titleDirectory);
-            var directories2 = await FileSystem.readDirectoryAsync(titleDirectory);
-            console.log('a2', directories2)
+            await FileSystem.deleteAsync(titleDirectory);
         } catch (err) {
-            console.log('Delete', err);
+            return false;
         }
     }
     DeleteChat = async (data) => {
@@ -126,24 +128,31 @@ class Directory {
             var fileDirectory = await FileSystem.documentDirectory;
             var chat = 'CHAT/';
             var chatDirectory = fileDirectory + chat;
-            // await FileSystem.deleteAsync(chatDirectory);
-            var directories1 = await FileSystem.readDirectoryAsync(chatDirectory);
-
-            console.log('a1', directories1)
+            await FileSystem.deleteAsync(chatDirectory);
         } catch (err) {
-            console.log('Delete', err);
+            return false;
         }
     }
 
-    ReadDirectorya = async () => {
-        var fileDirectory = await FileSystem.documentDirectory;
-        var directories1 = await FileSystem.readDirectoryAsync(fileDirectory + 'CHAT/');
-        var directories2 = await FileSystem.readDirectoryAsync(fileDirectory + 'TITLE/');
-        var directories3 = await FileSystem.readDirectoryAsync(fileDirectory);
+    ReadTitleDirectory = async () => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var directories = await FileSystem.readDirectoryAsync(fileDirectory + 'TITLE/');
+            console.log(directories)
+        } catch (err) {
+            return false;
+        }
 
-        console.log('CHAT', directories1)
-        console.log('TITLE', directories2)
-        console.log('ROOT', directories3)
+    }
+    ReadChatDirectory = async () => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var directories = await FileSystem.readDirectoryAsync(fileDirectory + 'CHAT/');
+            console.log(directories)
+
+        } catch (err) {
+            return false;
+        }
     }
 }
 

@@ -98,8 +98,8 @@ const ChatDetailScreen = ({ route, navigation }) => {
     const READ_LOCAL_DIRECTORY = useCallback(async () => {
         // await Directory.DeleteDirectory(roomCode);
         if (initialLoaded) {
-            var RAW_CHAT_HISTORY = await Directory.ReadDirectory(roomCode);
-            if (RAW_CHAT_HISTORY != undefined) {
+            var RAW_CHAT_HISTORY = await Directory.ReadChatHistory(roomCode);
+            if (RAW_CHAT_HISTORY) {
                 var rawArray = RAW_CHAT_HISTORY.split('/&/');
                 setChattings(rawArray);
                 isChatLoaded(true);
