@@ -138,7 +138,6 @@ class Directory {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var directories = await FileSystem.readDirectoryAsync(fileDirectory + 'TITLE/');
-            console.log(directories)
         } catch (err) {
             return false;
         }
@@ -148,7 +147,6 @@ class Directory {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var directories = await FileSystem.readDirectoryAsync(fileDirectory + 'CHAT/');
-            console.log(directories)
 
         } catch (err) {
             return false;

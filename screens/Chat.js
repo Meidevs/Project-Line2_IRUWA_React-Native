@@ -4,229 +4,255 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    StatusBar,
     StyleSheet,
-    Image,
     Dimensions,
     ScrollView,
     SafeAreaView
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import TimeGap from '../assets/components/TimeGap';
+import io from 'socket.io-client';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import GLOBAL from '../assets/dataSource/globalModel';
+import DateFunction from '../assets/components/DateFunction';
 import Directory from '../assets/components/Directory';
-const { width, height } = Dimensions.get('window');
+import GLOBAL from '../assets/dataSource/globalModel';
+import Icon from 'react-native-vector-icons/AntDesign';
 
-function ChatScreen({ route, navigation }) {
-    const [receiveMessage, setReceiveMessage] = useState([]);
-    const [count, setUnreadCount] = useState([]);
-    const [logs, setMessageLogs] = useState([]);
-    console.log('receiveMessage', receiveMessage)
+const { width, height } = Dimensions.get('window');
+let socket;
+const ChatScreen = ({ route, navigation }) => {
+    const {
+        items_seq,
+        item_name,
+        sender_seq,
+        sender_name,
+        receiver_seq,
+        receiver_name,
+        cmp_seq,
+        cmp_name,
+        roomCode
+    } = route.params;
+    const [message, setMessage] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [receiveMessage, setReceiveMessage] = useState(null);
+    const [chattings, setChattings] = useState([]);
+    const [chatIsLoaded, isChatLoaded] = useState(false);
+    const [initialLoaded, setInitialValue] = useState(false);
+
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
             headerTitle: () => (
-                <View style={styles.TitleHeader}>
-                    <Text style={styles.TitleHeaderTxtStyle}>채팅</Text>
+                <View>
+                    <View style={styles.TitleHeader}>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Icon name={'arrowleft'} size={24} />
+                        </TouchableOpacity>
+                        <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={styles.TitleHeaderTxtStyle}>
+                                {cmp_name}님과의 채팅
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', height: 50 }}>
+                        <View style={{ borderRadius: 5, backgroundColor: 'rgba(180, 180, 180, 1)', width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>Image</Text>
+                        </View>
+                        <View style={{ padding: 10 }}>
+                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>{item_name}</Text>
+                        </View>
+                    </View>
                 </View>
             ),
+            headerStyle: {
+                height: 110,
+            }
         })
-    }, []);
+    }, [route]);
 
     useEffect(() => {
         const INITIAL_SETTINGS = async () => {
             try {
                 await Directory.CheckRootDirectory();
-                // await Directory.ReadTitleDirectory();
-                // await Directory.ReadChatDirectory();
-                // await Directory.DeleteTitle();
-                // await Directory.DeleteChat();
-                var EXISTENCE = await Directory.ReadTitleDirectory();
-                if (!EXISTENCE)
-                    console.log('TITLE DIRECTORY가 없습니다.')
-                var EXISTENCE = await Directory.ReadChatDirectory();
-                if (!EXISTENCE)
-                    console.log('CHAT DIRECTORY가 없습니다.')
+                setInitialValue(true);
             } catch (err) {
                 console.log(err);
             }
         }
         INITIAL_SETTINGS();
+    }, [route]);
+
+    useEffect(() => {
+        const connectionConfig = {
+            jsonp: false,
+            reconnection: true,
+            reconnectionDelay: 100,
+            reconnectionAttempts: 5000,
+            transports: ['websocket']/// you need to explicitly tell it to use websockets
+        };
+        socket = io('http://192.168.0.40:8888');
     }, []);
 
     useEffect(() => {
-        const SET_MESSAGE_LOGS = async () => {
-            var TITLE_LIST = await Directory.ReadDirectoryTitles();
-            var rawArr = new Array();
-            if (TITLE_LIST && TITLE_LIST.length > 0) {
-                TITLE_LIST.map((data) => {
-                    var index = 0;
-                    var rawObj = new Object();
-                    for (var i = 0; i < logs.length; i++) {
-                        if (data == logs[i].roomCode) {
-                            index = index + 1;
-                            rawObj = {
-                                title: logs[i].roomCode,
-                                newCount: index
-                            }
-                        }
-                    }
-                    rawArr.push(rawObj)
-                    setUnreadCount(rawArr);
-                })
+        socket.on('message', (message, err) => {
+            console.log('Chat ', message)
+            if (err)
+                alert(err)
+        });
+    }, []);
+
+    const sendMessage = async () => {
+        if (message) {
+            var dateTime = await DateFunction();
+            var sendMessage = message;
+            var form = {
+                sender_seq: sender_seq,
+                sender_name: sender_name,
+                receiver_seq: receiver_seq,
+                receiver_name: receiver_name,
+                items_seq: items_seq,
+                item_name: item_name,
+                cmp_seq: cmp_seq,
+                cmp_name: cmp_name,
+                roomCode: roomCode,
+                message: sendMessage,
+                reg_date: dateTime,
             }
+            socket.emit('goMessage', form)
+            await Directory.UpdateChatTitle(form)
+            await Directory.UpdateDirectory(form);
+            setMessage(null);
         }
-        SET_MESSAGE_LOGS();
-    }, [logs]);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            const UPDATE_DIRECTORY = async () => {
-                var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
-                GLOBAL.FIND_MESSAGE_LOGS(USER_INFOs.user_seq);
-                GLOBAL.RECEIVE_MESSAGE_LOGS().then(async (list) => {
-                    if (list.length > 0) {
-                        for (var j = 0; j < list.length; j++) {
-                            await Directory.UpdateChatTitle(list[j]);
-                            await Directory.UpdateDirectory(list[j]);
-                        }
-                        setMessageLogs(list);
-                    }
-                });
-            }
-            UPDATE_DIRECTORY();
-        }, [])
-    )
-
-    useEffect(() => {
-        const SET_HISTORY = async () => {
-            var TITLE_LIST = await Directory.ReadDirectoryTitles();
-            if (TITLE_LIST && TITLE_LIST.length > 0) {
-                var rawArr = new Array();
-                for (var i = 0; i < TITLE_LIST.length; i++) {
-                    var ChatHistory = await Directory.ReadChatHistory(TITLE_LIST[i]);
-                    var TitleHistory = await Directory.ReadTitleHistory(TITLE_LIST[i]);
-                    var Chattings = ChatHistory.split('/&/');
-                    var len = parseInt(Chattings.length);
-                    var lastMessage = JSON.parse(Chattings[len - 1]);
-                    rawArr.push({ roomCode: TITLE_LIST[i], title: JSON.parse(TitleHistory), chat: lastMessage });
-                }
-                setReceiveMessage(rawArr)
-            }
-        }
-        SET_HISTORY();
-    }, [logs])
-
-    const componentJSX_CHATLIST = () => {
-        return (
-            receiveMessage.map((data) => {
-                var time_gap = TimeGap(data.title);
-                return (
-                    <TouchableOpacity
-                        key={data.roomCode}
-                        style={styles.ChatBox}
-                        onPress={() => navigation.navigate('ChatDetail')}
-                    >
-                        <View style={styles.ChatItem}>
-                            <View style={styles.ProfileContent}>
-                                <Text>Profile Image</Text>
-                            </View>
-                            <View style={styles.ChatContent}>
-                                <View style={styles.UserInfo}>
-                                    <Text style={styles.UserTitle}>{data.title.sender_name}</Text>
-                                    <Text style={styles.TimeCal}>{time_gap}</Text>
-                                </View>
-                                <View>
-                                    <Text>{data.chat.message}</Text>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={styles.ItemContent}>
-                            <Text>Item Image</Text>
-                        </View>
-                    </TouchableOpacity>
-                )
-            })
-        )
     }
 
+    // const componentJSX_Chat = () => {
+    //     if (chatIsLoaded)
+    //         return (
+    //             chattings.map((data, index) => {
+    //                 if (data.sender_seq == sender_seq) {
+    //                     return (
+    //                         <View>
+    //                             <View style={styles.DateSeparator}>
+    //                                 <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+    //                                 <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
+    //                                 <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+    //                             </View>
+    //                             <View style={styles.SenderBox}>
+    //                                 <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
 
+    //                                 </View>
+    //                                 <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+    //                                     <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+    //                                 </View>
+    //                                 <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
+    //                                     <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+    //                                 </View>
+    //                             </View>
+    //                         </View>
+    //                     )
+    //                 } else {
+    //                     return (
+    //                         <View>
+    //                             <View style={styles.ReceiverBox}>
+    //                                 <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
+    //                                     <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+    //                                 </View>
+    //                                 <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+    //                                     <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+    //                                 </View>
+    //                             </View>
+    //                         </View>
+    //                     )
+    //                 }
+    //             })
+    //         )
+    // }
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
-                {
-                    componentJSX_CHATLIST()
-                }
+                {/* {
+                    componentJSX_Chat()
+                } */}
             </ScrollView>
+            <View style={styles.MessageInputBox}>
+                <View style={styles.InputBox}>
+                    <TextInput
+                        value={message}
+                        placeholder={'메세지를 입력해주세요'}
+                        placeholderTextColor='#B4B4B4'
+                        onChangeText={(text) => setMessage(text)}
+
+                    />
+                    {messages.map(data => {
+                        return (
+                            <View>
+                                <Text>{data.text}</Text>
+                            </View>
+                        )
+                    })}
+                </View>
+                <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>
+                    <Icon name={'caretright'} size={28} />
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     TitleHeader: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
+        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start'
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
         fontSize: 18
     },
     Container: {
+        flex: 1,
         backgroundColor: 'rgba(255, 255, 255, 1)'
     },
-    ChatBox: {
+    DateSeparator: {
+        padding: 15,
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 10,
-        borderWidth: 1,
-        borderColor: 'rgba(238, 238, 238, 1)',
-    },
-    ChatItem: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    ProfileContent: {
-        padding: 5,
-        width: width * 0.12,
-        height: width * 0.12,
-        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 50,
-        backgroundColor: 'rgba(238, 238, 238, 1)'
     },
-    ChatContent: {
-        padding: 10,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start'
+    MessageInputBox: {
+        height: 60,
+        width: width,
+        borderTopWidth: 0.5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderColor: 'rgba(180, 180, 180, 1)',
     },
-    ItemContent: {
-        padding: 10,
+    InputBox: {
+        flex: 10,
+        margin: 5,
+        paddingLeft: 10,
+        borderWidth: 0.8,
+        borderColor: 'rgba(180, 180, 180, 1)',
         borderRadius: 10,
-        width: width * 0.10,
-        height: width * 0.10,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'pink'
     },
-    UserInfo: {
-        flexDirection: 'row',
+    SendBtn: {
+        flex: 1,
+        margin: 5,
 
     },
-    UserTitle: {
-        paddingRight: 5,
-        fontSize: 15,
-        fontWeight: '800',
+    SenderBox: {
+        margin: 15,
+        height: 70,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'flex-start'
     },
-    TimeCal: {
-        color: 'rgba(140, 140, 140, 1)',
-        fontSize: 14,
-        fontWeight: '600'
+    ReceiverBox: {
+        margin: 15,
+        height: 70,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'flex-end'
     }
 })
 

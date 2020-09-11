@@ -46,7 +46,7 @@ const Item = ({ data, user, navigation }) => {
         <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
             items_seq: data.items_seq,
             cmp_seq: data.cmp_seq,
-            user_seq : user
+            user_seq: user
         })}>
             <View style={styles.LeftArea}>
                 <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
@@ -87,8 +87,6 @@ function MainScreen({ route, navigation }) {
     useFocusEffect(
         React.useCallback(() => {
             const GET_MAIN_INFOs = async () => {
-                setIsError(false);
-                setIsLoading(true);
                 try {
                     const data = await AUTHENTICATION.GET_USER_INFOs();
                     const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
@@ -98,20 +96,17 @@ function MainScreen({ route, navigation }) {
                 } catch (err) {
                     setIsError(true);
                 }
-                setIsLoading(false);
+                setIsLoading(true);
             }
             GET_MAIN_INFOs();
         }, [user_location])
     );
 
-    useEffect( () => {
-        const SET_GLOBAL_SOCKET = async () => {
-            var USER_INFOs = await CHATTING.USER_INFO();
-            GLOBAL.SET_SOCKET_IO();
-            GLOBAL.CONNECT_TO_SOCKET_IO(USER_INFOs.user_seq)
-        }
-        SET_GLOBAL_SOCKET();
-    }, [])
+    useEffect(() => {
+        GLOBAL.SET_SOCKET_IO();
+        GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
+        return () => GLOBAL.DISCONNECT();
+    }, [user_seq])
     return (
         <SafeAreaView style={styles.Container}>
             <View>
@@ -176,16 +171,16 @@ const styles = StyleSheet.create({
         width: width,
         height: width * 0.15,
     },
-    LocationBtn : {
-        flexDirection : 'row',
-        alignItems : 'center',
-        justifyContent : 'flex-start',
-        padding : 15,
+    LocationBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        padding: 15,
     },
-    CurrentLocationTxt : {
-        fontSize : 18,
-        fontWeight : '800',
-        marginRight : 10,
+    CurrentLocationTxt: {
+        fontSize: 18,
+        fontWeight: '800',
+        marginRight: 10,
     },
     ImageContent: {
         resizeMode: 'contain',

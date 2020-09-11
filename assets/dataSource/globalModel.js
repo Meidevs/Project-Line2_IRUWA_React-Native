@@ -1,13 +1,13 @@
 import io from 'socket.io-client';
 
 class GLOBE {
-
     constructor() {
         this.GLOBE_RECEIVE_MESSAGE
         this.GLOBE_SEND_MESSAGE;
         this.GET_MESSAGE_LOGS;
     }
-    static GLOBE_SOCKET
+    static GLOBE_SOCKET;
+
     SET_SOCKET_IO = () => {
         const connectionConfig = {
             jsonp: false,
@@ -29,9 +29,16 @@ class GLOBE {
     }
 
     SEND_SOCKET_MESSAGE = (form) => {
-        this.GLOBE_SOCKET.emit('sendMessage', form);
+        this.GLOBE_SOCKET.emit('goMessage', form,(err) => {
+            if (err) {
+                alert(err);
+            }
+        });
+    }
+
+    RECEIVE_SOCKET_MESSAGE = async () => {
         this.GLOBE_SOCKET.on('receiveMessage', async (message) => {
-            this.GLOBE_RECEIVE_MESSAGE = message;
+            this.GLOBE_RECEIVE_MESSAGE;
         });
     }
 
@@ -57,6 +64,10 @@ class GLOBE {
         });
         let result = await promise;
         return result;
+    }
+
+    DISCONNECT = () => {
+        this.GLOBE_SOCKET.emit('disconnect')
     }
 }
 

@@ -11,9 +11,9 @@ import MainScreen from './screens/Main';
 import DetailScreen from './screens/Detail';
 import CateScreen from './screens/Category';
 import AddScreen from './screens/Add';
+import ChatListScreen from './screens/ChatList';
 import ChatScreen from './screens/Chat';
-import ChatDetailScreen from './screens/ChatDetail';
-import TempChatDetailScreen from './screens/TempChatDetail';
+import inviteChat from './screens/inviteChat';
 import MyinfoScreen from './screens/Myinfo';
 import SearchScreen from './screens/Search';
 import AlarmScreen from './screens/Alarm';
@@ -105,12 +105,12 @@ const ChatStackScreens = () => {
   return (
     <ChatStack.Navigator>
       <ChatStack.Screen
-        name='Chat'
-        component={ChatScreen}
+        name='ChatList'
+        component={ChatListScreen}
       />
       <ChatStack.Screen
-        name='ChatDetail'
-        component={ChatDetailScreen}
+        name='Chat'
+        component={ChatScreen}
       />
     </ChatStack.Navigator>
   )
@@ -179,8 +179,8 @@ const MainStackScreens = () => {
         component={CateListScreen}
       />
       <ChatStack.Screen
-        name='ChatDetail'
-        component={ChatDetailScreen}
+        name='Chat'
+        component={ChatScreen}
       />
     </MainStack.Navigator>
   )

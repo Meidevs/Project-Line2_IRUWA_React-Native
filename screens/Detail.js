@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
+import CHATTING from '../assets/dataSource/chatModel';
 import TimeGap from '../assets/components/TimeGap';
 import Carousel from '../assets/components/Carousel';
 import KeyGenerator from '../assets/components/KeyGenerator';
@@ -211,14 +212,21 @@ function DetailScreen({ route, navigation }) {
         var cmp_seq = itemInfos.cmp_seq;
         var items_seq = itemInfos.items_seq;
         var user_seq = itemInfos.user_seq;
+        var USER_INFOs = await CHATTING.USER_INFO(user_seq);
+        var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
+        var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
         var roomCode = 'RoomU' + user_seq + 'C' + cmp_seq + 'I' + items_seq;
         const keyString = await KeyGenerator(roomCode);
-        console.log(keyString)
-        navigation.navigate('ChatDetail', {
-            cmp_seq : cmp_seq,
-            items_seq : items_seq,
-            user_seq : user_seq,
-            roomCode : keyString
+        navigation.navigate('Chat', {
+            items_seq: ITEMS_INFOs.items_seq,
+            item_name: ITEMS_INFOs.item_name,
+            sender_seq: USER_INFOs.user_seq,
+            sender_name: USER_INFOs.user_name,
+            receiver_seq: CMP_INFOs.host_seq,
+            receiver_name: CMP_INFOs.host_name,
+            cmp_seq: CMP_INFOs.cmp_seq,
+            cmp_name: CMP_INFOs.cmp_name,
+            roomCode: keyString
         })
     }
 

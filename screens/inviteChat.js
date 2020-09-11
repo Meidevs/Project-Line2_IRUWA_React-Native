@@ -9,35 +9,29 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
+import io from 'socket.io-client';
 
 import DateFunction from '../assets/components/DateFunction';
 import Directory from '../assets/components/Directory';
 import GLOBAL from '../assets/dataSource/globalModel';
-import CHATTING from '../assets/dataSource/chatModel';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 const { width, height } = Dimensions.get('window');
 
 const ChatDetailScreen = ({ route, navigation }) => {
-    const [infos, setInfos] = useState({
-        user_seq: null,
-        user_name: null,
-        cmp_seq: null,
-        cmp_name: null,
-        host_seq: null,
-        host_name: null,
-        items_seq: null,
-        item_name: null,
-    });
+    const {
+        items_seq,
+        sender_seq,
+        receiver_seq,
+        cmp_seq,
+        roomCode
+    } = route.params;
     const [message, setMessage] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState(null);
     const [chattings, setChattings] = useState([]);
     const [chatIsLoaded, isChatLoaded] = useState(false);
     const [initialLoaded, setInitialValue] = useState(false);
-    const cmp_seq = route.params.cmp_seq;
-    const items_seq = route.params.items_seq;
-    const user_seq = route.params.user_seq;
-    const roomCode = route.params.roomCode;
+    const [isInitial, isInitialChat] = useState(true);
 
     useEffect(() => {
         navigation.setOptions({
@@ -50,7 +44,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
                         </TouchableOpacity>
                         <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={styles.TitleHeaderTxtStyle}>
-                                {infos.cmp_name}님과의 채팅
+                                {/* {cmp_name}님과의 채팅 */}
                             </Text>
                         </View>
                     </View>
@@ -59,7 +53,7 @@ const ChatDetailScreen = ({ route, navigation }) => {
                             <Text>Image</Text>
                         </View>
                         <View style={{ padding: 10 }}>
-                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>{infos.item_name}</Text>
+                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}></Text>
                         </View>
                     </View>
                 </View>
@@ -68,25 +62,17 @@ const ChatDetailScreen = ({ route, navigation }) => {
                 height: 110,
             }
         })
-    }, [infos]);
+    }, [route]);
 
     useEffect(() => {
         const INITIAL_SETTINGS = async () => {
             try {
-                var USER_INFOs = await CHATTING.USER_INFO(user_seq);
-                var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
-                var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
-                setInfos({
-                    user_seq : USER_INFOs.user_seq,
-                    user_name : USER_INFOs.user_name,
-                    cmp_seq: CMP_INFOs.cmp_seq,
-                    cmp_name: CMP_INFOs.cmp_name,
-                    host_seq: CMP_INFOs.host_seq,
-                    host_name: CMP_INFOs.host_name,
-                    items_seq: ITEMS_INFOs.items_seq,
-                    item_name: ITEMS_INFOs.item_name,
-                });
                 await Directory.CheckRootDirectory();
+                var DIRECTORY_LIST = await Directory.ReadDirectoryTitles();
+                var EXISTENCE = DIRECTORY_LIST.includes(roomCode);
+                if (EXISTENCE) {
+                    isInitialChat(false);
+                }
                 setInitialValue(true);
             } catch (err) {
                 console.log(err);
@@ -111,75 +97,90 @@ const ChatDetailScreen = ({ route, navigation }) => {
         READ_LOCAL_DIRECTORY()
     }, [READ_LOCAL_DIRECTORY]);
 
-    GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
-        if (message) {
-            setReceiveMessage(message)
-        }
-    });
+    useEffect(() => {
+        GLOBAL.RECEIVE_SOCKET_MESSAGE().then(async (message) => {
+            if (message) {
+                await Directory.UpdateChatTitle(message)
+                await Directory.UpdateDirectory(message);
+                setReceiveMessage(message)
+            }
+        });
+    }, [receiveMessage]);
 
     const sendMessage = async () => {
-        var dateTime = await DateFunction();
-        var sendMessage = message;
-        var form = {
-            sender_seq: infos.user_seq,
-            sender_name : infos.user_name,
-            receiver_seq: infos.host_seq,
-            receiver_name: infos.host_name,
-            items_seq: infos.items_seq,
-            item_name: infos.item_name,
-            cmp_seq : infos.cmp_seq,
-            cmp_name : infos.cmp_name,
-            roomCode: roomCode,
-            message: sendMessage,
-            reg_date: dateTime,
+        if (message) {
+            var dateTime = await DateFunction();
+            var sendMessage = message;
+            var form = {
+                sender_seq: sender_seq,
+                receiver_seq: receiver_seq,
+                items_seq : items_seq,
+                cmp_seq : cmp_seq,
+                roomCode: roomCode,
+                message: sendMessage,
+                reg_date: dateTime,
+            }
+            // GLOBAL.SET_SOCKET_IO();
+            // GLOBAL.CONNECT_TO_SOCKET_IO(form.sender_seq);
+            // if (isInitial) {
+            //     await GLOBAL.INVITE_RECEIVER(form);
+            // }
+            // await GLOBAL.SEND_SOCKET_MESSAGE(form);
+
+            const connectionConfig = {
+                jsonp: false,
+                reconnection: true,
+                reconnectionDelay: 100,
+                reconnectionAttempts: 5000,
+                transports: ['websocket']/// you need to explicitly tell it to use websockets
+            };
+            var socket = io('http://192.168.0.40:8888', connectionConfig);
+            socket.emit('sendMessage', form);
+            setMessage(null);
         }
-        await GLOBAL.SEND_SOCKET_MESSAGE(form);
-        await Directory.UpdateChatTitle(form)
-        await Directory.UpdateDirectory(form);
-        setMessage(null);
     }
 
     const componentJSX_Chat = () => {
-        // if (chatIsLoaded)
-        // return (
-        //     chattings.map((data, index) => {
-        //         if (data.sender_seq == infos.user_seq) {
-        //             return (
-        //                 <View>
-        //                     <View style={styles.DateSeparator}>
-        //                         <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-        //                         <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
-        //                         <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-        //                     </View>
-        //                     <View style={styles.SenderBox}>
-        //                         <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
+        if (chatIsLoaded)
+            return (
+                chattings.map((data, index) => {
+                    if (data.sender_seq == sender_seq) {
+                        return (
+                            <View>
+                                <View style={styles.DateSeparator}>
+                                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                    <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
+                                    <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                </View>
+                                <View style={styles.SenderBox}>
+                                    <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
 
-        //                         </View>
-        //                         <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-        //                             <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
-        //                         </View>
-        //                         <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
-        //                             <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
-        //                         </View>
-        //                     </View>
-        //                 </View>
-        //             )
-        //         } else {
-        //             return (
-        //                 <View>
-        //                     <View style={styles.ReceiverBox}>
-        //                         <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
-        //                             <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
-        //                         </View>
-        //                         <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-        //                             <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
-        //                         </View>
-        //                     </View>
-        //                 </View>
-        //             )
-        //         }
-        //     })
-        // )
+                                    </View>
+                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+                                        <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
+                                        <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    } else {
+                        return (
+                            <View>
+                                <View style={styles.ReceiverBox}>
+                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
+                                        <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
+                                    </View>
+                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+                                        <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    }
+                })
+            )
     }
     return (
         <SafeAreaView style={styles.Container}>
