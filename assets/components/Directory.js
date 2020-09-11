@@ -28,6 +28,7 @@ class Directory {
     UpdateChatTitle = async (data) => {
         try {
             var rawString = {
+                roomCode : data.roomCode,
                 sender_seq: data.sender_seq,
                 sender_name: data.sender_name,
                 receiver_seq: data.receiver_seq,
@@ -51,7 +52,7 @@ class Directory {
                 encoding: FileSystem.EncodingType.UTF8
             });
         } catch (err) {
-            return false;
+            console.log(err)
         }
     }
 
@@ -75,7 +76,7 @@ class Directory {
             });
 
         } catch (err) {
-            return false;
+            console.log(err)
         }
     }
     ReadChatHistory = async (data) => {
@@ -86,7 +87,7 @@ class Directory {
             var newString = await FileSystem.readAsStringAsync(subDirectory);
             return newString;
         } catch (err) {
-            return false;
+            console.log(err)
         }
     }
 
@@ -138,6 +139,7 @@ class Directory {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var directories = await FileSystem.readDirectoryAsync(fileDirectory + 'TITLE/');
+            return directories
         } catch (err) {
             return false;
         }
@@ -147,6 +149,7 @@ class Directory {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var directories = await FileSystem.readDirectoryAsync(fileDirectory + 'CHAT/');
+            return directories
 
         } catch (err) {
             return false;

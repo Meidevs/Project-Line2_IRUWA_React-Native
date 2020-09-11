@@ -15,7 +15,6 @@ import DateFunction from '../assets/components/DateFunction';
 import Directory from '../assets/components/Directory';
 import GLOBAL from '../assets/dataSource/globalModel';
 import Icon from 'react-native-vector-icons/AntDesign';
-
 const { width, height } = Dimensions.get('window');
 let socket;
 const ChatScreen = ({ route, navigation }) => {
@@ -81,6 +80,17 @@ const ChatScreen = ({ route, navigation }) => {
     }, [route]);
 
     useEffect(() => {
+        var form = {
+            items_seq: items_seq,
+            item_name: item_name,
+            sender_seq: sender_seq,
+            sender_name: sender_name,
+            receiver_seq: receiver_seq,
+            receiver_name: receiver_name,
+            cmp_seq: cmp_seq,
+            cmp_name: cmp_name,
+            roomCode: roomCode
+        }
         const connectionConfig = {
             jsonp: false,
             reconnection: true,
@@ -88,8 +98,9 @@ const ChatScreen = ({ route, navigation }) => {
             reconnectionAttempts: 5000,
             transports: ['websocket']/// you need to explicitly tell it to use websockets
         };
-        socket = io('http://192.168.0.40:8888');
-    }, []);
+        socket = io('http://192.168.0.40:8888', connectionConfig);
+        socket.emit('join', form);
+    }, [route]);
 
     useEffect(() => {
         socket.on('message', (message, err) => {
