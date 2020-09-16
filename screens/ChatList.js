@@ -39,6 +39,7 @@ const reducer = (state, action) => {
 function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [state, dispatch] = useReducer(reducer, initialValue);
+    console.log(state)
     useFocusEffect(
         React.useCallback(() => {
             const SET_USER = async () => {
@@ -55,12 +56,14 @@ function ChatListScreen({ route, navigation }) {
     useEffect(() => {
         var socket = GLOBAL.GET_SOCKET_IO();
         socket.on('receiveMessage', message => {
+            console.log('a')
             socket.emit('prevMessage', currentUser);
         })
         socket.on('prevMessage', message => {
+            console.log(message)
             dispatch({ type: 'initial', params: message });
         })
-    }, [dispatch]);
+    }, []);
 
     const ComponentJSX = () => {
         if (state.params.length > 0) {
@@ -68,11 +71,12 @@ function ChatListScreen({ route, navigation }) {
                 state.params.map((data, index) => {
                     var MESSAGE_LENGTH = data.messages.length;
                     return (
-                        <View>
+                        <View
+                            key={index.toString()}>
                             <TouchableOpacity
                                 style={styles.ListBox}
                                 onPress={() => setNavigationParams(data)}
-                                key={index.toString()}
+
                             >
                                 <View style={styles.LeftArea}>
                                     {
@@ -88,7 +92,7 @@ function ChatListScreen({ route, navigation }) {
                                         <Text>{data.sender_name}</Text><Text>{data.receiver_name}</Text>
                                     </View>
                                     <View style={styles.LatestMessage}>
-                                        <Text>{data.messages[MESSAGE_LENGTH-1].message}</Text>
+                                        <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>

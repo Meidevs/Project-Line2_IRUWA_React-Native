@@ -35,8 +35,6 @@ const ChatScreen = ({ route, navigation }) => {
     const [chatIsLoaded, isChatLoaded] = useState(false);
     const [initialLoaded, setInitialValue] = useState(false);
 
-    console.log('receiveMessage', receiveMessage)
-
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
@@ -89,21 +87,20 @@ const ChatScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         if (initialLoaded) {
-            console.log('1')
             socket.emit('getRoomMessages', roomCode);
 
             socket.on('getRoomMessages', message => {
                 setReceiveMessage(message)
-
-            }) 
+            })
         }
-    },[initialLoaded])
+    }, [initialLoaded])
 
     useEffect(() => {
         socket.on('receiveMessage', (message) => {
-            setReceiveMessage(...receiveMessage, message)
+            var newData = [...receiveMessage, message];
+            setReceiveMessage(newData);
         });
-    }, []);
+    }, [receiveMessage]);
 
     const sendMessage = async () => {
         if (message) {
@@ -128,54 +125,83 @@ const ChatScreen = ({ route, navigation }) => {
         }
     }
 
-    // const componentJSX_Chat = () => {
-    //     if (chatIsLoaded)
-    //         return (
-    //             chattings.map((data, index) => {
-    //                 if (data.sender_seq == sender_seq) {
-    //                     return (
-    //                         <View>
-    //                             <View style={styles.DateSeparator}>
-    //                                 <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-    //                                 <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>2020년 08월 06일</Text>
-    //                                 <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-    //                             </View>
-    //                             <View style={styles.SenderBox}>
-    //                                 <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
+    const componentJSX_Chat = () => {
+        if (receiveMessage.length > 0)
+            return (
+                receiveMessage.map((data, index) => {
+                    var currentTime;
+                    var currentDate = new Date().toISOString().substring(0, 10);
+                    var newTime = new Date(data.reg_date).toLocaleTimeString().substring(0, 5);
+                    var setAMPM = newTime.substring(0, 3);
+                    var am_pm = parseInt(setAMPM) >= 12;
+                    if (am_pm) {
+                        currentTime = '오후' + newTime;
+                    } else {
+                        currentTime = '오전' + newTime;
+                    }
+                    if (data.sender_seq == receiver_seq) {
+                        return (
+                            <View
+                                key={index.toString()}
+                            >
+                                {data.reg_date.substring(0, 10) != currentDate ? (
+                                    <View style={styles.DateSeparator}>
+                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                        <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>{currentDate}</Text>
+                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                    </View>
+                                ) : (
+                                        null
+                                    )
+                                }
+                                <View style={styles.SenderBox}>
+                                    <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
 
-    //                                 </View>
-    //                                 <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-    //                                     <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
-    //                                 </View>
-    //                                 <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
-    //                                     <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
-    //                                 </View>
-    //                             </View>
-    //                         </View>
-    //                     )
-    //                 } else {
-    //                     return (
-    //                         <View>
-    //                             <View style={styles.ReceiverBox}>
-    //                                 <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
-    //                                     <Text style={{ fontSize: 12, }}>{JSON.parse(data).reg_date}</Text>
-    //                                 </View>
-    //                                 <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-    //                                     <Text style={{ fontSize: 16, }}>{JSON.parse(data).message}</Text>
-    //                                 </View>
-    //                             </View>
-    //                         </View>
-    //                     )
-    //                 }
-    //             })
-    //         )
-    // }
+                                    </View>
+                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+                                        <Text style={{ fontSize: 16, }}>{data.message}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
+                                        <Text style={{ fontSize: 12, }}>{currentTime}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    } else {
+                        return (
+                            <View
+                                key={index.toString()}
+                            >
+                                {data.reg_date.substring(0, 10) != currentDate ? (
+                                    <View style={styles.DateSeparator}>
+                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                        <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>{currentDate}</Text>
+                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                    </View>
+                                ) : (
+                                        null
+                                    )
+                                }
+                                <View style={styles.ReceiverBox}>
+                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
+                                        <Text style={{ fontSize: 12, }}>{currentTime}</Text>
+                                    </View>
+                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
+                                        <Text style={{ fontSize: 16, }}>{data.message}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    }
+                })
+            )
+    }
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
-                {/* {
+                {
                     componentJSX_Chat()
-                } */}
+                }
             </ScrollView>
             <View style={styles.MessageInputBox}>
                 <View style={styles.InputBox}>
