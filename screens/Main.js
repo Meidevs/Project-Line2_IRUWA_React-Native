@@ -105,7 +105,6 @@ function MainScreen({ route, navigation }) {
     useEffect(() => {
         GLOBAL.SET_SOCKET_IO();
         GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
-        return () => GLOBAL.DISCONNECT();
     }, [user_seq])
     return (
         <SafeAreaView style={styles.Container}>

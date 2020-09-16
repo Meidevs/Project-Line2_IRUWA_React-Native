@@ -29,12 +29,13 @@ const ChatScreen = ({ route, navigation }) => {
         cmp_name,
         roomCode
     } = route.params;
-    const [message, setMessage] = useState(null);
-    const [messages, setMessages] = useState([]);
-    const [receiveMessage, setReceiveMessage] = useState(null);
+    const [message, setMessageText] = useState(null);
+    const [receiveMessage, setReceiveMessage] = useState([]);
     const [chattings, setChattings] = useState([]);
     const [chatIsLoaded, isChatLoaded] = useState(false);
     const [initialLoaded, setInitialValue] = useState(false);
+
+    console.log('receiveMessage', receiveMessage)
 
     useEffect(() => {
         navigation.setOptions({
@@ -71,42 +72,36 @@ const ChatScreen = ({ route, navigation }) => {
         const INITIAL_SETTINGS = async () => {
             try {
                 await Directory.CheckRootDirectory();
-                setInitialValue(true);
             } catch (err) {
                 console.log(err);
             }
         }
+        const GET_MAIN_INFOs = async () => {
+            socket = GLOBAL.GET_SOCKET_IO();
+            socket.emit('prevMessage', sender_seq);
+
+        }
+        setInitialValue(true);
+
+        GET_MAIN_INFOs();
         INITIAL_SETTINGS();
     }, [route]);
 
     useEffect(() => {
-        var form = {
-            items_seq: items_seq,
-            item_name: item_name,
-            sender_seq: sender_seq,
-            sender_name: sender_name,
-            receiver_seq: receiver_seq,
-            receiver_name: receiver_name,
-            cmp_seq: cmp_seq,
-            cmp_name: cmp_name,
-            roomCode: roomCode
+        if (initialLoaded) {
+            console.log('1')
+            socket.emit('getRoomMessages', roomCode);
+
+            socket.on('getRoomMessages', message => {
+                setReceiveMessage(message)
+
+            }) 
         }
-        const connectionConfig = {
-            jsonp: false,
-            reconnection: true,
-            reconnectionDelay: 100,
-            reconnectionAttempts: 5000,
-            transports: ['websocket']/// you need to explicitly tell it to use websockets
-        };
-        socket = io('http://192.168.0.40:8888', connectionConfig);
-        socket.emit('join', form);
-    }, [route]);
+    },[initialLoaded])
 
     useEffect(() => {
-        socket.on('message', (message, err) => {
-            console.log('Chat ', message)
-            if (err)
-                alert(err)
+        socket.on('receiveMessage', (message) => {
+            setReceiveMessage(...receiveMessage, message)
         });
     }, []);
 
@@ -127,10 +122,9 @@ const ChatScreen = ({ route, navigation }) => {
                 message: sendMessage,
                 reg_date: dateTime,
             }
+
             socket.emit('goMessage', form)
-            await Directory.UpdateChatTitle(form)
-            await Directory.UpdateDirectory(form);
-            setMessage(null);
+            setMessageText(null);
         }
     }
 
@@ -189,16 +183,9 @@ const ChatScreen = ({ route, navigation }) => {
                         value={message}
                         placeholder={'메세지를 입력해주세요'}
                         placeholderTextColor='#B4B4B4'
-                        onChangeText={(text) => setMessage(text)}
+                        onChangeText={(text) => setMessageText(text)}
 
                     />
-                    {messages.map(data => {
-                        return (
-                            <View>
-                                <Text>{data.text}</Text>
-                            </View>
-                        )
-                    })}
                 </View>
                 <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>
                     <Icon name={'caretright'} size={28} />

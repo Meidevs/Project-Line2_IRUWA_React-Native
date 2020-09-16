@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, { useEffect, useState, useCallback, useContext, useReducer } from 'react';
 import {
     View,
     Text,
@@ -18,144 +18,106 @@ import TimeGap from '../assets/components/TimeGap';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import GLOBAL from '../assets/dataSource/globalModel';
-import Directory from '../assets/components/Directory';
 const { width, height } = Dimensions.get('window');
 
-let socket;
+const initialValue = {
+    params: [],
+}
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'initial':
+            return {
+                ...state,
+                params: action.params
+            }
+        // default:
+        //     throw new Error();
+    }
+}
+
 function ChatListScreen({ route, navigation }) {
-    const [chattings, setChattingList] = useState([{
-        title: null,
-        messages: [],
-    }]);
-    console.log('chattings', chattings)
-    const [newUpdate, setNewUpdate] = useState({ history : [], info : []});
-    const [isLoaded, setIsLoaded] = useState(false);
-    useEffect(() => {
-        navigation.setOptions({
-            headerLeft: null,
-            headerTitle: () => (
-                <View style={styles.TitleHeader}>
-                    <Text style={styles.TitleHeaderTxtStyle}>채팅</Text>
-                </View>
-            ),
-        })
-    }, []);
-    useEffect(() => {
-        const connectionConfig = {
-            jsonp: false,
-            reconnection: true,
-            reconnectionDelay: 100,
-            reconnectionAttempts: 5000,
-            transports: ['websocket']/// you need to explicitly tell it to use websockets
-        };
-        socket = io('http://192.168.0.40:8888', connectionConfig);
-    }, []);
-
-    const READ_DIRECTORIES = useCallback(async () => {
-        console.log('isLoaded', isLoaded)
-        if (isLoaded) {
-            var DIRECTORIES = await Directory.ReadTitleDirectory();
-            var rawArray = new Array();
-            for (var i = 0; i < DIRECTORIES.length; i++) {
-                var title = await Directory.ReadTitleHistory(DIRECTORIES[i]);
-                var chats = await Directory.ReadChatHistory(DIRECTORIES[i]);
-                var chattingList = chats.split('/&/');
-                console.log('chattingList', chattingList)
-                rawArray.push({title : JSON.parse(title), messages : chattingList});
-                setChattingList(rawArray);
-            }
-        }
-    }, [isLoaded])
-
-    useEffect(() => {
-        READ_DIRECTORIES();
-    }, [READ_DIRECTORIES])
-
-
-    useEffect(() => {
-        const SET_UPDATES = async () => {
-            try {
-                console.log('Length', newUpdate.history.length)
-                if (newUpdate.history.length > 0 ) {
-                    for (var i = 0; i < newUpdate.history.length; i++) {
-                        await Directory.UpdateDirectory(newUpdate.history[i])
-                    }
-                    for (var i = 0; i < newUpdate.info.length; i++) {
-                        await Directory.UpdateChatTitle(newUpdate.info[i])
-                    }
-                    setIsLoaded(true);
-                }
-            } catch (err) {
-                console.log(err)
-            }
-        }
-        SET_UPDATES();
-    }, [newUpdate]);
-
-    useEffect(() => {
-        socket.on('returnHistory', async (message, err) => {
-            if (err) {
-                alert(err)
-            }
-            setNewUpdate(message);
-        });
-    }, []);
-
+    const [currentUser, setCurrentUser] = useState(null);
+    const [state, dispatch] = useReducer(reducer, initialValue);
     useFocusEffect(
         React.useCallback(() => {
-            const GET_MAIN_INFOs = async () => {
-                setIsLoaded(false)
-                await Directory.CheckRootDirectory()
-                // await Directory.DeleteChat();
-                // await Directory.DeleteTitle();
-                // var a = await Directory.ReadTitleDirectory();
-                // var b = await Directory.ReadChatDirectory();
-                // console.log('a', a)
-                // console.log('b', b)
-                try {
-                    const USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
-                    socket.emit('getHistory', USER_INFOs.user_seq);
-                } catch (err) {
-                    console.log(err);
-                }
+            const SET_USER = async () => {
+                var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
+                var socket = GLOBAL.GET_SOCKET_IO();
+                socket.emit('prevMessage', USER_INFO.user_seq);
+                setCurrentUser(USER_INFO.user_seq);
             }
-
-            GET_MAIN_INFOs();
+            SET_USER();
         }, [])
     );
-    const setNavigationParams = async (data) => {
-        var cmp_seq = data.cmp_seq;
-        var items_seq = data.items_seq;
-        const user_seq = await AUTHENTICATION.GET_USER_INFOs();
-        var USER_INFOs = await CHATTING.USER_INFO(user_seq.user_seq);
-        var CMP_INFOs = await CHATTING.CMP_INFO(cmp_seq);
-        var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
+
+
+    useEffect(() => {
+        var socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('receiveMessage', message => {
+            socket.emit('prevMessage', currentUser);
+        })
+        socket.on('prevMessage', message => {
+            dispatch({ type: 'initial', params: message });
+        })
+    }, [dispatch]);
+
+    const ComponentJSX = () => {
+        if (state.params.length > 0) {
+            return (
+                state.params.map((data, index) => {
+                    var MESSAGE_LENGTH = data.messages.length;
+                    return (
+                        <View>
+                            <TouchableOpacity
+                                style={styles.ListBox}
+                                onPress={() => setNavigationParams(data)}
+                                key={index.toString()}
+                            >
+                                <View style={styles.LeftArea}>
+                                    {
+                                        currentUser === data.sender_seq ? (
+                                            <Text>판매자</Text>
+                                        ) : (
+                                                <Text>구매자</Text>
+                                            )
+                                    }
+                                </View>
+                                <View style={styles.RightArea}>
+                                    <View style={styles.UserInfo}>
+                                        <Text>{data.sender_name}</Text><Text>{data.receiver_name}</Text>
+                                    </View>
+                                    <View style={styles.LatestMessage}>
+                                        <Text>{data.messages[MESSAGE_LENGTH-1].message}</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                })
+            )
+        }
+    }
+    const setNavigationParams = (data) => {
+        var Tmp;
+        if (data.sender_seq != currentUser) {
+            Tmp = data.sender_seq;
+            data.sender_seq = currentUser
+            data.receiver_seq = Tmp;
+        }
+
         navigation.navigate('Chat', {
-            items_seq: ITEMS_INFOs.items_seq,
-            item_name: ITEMS_INFOs.item_name,
-            sender_seq: USER_INFOs.user_seq,
-            sender_name: USER_INFOs.user_name,
-            receiver_seq: data.sender_seq,
-            receiver_name: data.sender_name,
-            cmp_seq: CMP_INFOs.cmp_seq,
-            cmp_name: CMP_INFOs.cmp_name,
+            items_seq: data.items_seq,
+            item_name: data.item_name,
+            sender_seq: data.sender_seq,
+            sender_name: data.sender_name,
+            receiver_seq: data.receiver_seq,
+            receiver_name: data.receiver_name,
+            cmp_seq: data.cmp_seq,
+            cmp_name: data.cmp_name,
             roomCode: data.roomCode
         })
     }
-    const ComponentJSX = () => {
-        return (
-            chattings.map((data) => {
-                return (
-                    <View>
-                        <TouchableOpacity onPress={() => setNavigationParams(data.title)} >
-                            <Text></Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-            })
-        )
-    }
-
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
@@ -231,6 +193,35 @@ const styles = StyleSheet.create({
         color: 'rgba(140, 140, 140, 1)',
         fontSize: 14,
         fontWeight: '600'
+    },
+    ListBox: {
+        width: width,
+        height: height * 0.1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        marginTop: 1,
+        padding: 15,
+    },
+    LeftArea: {
+        flex: 1,
+        justifyContent: 'center'
+    },
+    RightArea: {
+        flex: 4,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    UserInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    LatestMessage: {
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })
 

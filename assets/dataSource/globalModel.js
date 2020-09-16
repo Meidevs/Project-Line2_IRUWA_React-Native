@@ -36,33 +36,13 @@ class GLOBE {
         });
     }
 
-    RECEIVE_SOCKET_MESSAGE = async () => {
-        this.GLOBE_SOCKET.on('receiveMessage', async (message) => {
-            this.GLOBE_RECEIVE_MESSAGE;
-        });
-    }
 
     RECEIVE_SOCKET_MESSAGE = async () => {
         let promise = new Promise((resolve, reject) => {
             setTimeout(() => resolve(this.GLOBE_RECEIVE_MESSAGE), 100);
         });
         let result = await promise;
-        return result;
-    }
-
-    FIND_MESSAGE_LOGS = (data) => {
-        this.GET_MESSAGE_LOGS = null;
-        this.GLOBE_SOCKET.emit('messageLogs', data);
-        this.GLOBE_SOCKET.on('getMessageLogs', (message) => {
-            this.GET_MESSAGE_LOGS = message;
-        })
-    }
-
-    RECEIVE_MESSAGE_LOGS = async () => {
-        let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve(this.GET_MESSAGE_LOGS), 100);
-        });
-        let result = await promise;
+        console.log(result)
         return result;
     }
 
