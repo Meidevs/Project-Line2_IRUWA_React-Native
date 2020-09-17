@@ -66,7 +66,8 @@ function MyinfoScreen({ route, navigation }) {
                 </View>
                 <View style={styles.ContentBox}>
                     <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('ItemList', {
-                        user_seq: infos.user_seq
+                        user_seq: infos.user_seq,
+                        cmp_seq : infos.cmp_seq
                     })}>
                         <View style={styles.IconBox}>
                             <Icon name={'ios-list-box'} size={36} />

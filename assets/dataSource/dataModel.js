@@ -132,6 +132,25 @@ class DATA_SORUCE {
             console.log(err)
         }
     }
+
+    GET_MY_ITEMS = async (cmp_seq) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/mylist', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ cmp_seq: cmp_seq })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 

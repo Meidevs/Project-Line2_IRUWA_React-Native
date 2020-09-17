@@ -17,7 +17,6 @@ import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import AddressSearchBox from '../assets/components/AddressSearchBox';
 import * as Location from 'expo-location';
-import { preventAutoHide } from 'expo/build/launch/SplashScreen';
 
 const { width, height } = Dimensions.get('window');
 
