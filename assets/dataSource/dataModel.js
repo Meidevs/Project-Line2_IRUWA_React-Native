@@ -151,6 +151,25 @@ class DATA_SORUCE {
             console.log(err);
         }
     }
+
+    UPDATE_ITEM_PICK = async (items_seq) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/list/pick', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items_seq: items_seq })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 

@@ -3,21 +3,19 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    StatusBar,
     StyleSheet,
-    Image,
     Dimensions,
     ScrollView,
-    SafeAreaView
+    SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
+import NOTIFICATIONS from '../assets/dataSource/notiModel';
 
 const { width, height } = Dimensions.get('window');
 
 function NotificationScreen({ route, navigation }) {
     const [notifications, setNotifications] = useState([]);
+
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -28,38 +26,67 @@ function NotificationScreen({ route, navigation }) {
         })
     }, []);
 
-    const GET_NOTIFICATIONS = useCallback(async () => {
-        // const data = await DATA_SOURCE.GetNotifications();
-        var Notis = [
-            {id : 'A_1', notification: '[공지]검색기능 오류로 인하여 서비스 이용에 불편을 드려죄송합니다.', reg_date: '2020-07-11' },
-            {id : 'A_2',  notification: '[공지]채팅방 진입 오류로 인하여 서비스 이용에 불편을 드려 죄송합니다.', reg_date: '2020-07-09' },
-            {id : 'A_3',  notification: '[공지]정부 지원 농산물 꾸러미 판매를 제한합니다.', reg_date: '2020-07-08' },
-        ]
-        setNotifications(Notis);
-    }, [])
-
     useEffect(() => {
+        const GET_NOTIFICATIONS = async () => {
+            var NOTIS = await NOTIFICATIONS.GET_NOTIFICATIONS();
+            for (var i = 0; i < NOTIS.length; i++) {
+                NOTIS[i].visible = false;
+            }
+            setNotifications(NOTIS);
+        };
         GET_NOTIFICATIONS();
-    }, [GET_NOTIFICATIONS])
+    }, []);
+
+    const OpenContent = (num) => {
+        notifications[num].visible = !notifications[num].visible;
+        setNotifications([
+            ...notifications,
+        ]);
+    }
 
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
                 {
-                    notifications.map((data) => {
+                    notifications.map((data, index) => {
                         return (
-                            <TouchableOpacity style={styles.NotiList} onPress={() => navigation.navigate('Main')}>
-                                <View style={styles.RegiDate}>
-                                    <Text>{data.reg_date}</Text>
-                                </View>
-                                <View>
-                                    <Text>{data.notification}</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={styles.NotificationBox}>
+                                <TouchableOpacity
+                                    style={styles.TitleBtn}
+                                    onPress={() => OpenContent(index)}
+                                >
+                                    <View style={styles.TitleIconBox}>
+                                        <View style={styles.IconAround}>
+                                            <Icon />
+                                        </View>
+                                    </View>
+                                    <View style={styles.TitleContent}>
+                                        <View style={styles.DateArea}>
+                                            <Text style={styles.DateTxt}>{data.reg_date}</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={styles.TitleTxt}>{data.title}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                                {
+                                    data.visible == true ?
+                                        <View style={styles.ContentBox}>
+                                            <Text>{data.content}</Text>
+                                        </View>
+                                        :
+                                        null
+                                }
+                            </View>
                         )
                     })
                 }
             </ScrollView>
+            <View>
+                <View>
+                    <Text>광고광고</Text>
+                </View>
+            </View>
         </SafeAreaView>
     )
 }
@@ -76,18 +103,54 @@ const styles = StyleSheet.create({
     },
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
     },
-    NotiList : {
-        height : 80,
-        width : width,
-        padding : 15,
-        borderBottomWidth : 1,
-        borderColor : 'rgba(220, 220, 220, 1)',
+    NotificationBox: {
+        width: width,
+        borderColor: 'rgba(245, 245, 245, 1)',
+        borderBottomWidth: 0.8,
+    },
+    TitleBtn: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        padding: 25,
+        backgroundColor : 'rgba(255, 255, 255, 1)'
+    },
+    TitleIconBox: {
+        flex: 1,
+        marginRight: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    IconAround : {
+        width : width * 0.12,
+        height : width * 0.12,
+        borderRadius : 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor : 'rgba(235, 235, 235, 1)'
+    },
+    TitleContent: {
+        flex: 9,
         justifyContent : 'center',
+        alignItems : 'flex-start'
     },
-    RegiDate : {
-        paddingBottom : 5,
+    DateArea : {
+        paddingBottom : 10,
+    },
+    DateTxt : {
+        fontSize : 14,
+        fontWeight : '600',
+        color : 'rgba(165, 165, 165, 1)'
+    },
+    TitleTxt : {
+        fontSize : 15,
+        fontWeight : '700',
+        color : 'rgba(0, 0, 0, 1)'
+    },
+    ContentBox : {
+        padding : 25,
     }
 })
 

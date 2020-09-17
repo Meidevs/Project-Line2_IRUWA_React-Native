@@ -186,7 +186,6 @@ function DetailScreen({ route, navigation }) {
                     view_count: ITEM_INFOs.VIEW_COUNT,
                 })
                 setOtherItem(ITEM_INFOs.NonSELECTED);
-                setIsLoaded(true);
             } catch (err) {
                 console.log(err);
             }
@@ -213,6 +212,15 @@ function DetailScreen({ route, navigation }) {
             cmp_seq: CMP_INFOs.cmp_seq,
             cmp_name: CMP_INFOs.cmp_name,
             roomCode: keyString
+        })
+    }
+    const InterestList = async () => {
+        console.log('items_seq', items_seq)
+        await DATA_SOURCE.UPDATE_ITEM_PICK(items_seq);
+
+        setItemInfos({
+            ...itemInfos,
+            pick_status : !itemInfos.pick_status
         })
     }
 
@@ -267,7 +275,7 @@ function DetailScreen({ route, navigation }) {
                             <Text>{itemInfos.time_avg}</Text>
                         </View>
                     </View>
-                    <ContentCard data={itemInfos}/>
+                    <ContentCard data={itemInfos} />
                     <View style={styles.ItemBox}>
                         <View style={styles.TitleBox}>
                             <View style={styles.TitleBorder}>
@@ -302,17 +310,28 @@ function DetailScreen({ route, navigation }) {
                 </View>
             </Animated.ScrollView>
             <View style={styles.ContentBtn}>
-                <TouchableOpacity style={styles.PickContent} onPress={() => InterestList()}>
-                    <Icon name={'ios-heart-empty'} size={30} />
+                <TouchableOpacity
+                    style={styles.PickContent}
+                    onPress={() => InterestList()}
+                >
+                    {
+                        itemInfos.pick_status == true ?
+                            (<Icon name={'ios-heart-empty'} size={30} color={'red'} />) :
+                            (<Icon name={'ios-heart-empty'} size={30} />)
+                    }
                 </TouchableOpacity>
                 <View style={styles.ChatContent}>
-                    <TouchableOpacity style={styles.ChatBtn} onPress={() => setNavigationParams()}>
+                    <TouchableOpacity
+                        style={styles.ChatBtn}
+                        onPress={() => setNavigationParams()}
+                    >
                         <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
     )
+
 
 
 }
