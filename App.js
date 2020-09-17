@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import BeforeLoginScreen from './screens/BeforeLogin';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
 import MainScreen from './screens/Main';
@@ -227,11 +228,19 @@ const App = () => {
   return (
     <NavigationContainer>
       <AuthStack.Navigator
-        initialRouteName="Login">
+        initialRouteName="BeforeLogin">
+        <AuthStack.Screen
+          name="BeforeLogin"
+          component={BeforeLoginScreen}
+          options={{ headerShown: false }}
+        />
         <AuthStack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: true,
+            headerTransparent: true
+          }}
         />
         <AuthStack.Screen
           name="Register"

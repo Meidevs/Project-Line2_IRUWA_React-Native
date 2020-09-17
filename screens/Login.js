@@ -11,13 +11,30 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/AntDesign';
 const { width, height } = Dimensions.get('window');
 
 function LoginScreen({ navigation }) {
     const [user_id, setUserid] = useState('');
     const [user_pw, setUserpw] = useState('');
     const [remember, setRemember] = useState(false);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <View style={{padding : 25, marginTop : 50, flexDirection : 'column'}}>
+                    <Icon name={'arrowleft'} size={32} />
+                    <View style={{marginTop : height * 0.05}}>
+                        <Text style={{fontSize : 44, fontWeight : 'bold'}}>로그인</Text>
+                    </View>
+                </View>
+            ),
+            headerTitle: null,
+            headerStyle: {
+                height: height * 0.20,
+            }
+        })
+    }, []);
 
     const toggleRememberMe = () => {
         setRemember(!remember);
@@ -76,7 +93,7 @@ function LoginScreen({ navigation }) {
     }
 
     return (
-        <KeyboardAvoidingView
+        <View
             behavior={Platform.OS == "ios" ? "padding" : "height"}
             style={styles.Container}>
             <StatusBar
@@ -84,14 +101,13 @@ function LoginScreen({ navigation }) {
                 // dark-content, light-content and default
                 hidden={false}
                 //To hide statusBar
-                backgroundColor="#00BCD4"
+                backgroundColor="rgba(0, 0, 0, 0)"
                 //Background color of statusBar
-                translucent={false}
+                translucent={true}
                 //allowing light, but not detailed shapes
                 networkActivityIndicatorVisible={true}
             />
             <View style={styles.LogoContainer}>
-                {/* <Image source={require('../assets/images/logo/logo.png')} style={styles.LogoImage} /> */}
             </View>
             <View style={styles.MainContainer}>
                 <View style={styles.UserInputForm}>
@@ -122,23 +138,17 @@ function LoginScreen({ navigation }) {
                                 아이디 기억하기
                                 </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.SearchBox} onPress={() => navigation.navigate('SearchUser')}>
-                            <Text style={styles.SearchUserPasswordTxt}>아이디 비밀번호 찾기</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
-            <View style={styles.ButtonContainer}>
-                <View style={styles.ButtonForm}>
-                    <TouchableOpacity style={styles.LoginBtn} onPress={() => Login()}>
-                        <Text style={styles.LoginBtnTxt}>로그인</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.LoginBtn} onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.LoginBtnTxt}>회원가입</Text>
+            <View>
+                <View>
+                    <TouchableOpacity onPress={() => Login()}>
+                        <Text>로그인</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-        </KeyboardAvoidingView>
+        </View>
     )
 }
 
