@@ -4,7 +4,7 @@ import {
     Picker
 } from 'react-native';
 // import { Picker } from '@react-native-community/picker';
-import DATA_SOURCE from '../dataSource/dataModel';
+import DATA_SOURCE from '../../dataSource/dataModel';
 
 const CategoryPicker = ({ callback }) => {
     const [categories, setCategories] = useState([]);

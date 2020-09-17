@@ -17,7 +17,6 @@ import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
 import PremiumBanner from '../assets/components/PremiumBanner';
 import GLOBAL from '../assets/dataSource/globalModel';
-
 const { width, height } = Dimensions.get('window');
 
 const getItem = (data, index) => {

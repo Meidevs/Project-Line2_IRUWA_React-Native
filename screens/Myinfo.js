@@ -65,7 +65,9 @@ function MyinfoScreen({ route, navigation }) {
                     </View>
                 </View>
                 <View style={styles.ContentBox}>
-                    <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('ItemList')}>
+                    <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('ItemList', {
+                        user_seq: infos.user_seq
+                    })}>
                         <View style={styles.IconBox}>
                             <Icon name={'ios-list-box'} size={36} />
                         </View>
@@ -79,14 +81,20 @@ function MyinfoScreen({ route, navigation }) {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.MyinfoContent}>
-                    <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Add')}>
-                        <View style={styles.IconArea}>
-                            <Icon name={'ios-create'} size={36} />
-                        </View>
-                        <View style={styles.SettingList}>
-                            <Text>업체 글쓰기</Text>
-                        </View>
-                    </TouchableOpacity>
+                    {
+                        hasComp == true ? (
+                            <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Add')}>
+                                <View style={styles.IconArea}>
+                                    <Icon name={'ios-create'} size={36} />
+                                </View>
+                                <View style={styles.SettingList}>
+                                    <Text>업체 글쓰기</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ) : (
+                                null
+                            )
+                    }
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Invite')}>
                         <View style={styles.IconArea}>
                             <Icon name={'ios-mail'} size={36} />

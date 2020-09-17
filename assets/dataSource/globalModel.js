@@ -28,24 +28,6 @@ class GLOBE {
         return this.GLOBE_SOCKET;
     }
 
-    SEND_SOCKET_MESSAGE = (form) => {
-        this.GLOBE_SOCKET.emit('goMessage', form,(err) => {
-            if (err) {
-                alert(err);
-            }
-        });
-    }
-
-
-    RECEIVE_SOCKET_MESSAGE = async () => {
-        let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve(this.GLOBE_RECEIVE_MESSAGE), 100);
-        });
-        let result = await promise;
-        console.log(result)
-        return result;
-    }
-
     DISCONNECT = () => {
         this.GLOBE_SOCKET.emit('disconnect')
     }

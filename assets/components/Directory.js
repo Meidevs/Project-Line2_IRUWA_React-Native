@@ -28,7 +28,7 @@ class Directory {
     UpdateChatTitle = async (data) => {
         try {
             var rawString = {
-                roomCode : data.roomCode,
+                roomCode: data.roomCode,
                 sender_seq: data.sender_seq,
                 sender_name: data.sender_name,
                 receiver_seq: data.receiver_seq,
@@ -161,6 +161,16 @@ class Directory {
             var fileDirectory = await FileSystem.documentDirectory;
             var PROFILE_IMAGE = await FileSystem.readAsStringAsync(fileDirectory + 'ProfileImage');
             return PROFILE_IMAGE;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    GET_CATEGORY_ICONS = async () => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var CATEGORY_ICON = await FileSystem.readAsStringAsync(fileDirectory + 'CATEGORY');
+            return CATEGORY_ICON;
         } catch (err) {
             return false;
         }

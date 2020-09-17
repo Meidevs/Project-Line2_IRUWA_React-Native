@@ -3,21 +3,63 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Image,
     Dimensions,
     SafeAreaView,
     VirtualizedList
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
+import AUTHENTICATION from '../assets/dataSource/authModel';
+import TimeGap from '../assets/components/TimeGap';
+
 const { width, height } = Dimensions.get('window');
+
+const getItem = (data, index) => {
+    const items = data[index];
+    if (data[index] != undefined) {
+        return {
+            items_seq: items.items_seq,
+            item_name: items.item_name,
+            cmp_location: items.cmp_location,
+            reg_date: items.reg_date,
+            cmp_seq: items.cmp_seq,
+            uri: items.uri
+        }
+    }
+}
+
+const getItemCount = (data) => {
+    var cnt = data.length;
+    return cnt;
+}
+
+const Item = ({ data, user, navigation }) => {
+    var time_gap = TimeGap(data.reg_date);
+    return (
+        <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
+            items_seq: data.items_seq,
+            cmp_seq: data.cmp_seq,
+            user_seq: user
+        })}>
+            <View style={styles.LeftArea}>
+                <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
+            </View>
+            <View style={styles.RightArea}>
+                <Text>{data.item_name}</Text>
+                <Text>{data.cmp_location}</Text>
+                <Text>{time_gap}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+}
 
 function CateListScreen({ route, navigation }) {
     const category_name = route.params.category_name;
-    const [items, setItemList] = useState([]);
+    const category_seq = route.params.category_seq;
+    const [data, setData] = useState([]);
+    const [user_seq, setUserSeq] = useState('');
+    const [isLoaded, setIsLoad] = useState(false);
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -29,99 +71,88 @@ function CateListScreen({ route, navigation }) {
     }, [category_name]);
 
     const GET_ITEMS_LIST = useCallback(async () => {
-        const data = await DATA_SOURCE.GetItemList();
-        var items = [
-            { id: 'a_1', uri: 'ImageUri', title: 'Item Title 1', location: 'Location 1' },
-            { id: 'a_2', uri: 'ImageUri', title: 'Item Title 2', location: 'Location 2' },
-            { id: 'a_3', uri: 'ImageUri', title: 'Item Title 3', location: 'Location 3' },
-            { id: 'a_4', uri: 'ImageUri', title: 'Item Title 4', location: 'Location 4' },
-            { id: 'a_4', uri: 'ImageUri', title: 'Item Title 4', location: 'Location 4' },
-            { id: 'a_4', uri: 'ImageUri', title: 'Item Title 4', location: 'Location 4' },
-            { id: 'a_4', uri: 'ImageUri', title: 'Item Title 4', location: 'Location 4' },
-            { id: 'a_4', uri: 'ImageUri', title: 'Item Title 4', location: 'Location 4' },
-        ]
-        if (items.length % 2 != 0) {
-            items.push([]);
-        }
-        setItemList(items)
-    }, []);
+        const USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
+        const GET_ITEMS = await DATA_SOURCE.GET_ITEMS_ON_CATEGORY(category_seq);
+        setData(GET_ITEMS.content);
+        setUserSeq(USER_INFOs.user_seq);
+        setIsLoad(true);
+    }, [category_seq]);
 
     useEffect(() => {
         GET_ITEMS_LIST();
-    }, [GET_ITEMS_LIST])
+    }, [GET_ITEMS_LIST]);
 
-    return (
-        <SafeAreaView style={styles.Container}>
-            <ScrollView>
-                <View style={styles.OutsideBox}>
-                    {
-                        items.map((data) => {
-                            return (
-                                <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
-                                    item_code: data.id,
-                                })}>
-                                    <View style={styles.TopArea}>
-                                        <Text>{data.uri}</Text>
-                                    </View>
-                                    <View style={styles.BottomArea}>
-                                        <Text>{data.title}</Text>
-                                        <Text>{data.location}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
-                </View>
-            </ScrollView>
-        </SafeAreaView>
-    )
+    if (isLoaded) {
+        return (
+            <SafeAreaView>
+                <VirtualizedList
+                    data={data}
+                    initialNumToRender={10}
+                    renderItem={({ item }) => <Item data={item} user={user_seq} navigation={navigation} />}
+                    keyExtractor={(item, index) => JSON.stringify(index)}
+                    getItemCount={getItemCount}
+                    getItem={getItem}
+                />
+            </SafeAreaView>
+        )
+    } else {
+        return null;
+    }
+
 }
 
 const styles = StyleSheet.create({
-    TitleHeader: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+    ContentBox: {
+        height: 120,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        marginTop: 1,
+        padding: 15,
+    },
+    LeftArea: {
+        flex: 1,
         justifyContent: 'center'
     },
-    TitleHeaderTxtStyle: {
-        fontWeight: 'bold',
-        fontSize: 18
+    RightArea: {
+        flex: 2,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start'
     },
     RightHeader: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    Container: {
-        flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
-    },
-    OutsideBox: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        paddingTop: 10,
-        paddingRight: 20,
-        paddingLeft: 20,
-    },
-    ContentBox: {
-        margin: 10,
-        width: width * 0.4,
-        height: width * 0.4,
-        borderRadius: 5,
-        alignItems: 'center',
-        borderWidth: 1,
-    },
-    TopArea: {
-        flex: 2,
-        padding: 10,
-        justifyContent: 'center',
-    },
-    BottomArea: {
-        flex: 1,
-        padding: 10,
+    HeaderTitleBox: {
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    HeaderTitleTxt: {
+        fontSize: 18,
+        fontWeight: 'bold'
+    },
+    HeaderTitle: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: width,
+        height: width * 0.15,
+    },
+    LocationBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        padding: 15,
+    },
+    CurrentLocationTxt: {
+        fontSize: 18,
+        fontWeight: '800',
+        marginRight: 10,
+    },
+    ImageContent: {
+        resizeMode: 'contain',
+        width: 100,
+        height: 100,
     }
 })
 

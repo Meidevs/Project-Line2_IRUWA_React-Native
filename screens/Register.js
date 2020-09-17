@@ -13,7 +13,7 @@ import {
     Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import CategoryPicker from '../assets/components/CategoryPicker';
+import CategoryPicker from '../assets/components/Category/CategoryPicker';
 import CmpAddressSearchBox from '../assets/components/CmpAddressSearchBox';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ROADAPI from '../assets/dataSource/roadAPI';

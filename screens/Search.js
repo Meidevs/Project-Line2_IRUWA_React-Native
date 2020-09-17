@@ -10,7 +10,6 @@ import {
     ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import CategoryListUp from '../assets/components/CategoryListUp';
 import SEARCH_API from '../assets/dataSource/searchModel';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
@@ -189,7 +188,6 @@ function SearchScreen({ navigation, route }) {
                     <View style={styles.CategoryTitle}>
                         <Text style={styles.CategoryTitleTxtStyle}>카테고리</Text>
                     </View>
-                    <CategoryListUp navigation={navigation} route={route} />
                 </View>
             )
         } else {

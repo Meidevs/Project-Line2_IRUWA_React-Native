@@ -15,6 +15,7 @@ import DATA_SOURCE from '../assets/dataSource/dataModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import TimeGap from '../assets/components/TimeGap';
 import Carousel from '../assets/components/Carousel';
+import ContentCard from '../assets/components/Detail/ContentCard';
 import KeyGenerator from '../assets/components/KeyGenerator';
 
 const { width, height } = Dimensions.get('window');
@@ -152,7 +153,6 @@ function DetailScreen({ route, navigation }) {
         time_avg: null,
         view_coount: null,
     });
-    const [isLoaded, setIsLoaded] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
     const user_seq = route.params.user_seq;
@@ -193,20 +193,6 @@ function DetailScreen({ route, navigation }) {
         }
         GET_ITEM_INFOs()
     }, []);
-
-    const ComponentExp = useCallback(() => {
-        if (isLoaded) {
-            return (
-                <View>
-                    <Text>{itemInfos.item_content}</Text>
-                </View>
-            )
-        }
-    }, [isLoaded]);
-
-    useEffect(() => {
-        ComponentExp();
-    }, [ComponentExp]);
 
     const setNavigationParams = async () => {
         var cmp_seq = itemInfos.cmp_seq;
@@ -281,27 +267,7 @@ function DetailScreen({ route, navigation }) {
                             <Text>{itemInfos.time_avg}</Text>
                         </View>
                     </View>
-                    <View style={styles.ItemBox}>
-                        <View style={styles.TitleBox}>
-                            <View>
-                                <Text style={styles.ItemTitleTxtStyle}>{itemInfos.item_title}</Text>
-                            </View>
-                            <View style={styles.ItemSimpleInfo}>
-                                <Text>{itemInfos.cmp_category_name}</Text>
-                                <Text>{itemInfos.item_reg}</Text>
-                            </View>
-                        </View>
-                        <View>
-                            <View>
-                                {
-                                    ComponentExp()
-                                }
-                            </View>
-                        </View>
-                        <View>
-                            <Text>조회 {itemInfos.view_count}</Text>
-                        </View>
-                    </View>
+                    <ContentCard data={itemInfos}/>
                     <View style={styles.ItemBox}>
                         <View style={styles.TitleBox}>
                             <View style={styles.TitleBorder}>
@@ -336,7 +302,7 @@ function DetailScreen({ route, navigation }) {
                 </View>
             </Animated.ScrollView>
             <View style={styles.ContentBtn}>
-                <TouchableOpacity style={styles.PickContent}>
+                <TouchableOpacity style={styles.PickContent} onPress={() => InterestList()}>
                     <Icon name={'ios-heart-empty'} size={30} />
                 </TouchableOpacity>
                 <View style={styles.ChatContent}>
@@ -513,6 +479,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         resizeMode: 'cover'
     }
-})
+});
 
 export default DetailScreen;

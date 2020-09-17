@@ -11,27 +11,20 @@ import {
     SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
+
+import CategoryList from '../assets/components/Category/CategoryList';
+
 const { width, height } = Dimensions.get('window');
 
-async function GetFetchUrl() {
-    // const DATA_SET = await DATA_SOURCE.GetCategoryList();
-    var DATA_SET = [
-        { uri: 'Icon', categoryid: 'C1', categoryname: '단란주점' },
-        { uri: 'Icon', categoryid: 'C2', categoryname: '나이트' },
-        { uri: 'Icon', categoryid: 'C3', categoryname: '노래방' },
-        { uri: 'Icon', categoryid: 'C4', categoryname: '마사지' },
-        { uri: 'Icon', categoryid: 'C5', categoryname: '유흥주점' },
-    ]
-    return DATA_SET;
-}
-
 function CategoryScreen({ route, navigation }) {
-    const [categories, setCategory] = useState([]);
 
     useEffect(() => {
         navigation.setOptions({
-            headerLeft: null,
+            headerLeft: () => (
+                <View>
+
+                </View>
+            ),
             headerTitle: () => (
                 <View style={styles.TitleHeader}>
                     <Text style={styles.TitleHeaderTxtStyle}>카테고리</Text>
@@ -42,21 +35,11 @@ function CategoryScreen({ route, navigation }) {
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <Icon name="ios-search" size={28} color={'#000000'} style={{ padding: 10, }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Alarm')}>
-                        <Icon name="ios-notifications-outline" size={32} color={'#000000'} style={{ padding: 10, }} />
-                    </TouchableOpacity>
                 </View>
             )
         })
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const CATEGORIES = await GetFetchUrl();
-            setCategory(CATEGORIES);
-        }
-        fetchData()
-    }, [])
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
@@ -64,31 +47,23 @@ function CategoryScreen({ route, navigation }) {
                     <View style={styles.TitleContent}>
                         <Text style={styles.TitleTxtStyle}>프리미엄 서비스</Text>
                     </View>
-                    <TouchableOpacity style={styles.CategoryBtn}>
-                        <Text>프리미엄 광고 (이미지로 대체)</Text>
-                    </TouchableOpacity>
+                    <View style={styles.CategoryBtnBox}>
+                        <TouchableOpacity style={styles.CategoryBtn}>
+                            <View style={styles.CategoryIconBox}>
+
+                            </View>
+                            <View style={styles.CategoryText}>
+                                <Text>프리미엄 광고 (이미지로 대체)</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.CategoryBox}>
                     <View style={styles.TitleContent}>
-                        <Text style={styles.TitleTxtStyle}>유흥업체 카테고리</Text>
+                        <Text style={styles.TitleTxtStyle}>유흥업체 분류</Text>
                     </View>
                     <View style={styles.CategoryContent}>
-                        {
-                            categories.map((data) => {
-                                return (
-                                    <TouchableOpacity key={data.categoryid} style={styles.CategoryBtn} onPress={() => navigation.navigate('CateList',{
-                                        category_name : data.categoryname
-                                    })}>
-                                        <View style={styles.ImageContent}>
-                                            <Text>{data.uri}</Text>
-                                        </View>
-                                        <View style={styles.TxtContent}>
-                                            <Text>{data.categoryname}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
+                        <CategoryList navigation={navigation} />
                     </View>
                 </View>
             </ScrollView>
@@ -103,7 +78,7 @@ const styles = StyleSheet.create({
     },
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
@@ -122,8 +97,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-start',
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        borderBottomWidth: 2,
-        borderColor: 'rgba(238, 238, 238, 1)'
     },
     CategoryBox: {
         padding: 10,
@@ -148,10 +121,33 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-start'
     },
+    CategoryBtnBox: {
+        height: height * 0.13,
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     CategoryBtn: {
-        height: 40,
+        flex: 1,
+        height : height * 0.1,
+        borderRadius: 10,
+        borderWidth: 1,
+        paddingTop: 10,
+        paddingBottom: 10,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'flex-start'
+    },
+    CategoryIconBox: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin : 10,
+        width : width * 0.13,
+        height : width * 0.13,
+    },
+    CategoryText : {
+        flex : 5,
     },
     ImageContent: {
         flex: 1,

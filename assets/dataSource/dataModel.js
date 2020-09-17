@@ -26,7 +26,7 @@ class DATA_SORUCE {
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify({ user_location : user_location })
+                body: JSON.stringify({ user_location: user_location })
             });
             var json = await response.json();
             if (response.ok) {
@@ -98,13 +98,31 @@ class DATA_SORUCE {
 
     GET_ITEMS_ON_KEYWORD = async (keyword) => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/item/search', {
+            var response = await fetch('http://192.168.0.40:8888/api/item/search/keyword', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
                 body: JSON.stringify({ keyword: keyword }),
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    GET_ITEMS_ON_CATEGORY = async (category_seq) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/search/category', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ category_seq: category_seq })
             });
             var json = await response.json();
             if (response.ok) {

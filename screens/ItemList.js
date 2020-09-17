@@ -17,7 +17,7 @@ import DATA_SOURCE from '../assets/dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
 function InviteScreen({ route, navigation }) {
-
+    const user_seq = route.params.user_seq;
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
