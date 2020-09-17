@@ -11,12 +11,19 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
+import AUTHENTICATION from '../assets/dataSource/authModel';
+
+import ProfileSetter from '../assets/components/ProfileSetter';
 
 const { width, height } = Dimensions.get('window');
 
 function MyinfoScreen({ route, navigation }) {
+    const [hasComp, isUserHasComp] = useState(false);
+    const [infos, setInformations] = useState(null);
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
@@ -33,21 +40,26 @@ function MyinfoScreen({ route, navigation }) {
         })
     }, []);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            const USER_CMP_CHECK = async () => {
+                var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
+                if (USER_INFOs.cmp_exist == 'Y')
+                    isUserHasComp(true);
+
+                setInformations(USER_INFOs);
+            }
+            USER_CMP_CHECK()
+        }, [])
+    );
+
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
                 <View style={styles.ProfileBox}>
-                    <View style={styles.ProfileContent}>
-                        <View style={styles.ProfileImageArea}>
-                            <Text>hi</Text>
-                        </View>
-                        <View style={styles.ProfileTextArea}>
-                            <Text>(주)이루와</Text>
-                            <Text>구로구 구로3동</Text>
-                        </View>
-                    </View>
+                    <ProfileSetter hasComp={hasComp} user={infos} />
                     <View style={styles.ProfileSettings}>
-                        <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() =>  navigation.navigate('Profile')}>
+                        <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() => navigation.navigate('Profile')}>
                             <Text>  개인정보수정  </Text>
                         </TouchableOpacity>
                     </View>
@@ -83,7 +95,7 @@ function MyinfoScreen({ route, navigation }) {
                             <Text>친구 초대</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.ContentArea} onPress={() =>  navigation.navigate('Notification')}>
+                    <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Notification')}>
                         <View style={styles.IconArea}>
                             <Icon name={'ios-notifications-outline'} size={36} />
                         </View>
@@ -132,29 +144,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        borderWidth : 0.8,
-        borderColor : 'rgba(238, 238, 238, 1)'
-    },
-    ProfileContent: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center'
-    },
-    ProfileImageArea: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width : width * 0.1,
-        height : width * 0.1,
-        borderRadius : 30,
-        margin : 10,
-        backgroundColor : 'rgba(238, 238, 238, 1)'
-    },
-    ProfileTextArea: {
-        flex: 3,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
+        borderWidth: 0.8,
+        borderColor: 'rgba(238, 238, 238, 1)'
     },
     ProfileSettings: {
         flex: 1,
@@ -163,7 +154,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     ProfilleSetBtn: {
-        margin : 10,
+        margin: 10,
         padding: 10,
         borderWidth: 1,
         borderRadius: 10,
@@ -201,9 +192,9 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         height: width * 0.15,
-        width : width,
-        borderWidth : 0.8,
-        borderColor : 'rgba(238, 238, 238, 1)'
+        width: width,
+        borderWidth: 0.8,
+        borderColor: 'rgba(238, 238, 238, 1)'
     },
     IconArea: {
         padding: 10,

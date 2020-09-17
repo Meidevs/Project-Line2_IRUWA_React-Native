@@ -155,6 +155,16 @@ class Directory {
             return false;
         }
     }
+
+    GET_PROFILE_IMAGE = async () => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var PROFILE_IMAGE = await FileSystem.readAsStringAsync(fileDirectory + 'ProfileImage');
+            return PROFILE_IMAGE;
+        } catch (err) {
+            return false;
+        }
+    }
 }
 
 
