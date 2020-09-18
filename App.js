@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BeforeLoginScreen from './screens/BeforeLogin';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
+import FindUserScreen from './screens/FindUser';
 import MainScreen from './screens/Main';
 import DetailScreen from './screens/Detail';
 import CateScreen from './screens/Category';
@@ -130,7 +131,12 @@ const CateStackScreens = () => {
     </CateStack.Navigator>
   )
 }
-
+const config = {
+  animation: 'timing',
+  config: {
+    duration: 1,
+  },
+};
 
 const MainStackScreens = () => {
   return (
@@ -140,6 +146,7 @@ const MainStackScreens = () => {
         component={MainScreen}
         options={{
           headerLeft: null,
+          gestureDirection: 'horizontal'
         }}
       />
       <MainStack.Screen
@@ -147,6 +154,10 @@ const MainStackScreens = () => {
         component={DetailScreen}
         options={{
           headerShown: false,
+          transitionSpec: {
+            open: config,
+            close: config,
+          },
         }}
       />
       <MainStack.Screen
@@ -245,6 +256,14 @@ const App = () => {
         <AuthStack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{
+            headerShown: true,
+            headerTransparent: true
+          }}
+        />
+        <AuthStack.Screen
+          name="FindUser"
+          component={FindUserScreen}
           options={{
             headerShown: true,
             headerTransparent: true

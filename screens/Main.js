@@ -8,6 +8,7 @@ import {
     Dimensions,
     VirtualizedList,
     SafeAreaView,
+    StatusBar
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -62,7 +63,7 @@ function MainScreen({ route, navigation }) {
     const [data, setData] = useState([]);
     const [user_location, setUserLocation] = useState('');
     const [user_seq, setUserSeq] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoad, setIsLoad] = useState(false);
     const [isError, setIsError] = useState(true);
     useEffect(() => {
         navigation.setOptions({
@@ -94,7 +95,7 @@ function MainScreen({ route, navigation }) {
                 } catch (err) {
                     setIsError(true);
                 }
-                setIsLoading(true);
+                setIsLoad(true);
             }
             GET_MAIN_INFOs();
         }, [user_location])
@@ -103,28 +104,45 @@ function MainScreen({ route, navigation }) {
     useEffect(() => {
         GLOBAL.SET_SOCKET_IO();
         GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
-    }, [user_seq])
-    return (
-        <SafeAreaView style={styles.Container}>
-            <View>
-                <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location')} activeOpacity={0.6}>
-                    <View style={styles.LocationBtn}>
-                        <Text style={styles.CurrentLocationTxt}>{user_location}</Text>
-                        <Icon name={'ios-arrow-dropdown-circle'} size={24} />
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <PremiumBanner data={user_location} navigation={navigation} />
-            <VirtualizedList
-                data={data}
-                initialNumToRender={10}
-                renderItem={({ item }) => <Item data={item} user={user_seq} navigation={navigation} />}
-                keyExtractor={(item, index) => JSON.stringify(index)}
-                getItemCount={getItemCount}
-                getItem={getItem}
-            />
-        </SafeAreaView>
-    )
+    }, [user_seq]);
+
+    if (isLoad) {
+        return (
+            <SafeAreaView style={styles.Container}>
+                <StatusBar
+                    barStyle="dark-content"
+                    // dark-content, light-content and default
+                    hidden={false}
+                    //To hide statusBar
+                    backgroundColor="rgba(0, 0, 0, 0)"
+                    //Background color of statusBar
+                    translucent={false}
+                    //allowing light, but not detailed shapes
+                    networkActivityIndicatorVisible={true}
+                />
+                <View>
+                    <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location')} activeOpacity={0.6}>
+                        <View style={styles.LocationBtn}>
+                            <Text style={styles.CurrentLocationTxt}>{user_location}</Text>
+                            <Icon name={'ios-arrow-dropdown-circle'} size={24} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                <PremiumBanner data={user_location} navigation={navigation} />
+                <VirtualizedList
+                    data={data}
+                    initialNumToRender={10}
+                    renderItem={({ item }) => <Item data={item} user={user_seq} navigation={navigation} />}
+                    keyExtractor={(item, index) => JSON.stringify(index)}
+                    getItemCount={getItemCount}
+                    getItem={getItem}
+                />
+            </SafeAreaView>
+        )
+    } else {
+        return null
+    }
+
 }
 
 const styles = StyleSheet.create({

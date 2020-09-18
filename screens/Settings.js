@@ -32,12 +32,12 @@ function SettingsScreen({ route, navigation }) {
         })
     }, []);
 
-    Logout = async () => {
+    const Logout = async () => {
         var LOGOUT = await AUTHENTICATION.LOGOUT();
         if (LOGOUT) {
-            navigation.popToTop('Login');
+            navigation.replace('BeforeLogin');
         } else {
-            alert('로그아웃에 실패하였습니다.')
+            alert('로그아웃에 실패하였습니다.');
         }
     }
 
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)'
     },
     MainContainer: {
-        borderBottomWidth : 1,
-        borderColor : 'rgba(220, 220, 220, 1)',
+        borderBottomWidth: 1,
+        borderColor: 'rgba(220, 220, 220, 1)',
         width: width,
         flexDirection: 'column',
         justifyContent: 'flex-start',
@@ -168,9 +168,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    TitleTxt : {
-        fontSize : 14,
-        color : 'rgba(70, 70, 70, 1)'
+    TitleTxt: {
+        fontSize: 14,
+        color: 'rgba(70, 70, 70, 1)'
     }
 })
 

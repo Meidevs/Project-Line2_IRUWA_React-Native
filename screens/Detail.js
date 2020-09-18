@@ -8,7 +8,8 @@ import {
     StyleSheet,
     Dimensions,
     Image,
-    StatusBar
+    StatusBar,
+    ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
@@ -17,7 +18,7 @@ import TimeGap from '../assets/components/TimeGap';
 import Carousel from '../assets/components/Carousel';
 import ContentCard from '../assets/components/Detail/ContentCard';
 import KeyGenerator from '../assets/components/KeyGenerator';
-
+import AdvertisementList from '../assets/components/Detail/AdvertisementList';
 const { width, height } = Dimensions.get('window');
 
 const _getHeaderBackgroundColor = (scrollY) => {
@@ -153,9 +154,11 @@ function DetailScreen({ route, navigation }) {
         time_avg: null,
         view_coount: null,
     });
+    const [isLoad, setIsLoad] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
     const user_seq = route.params.user_seq;
+
     useEffect(() => {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
@@ -186,6 +189,7 @@ function DetailScreen({ route, navigation }) {
                     view_count: ITEM_INFOs.VIEW_COUNT,
                 })
                 setOtherItem(ITEM_INFOs.NonSELECTED);
+                setIsLoad(true);
             } catch (err) {
                 console.log(err);
             }
@@ -215,128 +219,131 @@ function DetailScreen({ route, navigation }) {
         })
     }
     const InterestList = async () => {
-        console.log('items_seq', items_seq)
         await DATA_SOURCE.UPDATE_ITEM_PICK(items_seq);
 
         setItemInfos({
             ...itemInfos,
-            pick_status : !itemInfos.pick_status
+            pick_status: !itemInfos.pick_status
         })
     }
 
-    return (
-        <SafeAreaView style={styles.Container}>
-            <StatusBar />
-            <Animated.View
-                style={[styles.HeaderStyle, {
-                    backgroundColor: yColor,
-                    borderBottomWidth: 1,
-                    borderColor: ybColor
-                }]}>
-                <View style={styles.HeaderBackBtn}>
-                    <Icon name='ios-arrow-back' size={30} color={yiColor} onPress={() => navigation.navigate('Main')} />
-                </View>
-                <View style={styles.HeaderTitle}>
-                    <Text style={styles.HeaderTitleTxtStyle}>
-                        {yPosition > 300 ?
-                            itemInfos.item_title != null ?
-                                itemInfos.item_title : null
-                            : null}
-                    </Text>
-                </View>
-            </Animated.View>
-            <Animated.ScrollView style={styles.ScrollView}
-                overScrollMode={'never'}
-                scrollEventThrottle={26}
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    {
-                        useNativeDriver: false,
-                        listener: event => {
-                            setYposition(scrollHandle(event)),
-                                setIconColor(iconColorHandle(event))
-                        }
-                    }
-                )}>
-                <Carousel
-                    data={itemInfos.item_image_url}
-                    navigation={navigation}
+    const NavigationBack = () => {
+        setIsLoad(false);
+        navigation.goBack();
+    }
+
+    if (isLoad) {
+        return (
+            <SafeAreaView style={styles.Container}>
+                <StatusBar
+                    barStyle="dark-content"
+                    // dark-content, light-content and default
+                    hidden={false}
+                    //To hide statusBar
+                    backgroundColor="rgba(0, 0, 0, 0)"
+                    //Background color of statusBar
+                    translucent={false}
+                    //allowing light, but not detailed shapes
+                    networkActivityIndicatorVisible={true}
                 />
-                <View style={styles.ContentBox}>
-                    <View style={styles.SellerContent}>
-                        <View style={styles.SellerBox}>
-                            <Text>Image</Text>
-                            <View style={styles.SellerTxtBox}>
-                                <Text>{itemInfos.cmp_name}</Text>
-                                <Text>{itemInfos.cmp_location}</Text>
-                            </View>
-                        </View>
-                        <View style={styles.SellerInfoBox}>
-                            <Text>{itemInfos.time_avg}</Text>
-                        </View>
+                <Animated.View
+                    style={[styles.HeaderStyle, {
+                        backgroundColor: yColor,
+                        borderBottomWidth: 1,
+                        borderColor: ybColor
+                    }]}>
+                    <View style={styles.HeaderBackBtn}>
+                        <Icon name='ios-arrow-back' size={30} color={yiColor} onPress={() => NavigationBack()} />
                     </View>
-                    <ContentCard data={itemInfos} />
-                    <View style={styles.ItemBox}>
-                        <View style={styles.TitleBox}>
-                            <View style={styles.TitleBorder}>
-                                <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 광고 목록</Text>
-                            </View>
-                        </View>
-                        <View style={styles.ADSBox}>
-                            {
-                                itemsArray.map((data, index) => {
-                                    return (
-                                        <TouchableOpacity
-                                            style={styles.ADSContent}
-                                            key={data.items_seq}
-                                            onPress={() => navigation.replace('Detail', {
-                                                cmp_seq: itemInfos.cmp_seq,
-                                                items_seq: data.items_seq,
-                                                user_seq: itemInfos.user_seq
-                                            })}
-                                        >
-                                            <View style={styles.ImageArea}>
-                                                <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
-                                            </View>
-                                            <View style={styles.NameArea}>
-                                                <Text>{data.item_name}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    )
-                                })
+                    <View style={styles.HeaderTitle}>
+                        <Text style={styles.HeaderTitleTxtStyle}>
+                            {yPosition > 300 ?
+                                itemInfos.item_title != null ?
+                                    itemInfos.item_title : null
+                                : null}
+                        </Text>
+                    </View>
+                </Animated.View>
+                <Animated.ScrollView style={styles.ScrollView}
+                    overScrollMode={'never'}
+                    scrollEventThrottle={26}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                        {
+                            useNativeDriver: false,
+                            listener: event => {
+                                setYposition(scrollHandle(event)),
+                                    setIconColor(iconColorHandle(event))
                             }
+                        }
+                    )}>
+                    <Carousel
+                        data={itemInfos.item_image_url}
+                        navigation={navigation}
+                    />
+                    <View style={styles.ContentBox}>
+                        <View style={styles.SellerContent}>
+                            <View style={styles.SellerBox}>
+                                <Text>Image</Text>
+                                <View style={styles.SellerTxtBox}>
+                                    <Text>{itemInfos.cmp_name}</Text>
+                                    <Text>{itemInfos.cmp_location}</Text>
+                                </View>
+                            </View>
+                            <View style={styles.SellerInfoBox}>
+                                <Text>{itemInfos.time_avg}</Text>
+                            </View>
+                        </View>
+                        <ContentCard data={itemInfos} />
+                        <View style={styles.ItemBox}>
+                            <View style={styles.TitleBox}>
+                                <View style={styles.TitleBorder}>
+                                    <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 광고 목록</Text>
+                                </View>
+                            </View>
+                            <AdvertisementList data={itemInfos} list={itemsArray} navigation={navigation}/>
                         </View>
                     </View>
-                </View>
-            </Animated.ScrollView>
-            <View style={styles.ContentBtn}>
-                <TouchableOpacity
-                    style={styles.PickContent}
-                    onPress={() => InterestList()}
-                >
-                    {
-                        itemInfos.pick_status == true ?
-                            (<Icon name={'ios-heart-empty'} size={30} color={'red'} />) :
-                            (<Icon name={'ios-heart-empty'} size={30} />)
-                    }
-                </TouchableOpacity>
-                <View style={styles.ChatContent}>
+                </Animated.ScrollView>
+                <View style={styles.ContentBtn}>
                     <TouchableOpacity
-                        style={styles.ChatBtn}
-                        onPress={() => setNavigationParams()}
+                        style={styles.PickContent}
+                        onPress={() => InterestList()}
                     >
-                        <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
+                        {
+                            itemInfos.pick_status == true ?
+                                (<Icon name={'ios-heart-empty'} size={30} color={'red'} />) :
+                                (<Icon name={'ios-heart-empty'} size={30} />)
+                        }
                     </TouchableOpacity>
+                    <View style={styles.ChatContent}>
+                        <TouchableOpacity
+                            style={styles.ChatBtn}
+                            onPress={() => setNavigationParams()}
+                        >
+                            <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+            </SafeAreaView>
+        )
+    } else {
+        return (
+            <View style={styles.Loading}>
+                <ActivityIndicator
+                    animating={true} />
             </View>
-        </SafeAreaView>
-    )
-
-
-
+        )
+    }
 }
 
 const styles = StyleSheet.create({
+    Loading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 1)'
+    },
     Container: {
         flex: 1,
         backgroundColor: 'rgba(255, 255, 255, 1)',
@@ -467,37 +474,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 20,
     },
-    ADSBox: {
-        height: width,
-        flexWrap: 'wrap',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    ADSContent: {
-        padding: 5,
-        height: width * 0.4,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    ImageArea: {
-        flex: 3,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    NameArea: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    ItemsImages: {
-        margin: 5,
-        width: width * 0.30,
-        height: width * 0.30,
-        borderRadius: 5,
-        resizeMode: 'cover'
-    }
+    
 });
 
 export default DetailScreen;

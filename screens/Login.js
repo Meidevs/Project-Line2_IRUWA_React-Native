@@ -22,10 +22,12 @@ function LoginScreen({ navigation }) {
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
-                <View style={{padding : 25, marginTop : 50, flexDirection : 'column'}}>
-                    <Icon name={'arrowleft'} size={32} />
-                    <View style={{marginTop : height * 0.05}}>
-                        <Text style={{fontSize : 44, fontWeight : 'bold'}}>로그인</Text>
+                <View style={{ padding: 25, marginTop: 50, flexDirection: 'column' }}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name={'arrowleft'} size={32} />
+                    </TouchableOpacity>
+                    <View style={{ marginTop: height * 0.05 }}>
+                        <Text style={{ fontSize: 44, fontWeight: 'bold' }}>로그인</Text>
                     </View>
                 </View>
             ),

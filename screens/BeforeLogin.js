@@ -5,9 +5,9 @@ import {
     StyleSheet,
     Dimensions,
     ImageBackground,
+    TouchableOpacity,
     StatusBar
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,9 +27,9 @@ function BeforeLoginScreen({ navigation }) {
                 networkActivityIndicatorVisible={true}
             />
             <View style={styles.Container}>
-                <View style={styles.SearchUserArea}>
+                <TouchableOpacity style={styles.SearchUserArea} onPress={() => navigation.navigate('FindUser')}>
                     <Text style={styles.SearchUserTxt}>아이디 비밀번호 찾기</Text>
-                </View>
+                </TouchableOpacity>
                 <View style={styles.IntroTextArea}>
                     <View style={styles.IntroSub}>
                         <Text style={styles.IntroSubTxt}>주변에 어디에서 놀아야할지 모르겠다면?</Text>
@@ -94,45 +94,45 @@ const styles = StyleSheet.create({
         paddingLeft: 25,
         paddingBottom: 25,
     },
-    IntroTxt : {
-        fontSize : 36,
-        color : 'rgba(245, 245, 245, 1)',
-        fontWeight : 'bold'
+    IntroTxt: {
+        fontSize: 36,
+        color: 'rgba(245, 245, 245, 1)',
+        fontWeight: 'bold'
     },
     BtnArea: {
         flex: 2,
-        paddingRight : 25,
-        paddingLeft : 25,
-        flexDirection : 'column',
-        justifyContent : 'center',
-        alignItems : 'center'
+        paddingRight: 25,
+        paddingLeft: 25,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    LoginBtn : {
-        margin : 5,
-        padding : 20,
-        borderRadius : 10,
-        width : width * 0.8,
-        justifyContent : 'center',
-        alignItems : 'center',
-        backgroundColor : 'rgba(255, 255, 255, 1)'
+    LoginBtn: {
+        margin: 5,
+        padding: 20,
+        borderRadius: 10,
+        width: width * 0.8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 1)'
     },
-    LoginTxt : {
-        fontSize : 18,
-        color : 'rgba(21, 186, 193, 1)'
+    LoginTxt: {
+        fontSize: 18,
+        color: 'rgba(21, 186, 193, 1)'
     },
-    RegisterBtn : {
-        margin : 5,
-        padding : 20,
-        borderRadius : 10,
-        width : width * 0.8,
-        justifyContent : 'center',
-        alignItems : 'center',
-        borderColor : 'rgba(255, 255, 255, 1)',
-        borderWidth : 1,
+    RegisterBtn: {
+        margin: 5,
+        padding: 20,
+        borderRadius: 10,
+        width: width * 0.8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: 'rgba(255, 255, 255, 1)',
+        borderWidth: 1,
     },
-    RegisterTxt : {
-        fontSize : 18,
-        color : 'rgba(255, 255, 255, 1)'
+    RegisterTxt: {
+        fontSize: 18,
+        color: 'rgba(255, 255, 255, 1)'
     },
 })
 
