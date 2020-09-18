@@ -1,6 +1,5 @@
 class SEARCH_API {
     SAVE_PREV_SEARCH_LIST = async (data) => {
-        console.log('dadadad', data)
         try {
             var response = await fetch('http://192.168.0.40:8888/api/search/history/update', {
                 method: 'POST',

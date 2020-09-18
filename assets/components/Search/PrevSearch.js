@@ -49,9 +49,7 @@ const reducer = (state, action) => {
     }
 }
 const PrevSearch = ({ status, newData, callback }) => {
-    console.log('PrevSearch newData', newData)
     const [state, dispatch] = useReducer(reducer, initialState);
-
     const DELETE_PREV_SEARCH = async (keyword) => {
         try {
             var DELETE_RESPONSE = await SEARCH_API.DELETE_PREV_SEARCH_LIST(keyword);
@@ -91,17 +89,20 @@ const PrevSearch = ({ status, newData, callback }) => {
     useEffect(() => {
         if (newData) {
             const UPDATE_PREV_SEARCH = async () => {
-                console.log(newData);
-                var SAVE_RESPONSE = await SEARCH_API.SAVE_PREV_SEARCH_LIST(text);
+                var SAVE_RESPONSE = await SEARCH_API.SAVE_PREV_SEARCH_LIST(newData);
                 if (SAVE_RESPONSE.flags == 0) {
                     var obj = new Object();
-                    obj = text;
+                    obj = newData;
                     dispatch({ type: 'update', data: { keyword: obj } });
                 }
             }
             UPDATE_PREV_SEARCH();
         }
-    }, [newData])
+    }, [newData]);
+
+    const ReturnPrev = (keyword) => {
+        callback(keyword)
+    }
 
     if (status) {
         return (
@@ -117,10 +118,12 @@ const PrevSearch = ({ status, newData, callback }) => {
                         return (
                             <View style={styles.PrevContentList} key={JSON.stringify(index)}>
                                 <View style={styles.PrevContentLeft}>
-                                    <TouchableOpacity style={styles.PrevIconBack}>
+                                    <View style={styles.PrevIconBack} >
                                         <Icon name={'tago'} size={24} />
+                                    </View>
+                                    <TouchableOpacity style={styles.PrevContentName} onPress={() => ReturnPrev(data.keyword)}>
+                                        <Text>{data.keyword}</Text>
                                     </TouchableOpacity>
-                                    <Text>{data.keyword}</Text>
                                 </View>
                                 <TouchableOpacity style={styles.PrevCancel} onPress={() => DELETE_PREV_SEARCH(data.keyword)}>
                                     <Icon name={'close'} size={18} />
@@ -139,7 +142,7 @@ const PrevSearch = ({ status, newData, callback }) => {
 const styles = StyleSheet.create({
     PrevSearch: {
         position: 'absolute',
-        top: 0,
+        top: height * 0.1,
         left: 0,
         zIndex: 5,
         width: width,
@@ -176,6 +179,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    PrevContentName : {
+        width : width * 0.6
     },
     PrevCancel: {
         margin: 10,
