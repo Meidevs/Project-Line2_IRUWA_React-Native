@@ -249,8 +249,7 @@ const App = () => {
           name="Login"
           component={LoginScreen}
           options={{
-            headerShown: true,
-            headerTransparent: true
+            headerShown: false,
           }}
         />
         <AuthStack.Screen
