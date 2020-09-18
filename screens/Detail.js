@@ -17,6 +17,7 @@ import CHATTING from '../assets/dataSource/chatModel';
 import TimeGap from '../assets/components/TimeGap';
 import Carousel from '../assets/components/Carousel';
 import ContentCard from '../assets/components/Detail/ContentCard';
+import CouponCard from '../assets/components/Detail/CouponCard';
 import KeyGenerator from '../assets/components/KeyGenerator';
 import AdvertisementList from '../assets/components/Detail/AdvertisementList';
 const { width, height } = Dimensions.get('window');
@@ -154,6 +155,7 @@ function DetailScreen({ route, navigation }) {
         time_avg: null,
         view_coount: null,
     });
+    const [coupon, setCoupon] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
@@ -188,6 +190,7 @@ function DetailScreen({ route, navigation }) {
                     time_avg: ITEM_INFOs.TIME_AVG,
                     view_count: ITEM_INFOs.VIEW_COUNT,
                 })
+                setCoupon(ITEM_INFOs.COUPON);
                 setOtherItem(ITEM_INFOs.NonSELECTED);
                 setIsLoad(true);
             } catch (err) {
@@ -295,6 +298,7 @@ function DetailScreen({ route, navigation }) {
                             </View>
                         </View>
                         <ContentCard data={itemInfos} />
+                        <CouponCard data={coupon}/>
                         <View style={styles.ItemBox}>
                             <View style={styles.TitleBox}>
                                 <View style={styles.TitleBorder}>

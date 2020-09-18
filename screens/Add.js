@@ -93,7 +93,7 @@ function AddScreen({ route, navigation }) {
     const SaveImages = async () => {
         var formData = new FormData();
         formData.append('item_name', title);
-        formData.append('item_content', content);
+        formData.append('item_content', JSON.stringify(content));
         formData.append('ads_type', adsType);
         for (var i = 0; i < images.length; i++) {
             formData.append('image', {

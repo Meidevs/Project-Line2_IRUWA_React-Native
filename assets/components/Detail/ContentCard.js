@@ -23,7 +23,7 @@ const ContentCard = ({ data }) => {
                 </View>
             </View>
             <View style={styles.CardContent}>
-                <Text>{data.item_content}</Text>
+                <Text>{JSON.parse(data.item_content)}</Text>
             </View>
             <View style={styles.CardSubInfo}>
                 <Text>조회 {data.view_count}</Text>
