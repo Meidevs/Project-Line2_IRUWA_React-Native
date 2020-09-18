@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import * as ImageManipulator from "expo-image-manipulator";
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import { useScreens } from 'react-native-screens';
 
@@ -69,12 +70,18 @@ function AddScreen({ route, navigation }) {
                 quality: 1,
             });
 
+            var resizedImage = await ImageManipulator.manipulateAsync(
+                IMAGE_INFOs.uri,
+                [{ resize: { width: 400, height: 400 } }],
+                { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+            );
+            console.log('resizedImage', resizedImage)
             if (!IMAGE_INFOs.cancelled) {
                 setImage([
                     ...images,
                     {
                         id: 'images',
-                        uri: IMAGE_INFOs.uri
+                        uri: resizedImage.uri
                     }
                 ])
             }
@@ -91,6 +98,7 @@ function AddScreen({ route, navigation }) {
     }
 
     const SaveImages = async () => {
+
         var formData = new FormData();
         formData.append('item_name', title);
         formData.append('item_content', JSON.stringify(content));
