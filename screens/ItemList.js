@@ -17,7 +17,7 @@ import TimeGap from '../assets/components/TimeGap';
 import ModalBox from '../assets/components/Myinfo/ModalBox';
 const { width, height } = Dimensions.get('window');
 
-function InviteScreen({ route, navigation }) {
+function ItemListScreen({ route, navigation }) {
     const user_seq = route.params.user_seq;
     const cmp_seq = route.params.cmp_seq;
     const [items, setItems] = useState([]);
@@ -160,4 +160,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default InviteScreen;
+export default ItemListScreen;

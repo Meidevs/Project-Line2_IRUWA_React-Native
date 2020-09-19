@@ -65,16 +65,24 @@ function MyinfoScreen({ route, navigation }) {
                     </View>
                 </View>
                 <View style={styles.ContentBox}>
-                    <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('ItemList', {
+                    {
+                        hasComp == true ? (
+                            <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('ItemList', {
+                                user_seq: infos.user_seq,
+                                cmp_seq: infos.cmp_seq
+                            })}>
+                                <View style={styles.IconBox}>
+                                    <Icon name={'ios-list-box'} size={36} />
+                                </View>
+                                <Text>등록 목록</Text>
+                            </TouchableOpacity>
+                        ) : (
+                                null
+                            )
+                    }
+                    <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('PickList', {
                         user_seq: infos.user_seq,
-                        cmp_seq : infos.cmp_seq
                     })}>
-                        <View style={styles.IconBox}>
-                            <Icon name={'ios-list-box'} size={36} />
-                        </View>
-                        <Text>등록 목록</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.BtnContent}>
                         <View style={styles.IconBox}>
                             <Icon name={'ios-heart'} size={36} />
                         </View>
@@ -122,7 +130,7 @@ function MyinfoScreen({ route, navigation }) {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 

@@ -222,12 +222,17 @@ function DetailScreen({ route, navigation }) {
         })
     }
     const InterestList = async () => {
-        await DATA_SOURCE.UPDATE_ITEM_PICK(items_seq);
+        var RESULT = await DATA_SOURCE.UPDATE_ITEM_PICK(items_seq);
+        if (RESULT.flags !== 2) {
+            setItemInfos({
+                ...itemInfos,
+                pick_status: !itemInfos.pick_status
+            })
+            alert(RESULT.message);
+        } else {
+            alert(RESULT.message);
+        }
 
-        setItemInfos({
-            ...itemInfos,
-            pick_status: !itemInfos.pick_status
-        })
     }
 
     const NavigationBack = () => {
@@ -298,14 +303,14 @@ function DetailScreen({ route, navigation }) {
                             </View>
                         </View>
                         <ContentCard data={itemInfos} />
-                        <CouponCard data={coupon}/>
+                        <CouponCard data={coupon} />
                         <View style={styles.ItemBox}>
                             <View style={styles.TitleBox}>
                                 <View style={styles.TitleBorder}>
                                     <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 광고 목록</Text>
                                 </View>
                             </View>
-                            <AdvertisementList data={itemInfos} list={itemsArray} navigation={navigation}/>
+                            <AdvertisementList data={itemInfos} list={itemsArray} navigation={navigation} />
                         </View>
                     </View>
                 </Animated.ScrollView>
@@ -478,7 +483,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 20,
     },
-    
+
 });
 
 export default DetailScreen;
