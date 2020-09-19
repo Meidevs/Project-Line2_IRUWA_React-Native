@@ -46,6 +46,7 @@ function LoginScreen({ navigation }) {
     const keyboardDidShow = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
                 duration: e.duration,
                 toValue: e.endCoordinates.height,
             }),
@@ -54,6 +55,7 @@ function LoginScreen({ navigation }) {
     const keyboardDidHide = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
                 duration: e.duration,
                 toValue: 0,
             }),
@@ -75,7 +77,7 @@ function LoginScreen({ navigation }) {
     return (
         <Animated.View
             behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={[styles.Container,]}>
+            style={[styles.Container]}>
             <StatusBar
                 barStyle="dark-content"
                 // dark-content, light-content and default
@@ -87,7 +89,12 @@ function LoginScreen({ navigation }) {
                 //allowing light, but not detailed shapes
                 networkActivityIndicatorVisible={true}
             />
-            <Animated.View style={{ padding: 25, marginTop: 25, flexDirection: 'column', bottom: keyboardHeight }}>
+            <Animated.View style={{
+                padding: 25,
+                marginTop: 25,
+                flexDirection: 'column',
+                bottom: keyboardHeight,
+            }}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Icon name={'arrowleft'} size={32} />
                 </TouchableOpacity>

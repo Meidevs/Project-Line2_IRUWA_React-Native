@@ -19,7 +19,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import * as ImageManipulator from "expo-image-manipulator";
 import DATA_SOURCE from '../assets/dataSource/dataModel';
-import { useScreens } from 'react-native-screens';
 
 const { width, height } = Dimensions.get('window');
 
@@ -88,7 +87,6 @@ function AddScreen({ route, navigation }) {
         } catch (err) {
             console.log('Image Error', err);
         }
-
     }
 
     const DELETE_IMAGE = (arrayNumber) => {

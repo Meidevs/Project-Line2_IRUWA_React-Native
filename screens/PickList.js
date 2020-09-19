@@ -196,7 +196,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '600',
     },
-    TimeTxt: {},
     Icon: {
         flex: 1,
         flexDirection: 'row',

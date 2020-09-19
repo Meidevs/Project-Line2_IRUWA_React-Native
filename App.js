@@ -26,6 +26,7 @@ import CustomerServiceScreen from './screens/CustomerService';
 import ProfileScreen from './screens/Profile';
 import SettingsScreen from './screens/Settings';
 import ItemListScreen from './screens/ItemList';
+import EditScreen from './screens/Edit';
 import PickListScreen from './screens/PickList';
 import SearchUserScreen from './screens/SearchUser';
 
@@ -98,6 +99,10 @@ const MyinfoStackScreens = () => {
       <MyinfoStack.Screen
         name='ItemList'
         component={ItemListScreen}
+      />
+      <MyinfoStack.Screen
+        name='Edit'
+        component={EditScreen}
       />
       <MyinfoStack.Screen
         name='PickList'

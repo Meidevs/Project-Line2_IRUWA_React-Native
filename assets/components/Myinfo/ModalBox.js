@@ -10,7 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 const { width, height } = Dimensions.get('window');
 
-const ModalBox = ({ visible, callback }) => {
+const ModalBox = ({ data, visible, callback, navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
@@ -18,7 +18,18 @@ const ModalBox = ({ visible, callback }) => {
     }, [visible]);
 
     const _handleDismiss = () => {
+        console.log('a')
         callback(!modalVisible)
+    }
+    const goToEdit = () => {
+        callback(!modalVisible)
+        navigation.navigate('Edit', {
+            items_seq: data.items_seq,
+            item_name: data.item_name,
+            item_content: data.item_content,
+            uri: data.uri,
+            ads_type: data.ads_type
+        })
     }
     return (
         <Modal
@@ -31,34 +42,35 @@ const ModalBox = ({ visible, callback }) => {
                 style={styles.Overlay}
                 onTouchStart={() => _handleDismiss()}
             >
-                <View style={styles.ContentArea}>
-                    <TouchableOpacity style={styles.ContentForm}>
-                        <View style={styles.IconArea}>
-                            <Icon name={'edit'} size={28} color={'gray'} />
-                        </View>
-                        <View style={styles.ExplaArea}>
-                            <Text style={styles.ExplaTitleTxt}>
-                                수정
+            </View>
+
+            <View style={styles.ContentArea}>
+                <TouchableOpacity style={styles.ContentForm} onPress={() => goToEdit()}>
+                    <View style={styles.IconArea}>
+                        <Icon name={'edit'} size={28} color={'gray'} />
+                    </View>
+                    <View style={styles.ExplaArea}>
+                        <Text style={styles.ExplaTitleTxt}>
+                            수정
                             </Text>
-                            <Text style={styles.ExplaSubTxt}>
-                                게시물을 수정하려면 클릭해주세요
+                        <Text style={styles.ExplaSubTxt}>
+                            게시물을 수정하려면 클릭해주세요
                             </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.ContentForm}>
-                        <View style={styles.IconArea}>
-                            <Icon name={'delete'} size={28} color={'red'} />
-                        </View>
-                        <View style={styles.ExplaArea}>
-                            <Text style={styles.ExplaTitleTxt_delete}>
-                                삭제
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.ContentForm} onPress={() => DELETE_ITEM()}>
+                    <View style={styles.IconArea}>
+                        <Icon name={'delete'} size={28} color={'red'} />
+                    </View>
+                    <View style={styles.ExplaArea}>
+                        <Text style={styles.ExplaTitleTxt_delete}>
+                            삭제
                             </Text>
-                            <Text style={styles.ExplaSubTxt_delete}>
-                                게시물을 삭제하시겠습니까?
+                        <Text style={styles.ExplaSubTxt_delete}>
+                            게시물을 삭제하시겠습니까?
                             </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                </TouchableOpacity>
             </View>
         </Modal>
     )
@@ -66,8 +78,8 @@ const ModalBox = ({ visible, callback }) => {
 
 const styles = StyleSheet.create({
     Overlay: {
-        backgroundColor: 'rgba(0,0,0,0.2)',
         flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.2)',
         justifyContent: 'flex-end',
     },
     ContentArea: {
@@ -77,6 +89,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        borderBottomWidth: 0.6,
+        borderColor: 'rgba(235, 235, 235, 1)'
     },
     IconArea: {
         padding: 15,
