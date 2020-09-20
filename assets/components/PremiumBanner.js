@@ -12,43 +12,47 @@ import PremiumBannerItem from './PremiumBannerItem';
 import DATA_SOURCE from '../dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
-let flatList;
-function infiniteScroll(dataList) {
-    const numberOfData = dataList.length;
-    let scrollValue = 0, scrolled = 0;
-
-    setInterval(() => {
-        scrolled++;
-        if (scrolled < numberOfData) scrollValue = scrollValue + width;
-
-        else {
-            scrollValue = 0;
-            scrolled = 0;
-        }
-        this.flatList.scrollToOffset({ animated: true, offset : scrollValue });
-    }, 3000)
-}
 
 const PremiumBanner = ({ data, navigation }) => {
     const [items, setPremiumItems] = useState();
+    const componentFlat = useRef(null)
     const scrollX = new Animated.Value(0);
     let position = Animated.divide(scrollX, width);
-    useFocusEffect(
-        React.useCallback(() => {
-            const PREMIUM_ITEMS = async () => {
-                var PREMIUM_LIST = await DATA_SOURCE.GET_PREMIUM_ITEMS(data);
-                setPremiumItems(PREMIUM_LIST.data);
-            }
-            PREMIUM_ITEMS();
-        }, [data])
-    );
+
+    useEffect(() => {
+        const PREMIUM_ITEMS = async () => {
+            var PREMIUM_LIST = await DATA_SOURCE.GET_PREMIUM_ITEMS(data);
+            setPremiumItems(PREMIUM_LIST.data);
+        }
+        PREMIUM_ITEMS();
+    }, [data])
+
+
+
+    useEffect(() => {
+        if (items && items.length > 0) {
+            const numberOfData = items.length;
+            let scrollValue = 0, scrolled = 0;
+            var interval = setInterval(() => {
+                scrolled++;
+                if (scrolled < numberOfData) scrollValue = scrollValue + width;
+
+                else {
+                    scrollValue = 0;
+                    scrolled = 0;
+                }
+                componentFlat.current.scrollToOffset({ animated: true, offset: scrollValue });
+            }, 3000)
+            return () => clearInterval(interval)
+        }
+    }, [items])
 
     if (items && items.length > 0) {
-        infiniteScroll(items)
         return (
             <View>
-                <FlatList data={items}
-                    ref={(flatList) => { this.flatList = flatList }}
+                <FlatList
+                    data={items}
+                    ref={(flatList) => componentFlat.current = flatList}
                     keyExtractor={(item, index) => 'key' + index.toString()}
                     horizontal
                     pagingEnabled
@@ -58,7 +62,7 @@ const PremiumBanner = ({ data, navigation }) => {
                     decelerationRate={'fast'}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item, index }) => {
-                        return <PremiumBannerItem item={item} navigation={navigation}/>
+                        return <PremiumBannerItem item={item} navigation={navigation} />
                     }}
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { x: scrollX } } }],

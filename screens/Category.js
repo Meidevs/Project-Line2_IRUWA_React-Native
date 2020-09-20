@@ -74,7 +74,7 @@ function CategoryScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(238, 238, 238, 1)'
+        backgroundColor: 'rgba(255, 255, 255, 1)'
     },
     TitleHeader: {
         flexDirection: 'column',
@@ -99,27 +99,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     CategoryBox: {
-        padding: 10,
+        padding : 10,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     TitleContent: {
-        paddingTop: 5,
-        paddingBottom: 5,
+        width : width,
+        padding: 5,
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     TitleTxtStyle: {
         fontSize: 18,
         fontWeight: 'bold'
-    },
-    CategoryContent: {
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start'
     },
     CategoryBtnBox: {
         height: height * 0.13,
@@ -146,21 +141,6 @@ const styles = StyleSheet.create({
         width : width * 0.13,
         height : width * 0.13,
     },
-    CategoryText : {
-        flex : 5,
-    },
-    ImageContent: {
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
-    },
-    TxtContent: {
-        flex: 6,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
-    }
 })
 
 export default CategoryScreen;

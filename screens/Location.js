@@ -10,12 +10,14 @@ import {
     AsyncStorage,
     ScrollView,
     SafeAreaView,
-    StatusBar
+    StatusBar, Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import AddressSearchBox from '../assets/components/AddressSearchBox';
+import Constants from "expo-constants";
+import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
@@ -35,6 +37,8 @@ const prevLocationExistence = async (location) => {
     return preArray.includes(location);
 }
 
+
+
 function LocationScreen({ navigation }) {
     const scrollY = useRef(new Animated.Value(0)).current;
     const [keys, setAllKeys] = useState([]);
@@ -52,6 +56,15 @@ function LocationScreen({ navigation }) {
                 setErrorMsg('Permission to access location was denied');
             }
         }, []);
+        const getLocationAsync = async () => {
+            if (Constants.platform.ios || Constants.platform.android) {
+                const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+                console.log('permissions', permissions)
+                if (status !== 'granted') {
+                    throw new Error('CAMERA_ROLL permission not granted');
+                }
+            }
+        }
         const GET_ALL_KEYS = async () => {
             const allKeys = await AsyncStorage.getAllKeys();
             var filtered = allKeys.filter(key => key != "@my_Key");
@@ -65,6 +78,7 @@ function LocationScreen({ navigation }) {
             var response = await ROADAPI.GET_CURRENT_LOCATION(position);
             setUserLocation(response);
         };
+        getLocationAsync();
         GET_ALL_KEYS();
         GET_CURRENT_LOCATION();
         setIsLoading(true);
@@ -186,7 +200,7 @@ function LocationScreen({ navigation }) {
                         <View style={styles.SearchInput}>
                             <TextInput
                                 value={location}
-                                placeholder={'예) 배민동'}
+                                placeholder={'예) 이루와동'}
                                 placeholderTextColor='#B4B4B4'
                                 onChangeText={(text) => setLocation(text)}
                             />
@@ -252,7 +266,8 @@ const styles = StyleSheet.create({
         height: height * 0.06,
         flexDirection: 'column',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        paddingTop: Platform.OS == 'ios' ? StatusBar.currentHeight : 0,
     },
     HeaderContent: {
         flex: 1,

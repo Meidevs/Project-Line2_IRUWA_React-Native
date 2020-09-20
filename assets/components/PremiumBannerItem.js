@@ -26,7 +26,12 @@ const PremiumBannerItem = ({ item, navigation }) => {
                             <Text style={styles.TitleTxt}>{item.item_name}</Text>
                         </View>
                         <View style={styles.PremiumContent}>
-                            <Text style={styles.ContentTxt}>{item.item_content}</Text>
+                            <Text style={styles.ContentTxt}>
+                                {
+                            JSON.parse(item.item_content).length > 18 ? 
+                            JSON.parse(item.item_content).substring(0,18) + '...' :
+                            JSON.parse(item.item_content)
+                            }</Text>
                         </View>
                     </View>
                 </ImageBackground>

@@ -11,6 +11,8 @@ import {
     VirtualizedList,
     Modal
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 import Icon from 'react-native-vector-icons/Entypo';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import TimeGap from '../assets/components/TimeGap';
@@ -40,14 +42,16 @@ function ItemListScreen({ route, navigation }) {
         })
     }, []);
 
-    useEffect(() => {
-        const GET_MYLIST = async () => {
-            var MYLIST = await DATA_SOURCE.GET_MY_ITEMS(cmp_seq);
-            setItems(MYLIST.content);
-            setIsLoad(true)
-        }
-        GET_MYLIST();
-    }, [user_seq]);
+    useFocusEffect(
+        React.useCallback(() => {
+            const GET_MYLIST = async () => {
+                var MYLIST = await DATA_SOURCE.GET_MY_ITEMS(cmp_seq);
+                setItems(MYLIST.content);
+                setIsLoad(true)
+            }
+            GET_MYLIST();
+        }, [user_seq])
+    );
 
     const setStatus = (data) => {
         setEdit({
@@ -58,7 +62,6 @@ function ItemListScreen({ route, navigation }) {
             ads_type: data.ads_type
         });
         setIsModal(true);
-
     }
 
     const callback = (ChildFrom) => {

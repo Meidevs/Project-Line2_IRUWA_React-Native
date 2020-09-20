@@ -35,7 +35,10 @@ function SettingsScreen({ route, navigation }) {
     const Logout = async () => {
         var LOGOUT = await AUTHENTICATION.LOGOUT();
         if (LOGOUT) {
-            navigation.replace('BeforeLogin');
+            navigation.reset({
+                index : 0,
+                routes:[{name : 'BeforeLogin'}]
+            });
         } else {
             alert('로그아웃에 실패하였습니다.');
         }

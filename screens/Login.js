@@ -8,7 +8,7 @@ import {
     StyleSheet,
     Dimensions,
     Animated,
-    Keyboard
+    Keyboard, Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import AUTHENTICATION from '../assets/dataSource/authModel';
@@ -75,9 +75,9 @@ function LoginScreen({ navigation }) {
     }
 
     return (
-        <Animated.View
+        <View
             behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={[styles.Container]}>
+            style={styles.Container}>
             <StatusBar
                 barStyle="dark-content"
                 // dark-content, light-content and default
@@ -89,69 +89,73 @@ function LoginScreen({ navigation }) {
                 //allowing light, but not detailed shapes
                 networkActivityIndicatorVisible={true}
             />
-            <Animated.View style={{
-                padding: 25,
-                marginTop: 25,
-                flexDirection: 'column',
-                bottom: keyboardHeight,
-            }}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Icon name={'arrowleft'} size={32} />
-                </TouchableOpacity>
-                <View style={{ marginTop: height * 0.05 }}>
-                    <Text style={{ fontSize: 44, fontWeight: 'bold' }}>로그인</Text>
+            <Animated.View style={{ flex : 1, bottom: Platform.OS == 'ios' ? keyboardHeight : keyboardHeight, }}>
+                <View style={styles.HeaderStyle}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name={'arrowleft'} size={32} />
+                    </TouchableOpacity>
+                    <View style={{ marginTop: height * 0.05 }}>
+                        <Text style={{ fontSize: 44, fontWeight: 'bold' }}>로그인</Text>
+                    </View>
+                </View>
+                <View style={styles.MainContainer}>
+                    <View style={styles.MainForm}>
+                        <View style={styles.MainTitle}>
+                            <Text style={styles.TitleTxt}>아이디</Text>
+                        </View>
+                        <View style={styles.InputForm}>
+                            <TextInput
+                                value={user_id}
+                                placeholderTextColor={'rgba(140, 140, 140, 1)'}
+                                placeholder={'아이디를 입력해주세요'}
+                                style={styles.Input}
+                                onChangeText={text => setUserid(text)}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.MainForm}>
+                        <View style={styles.MainTitle}>
+                            <Text style={styles.TitleTxt}>비밀번호</Text>
+                        </View>
+                        <View style={styles.InputForm}>
+                            <TextInput
+                                placeholderTextColor={'rgba(140, 140, 140, 1)'}
+                                value={user_pw}
+                                placeholder={'비밀번호를 입력해주세요'}
+                                style={styles.Input}
+                                onChangeText={text => setUserpw(text)}
+                                secureTextEntry={true}
+                            />
+                        </View>
+                    </View>
                 </View>
             </Animated.View>
-            <View style={styles.MainContainer}>
-                <View style={styles.MainForm}>
-                    <View style={styles.MainTitle}>
-                        <Text style={styles.TitleTxt}>아이디</Text>
-                    </View>
-                    <View style={styles.InputForm}>
-                        <TextInput
-                            value={user_id}
-                            placeholderTextColor={'rgba(140, 140, 140, 1)'}
-                            placeholder={'아이디를 입력해주세요'}
-                            style={styles.Input}
-                            onChangeText={text => setUserid(text)}
-                        />
-                    </View>
-                </View>
-                <View style={styles.MainForm}>
-                    <View style={styles.MainTitle}>
-                        <Text style={styles.TitleTxt}>비밀번호</Text>
-                    </View>
-                    <View style={styles.InputForm}>
-                        <TextInput
-                            placeholderTextColor={'rgba(140, 140, 140, 1)'}
-                            value={user_pw}
-                            placeholder={'비밀번호를 입력해주세요'}
-                            style={styles.Input}
-                            onChangeText={text => setUserpw(text)}
-                            secureTextEntry={true}
-                        />
-                    </View>
-                </View>
-            </View>
             <View style={styles.BtnContainer}>
                 <TouchableOpacity style={styles.LoginBtnForm} onPress={() => Login()}>
                     <Text style={styles.LoginBtnTxt}>로그인</Text>
                 </TouchableOpacity>
             </View>
-        </Animated.View >
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     Container: {
-        flex: 1,
+        width : width,
+        height : height,
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
-    MainContainer: {
-        flex: 9,
+    HeaderStyle: {
+        flex : 1,
+        padding: 25,
+        marginTop: 25,
         flexDirection: 'column',
-        alignItems: 'center',
+    },
+    MainContainer: {
+        flex: 1,
+        flexDirection: 'column',
         justifyContent: 'flex-end',
+        alignItems : 'center'
     },
     MainForm: {
         width: width,
@@ -179,7 +183,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     BtnContainer: {
-        flex: 1.3,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-end',

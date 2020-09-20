@@ -7,8 +7,9 @@ import {
     TouchableOpacity,
     Dimensions
 } from 'react-native';
-
+import Icon from 'react-native-vector-icons/AntDesign';
 import DATA_SOURCE from '../../dataSource/dataModel';
+const { width, height } = Dimensions.get('window');
 
 const getItem = (data, index) => {
     const items = data[index];
@@ -24,14 +25,47 @@ const getItemCount = (data) => {
 
 const Item = ({ data, navigation }) => {
     return (
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('CateList', {
-            category_name : data.category_name,
-            category_seq : data.category_seq,
+        <TouchableOpacity style={styles.CategoryBox} onPress={() => navigation.navigate('CateList', {
+            category_name: data.category_name,
+            category_seq: data.category_seq,
         })}>
-            <Text style={styles.title}>{data.category_name}</Text>
+            <View style={styles.IconArea}>
+                <View style={styles.IconAround}>
+                    <Icon name={'hearto'} size={28} color={'rgba(255, 255, 255, 1)'} />
+                </View>
+            </View>
+            <View style={styles.ContentArea}>
+                <View>
+                    <Text>{data.category_name}</Text>
+                </View>
+                <View>
+
+                </View>
+            </View>
         </TouchableOpacity>
     );
 }
+
+{/* <View style={styles.DownerContent}>
+    <View style={styles.ImageArea}>
+        <Image source={{ uri: data.uri[0] }}
+            borderRadius={15}
+            style={styles.Image}
+        />
+    </View>
+    <View style={styles.ContentArea}>
+        <View style={styles.ContentInfo}>
+            <Text style={styles.ItemNameTxt}>{data.item_name}</Text>
+        </View>
+        <View style={styles.ContentInfo}>
+            <Text>{content}</Text>
+        </View>
+        <View style={styles.ContentInfo}>
+            <Text style={styles.UploadTimeTxt}>{timegap}</Text>
+        </View>
+    </View>
+</View> */}
+
 
 const CategoryListUp = ({ navigation }) => {
     const [categories, setCategories] = useState([]);
@@ -50,7 +84,7 @@ const CategoryListUp = ({ navigation }) => {
             <VirtualizedList
                 data={categories}
                 initialNumToRender={10}
-                renderItem={({ item }) => <Item data={item} navigation={navigation}/>}
+                renderItem={({ item }) => <Item data={item} navigation={navigation} />}
                 keyExtractor={item => item.category_seq}
                 getItemCount={getItemCount}
                 getItem={getItem}
@@ -60,7 +94,32 @@ const CategoryListUp = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-
+    CategoryBox: {
+        width: width,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        borderBottomWidth: 1,
+        borderColor: 'rgba(235, 235, 235, 1)',
+    },
+    IconArea: {
+        flex: 1,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    IconAround: {
+        padding: 10,
+        borderRadius: 30,
+        backgroundColor: 'rgba(21, 186, 193, 1)',
+    },
+    ContentArea: {
+        flex: 4,
+        padding: 20,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+    },
 })
 
 

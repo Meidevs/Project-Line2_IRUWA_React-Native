@@ -11,6 +11,7 @@ import {
     Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import DATA_SOURCE from '../assets/dataSource/dataModel';
 import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -37,15 +38,46 @@ function EditScreen({ route, navigation }) {
     const [itemName, setItemName] = useState(null);
     const [itemContent, setItemContent] = useState(null);
     const [adsType, setItemAds] = useState(ads_type);
-    const [itemUri, setItemUri] = useState(uri);
-    console.log(itemUri);
+    const [itemUri, setItemUri] = useState([]);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: () => (
+                <View style={styles.TitleHeader}>
+                    <Text style={styles.TitleHeaderTxtStyle}>업체 글쓰기</Text>
+                </View>
+            ),
+            headerRight: () => (
+                <TouchableOpacity style={styles.RightHeader} onPress={() => SaveImages()}>
+                    <Text style={styles.TitleHeaderTxtStyle}>완료</Text>
+                </TouchableOpacity>
+            )
+        })
+    }, [items_seq, itemName, itemContent, itemUri, adsType]);
 
     useEffect(() => {
         const REQUEST_PERMISSIONS = async () => {
             await getImageRollAsync();
         }
+
+        const SET_IMAGE = async () => {
+            var rawArray = new Array();
+            for (var i = 0; i < uri.length; i++) {
+                var resizedImage = await ImageManipulator.manipulateAsync(
+                    uri[i],
+                    [{ resize: { width: 400, height: 400 } }],
+                    { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+                );
+                rawArray.push({
+                    id: 'images',
+                    uri: resizedImage.uri
+                })
+            }
+            setItemUri(rawArray);
+        }
+        SET_IMAGE();
         REQUEST_PERMISSIONS();
-    }, []);
+    }, [uri]);
 
     const IMAGE_PICKER = async () => {
         try {
@@ -79,6 +111,36 @@ function EditScreen({ route, navigation }) {
         setItemUri([
             ...itemUri.slice(0, arrayNumber), ...itemUri.slice(arrayNumber + 1, itemUri.length)
         ])
+    }
+
+    const SaveImages = async () => {
+
+        var formData = new FormData();
+        formData.append('items_seq', items_seq);
+        formData.append('item_name', itemName);
+        formData.append('item_content', JSON.stringify(itemContent));
+        formData.append('ads_type', adsType);
+        if (itemUri.length <= 0) return alert('이미지는 한가지 이상 등록해주세요.');
+        
+        for (var i = 0; i < itemUri.length; i++) {
+            formData.append('image', {
+                uri: itemUri[i].uri,
+                type: 'image/jpeg',
+                name: itemUri[i].id,
+            })
+        }
+        try {
+            var SAVE_RESULT = await DATA_SOURCE.UPDATE_IMAGE(formData);
+            if (SAVE_RESULT.flags == 0) {
+                navigation.goBack();
+                alert(SAVE_RESULT.message);
+            } else {
+                alert(SAVE_RESULT.message);
+            }
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
@@ -134,7 +196,7 @@ function EditScreen({ route, navigation }) {
                                         <View style={styles.DeleteIcon}>
                                             <Icon name={'ios-close'} size={20} />
                                         </View>
-                                        <Image source={{ uri: data }} resizeMode='cover' style={styles.ImageListForm} />
+                                        <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
                                     </TouchableOpacity>
                                 )
                             })
@@ -152,6 +214,20 @@ const styles = StyleSheet.create({
     },
     ScrollView: {
         width: width,
+    },
+    TitleHeader: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center'
+    },
+    TitleHeaderTxtStyle: {
+        fontWeight: 'bold',
+        fontSize: 18
+    },
+    RightHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
     },
     ShowAdsType: {
         padding: 15,
