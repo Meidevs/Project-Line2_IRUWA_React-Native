@@ -17,8 +17,6 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ProfileSetter from '../assets/components/ProfileSetter';
-import Directory from '../assets/components/Directory';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,6 +40,18 @@ function MyinfoScreen({ route, navigation }) {
         })
     }, []);
 
+    useEffect(() => {
+        if (infos) {
+            const GET_USER_PROFILE = async () => {
+                var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE();
+                if (PROFILE_IMAGE.flags == 0) {
+                    setUserProfileUri(PROFILE_IMAGE.message);
+                }
+            }
+            GET_USER_PROFILE();
+        }
+    }, [infos]);
+
     useFocusEffect(
         React.useCallback(() => {
             const USER_CMP_CHECK = async () => {
@@ -50,13 +60,6 @@ function MyinfoScreen({ route, navigation }) {
                     isUserHasComp(true);
                 setInformations(USER_INFOs);
             }
-            const GET_USER_PROFILE = async () => {
-                var USER_PROFILE_IMAGE = await Directory.GET_USER_PROFILE_URI();
-                if (USER_PROFILE_IMAGE) {
-                    setUserProfileUri(USER_PROFILE_IMAGE);
-                }
-            }
-            GET_USER_PROFILE();
             USER_CMP_CHECK();
         }, [])
     );

@@ -166,24 +166,25 @@ class Directory {
         }
     }
 
-    GET_USER_PROFILE_URI = async () => {
+    GET_USER_PROFILE_URI = async (data) => {
+        console.log(data)
         try {
             var fileDirectory = await FileSystem.documentDirectory;
-            var PROFILE_IMAGE = await FileSystem.readAsStringAsync(fileDirectory + 'USER_PROFILE');
+            var PROFILE_IMAGE = await FileSystem.readAsStringAsync(fileDirectory + data);
             return PROFILE_IMAGE;
         } catch (err) {
             return false;
         }
     }
-    SET_USER_PROFILE_URI = async (data) => {
+    SET_USER_PROFILE_URI = async (user_name, data) => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
-            var EXISTENCE = await FileSystem.getInfoAsync(fileDirectory + 'USER_PROFILE');
+            var EXISTENCE = await FileSystem.getInfoAsync(fileDirectory + user_name);
             if (EXISTENCE.exists) {
-                await FileSystem.deleteAsync(fileDirectory + 'USER_PROFILE');
-                await FileSystem.writeAsStringAsync(fileDirectory + 'USER_PROFILE', data);
+                await FileSystem.deleteAsync(fileDirectory + user_name);
+                await FileSystem.writeAsStringAsync(fileDirectory + user_name, data);
             } else {
-                await FileSystem.writeAsStringAsync(fileDirectory + 'USER_PROFILE', data);
+                await FileSystem.writeAsStringAsync(fileDirectory + user_name, data);
             }
         } catch (err) {
             return false;

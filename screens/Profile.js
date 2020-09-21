@@ -16,8 +16,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import * as ImageManipulator from "expo-image-manipulator";
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import Directory from '../assets/components/Directory';
-import dataModel from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
 
@@ -50,15 +48,14 @@ function ProfileScreen({ route, navigation }) {
 
     useEffect(() => {
         const GET_PROFILE_IMAGE = async () => {
-            var USER_PROFILE_URI = await Directory.GET_USER_PROFILE_URI();
-            if (USER_PROFILE_URI) {
-                setProfileImage({ uri: USER_PROFILE_URI });
+            var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE();
+            if (PROFILE_IMAGE.flags == 0) {
+                setProfileImage({uri : PROFILE_IMAGE.message});
             }
             setIsLoad(true);
-
         }
         GET_PROFILE_IMAGE();
-    }, [])
+    }, [route])
 
     const IMAGE_PICKER = async () => {
         try {
@@ -77,7 +74,6 @@ function ProfileScreen({ route, navigation }) {
             );
 
             //Save User Profile Image to Local.
-            await Directory.SET_USER_PROFILE_URI(resizedImage.uri);
             var formData = new FormData();
             formData.append('image', {
                 uri: resizedImage.uri,

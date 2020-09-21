@@ -12,6 +12,8 @@ import {
     ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MapView from 'react-native-maps';
+
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import CHATTING from '../assets/dataSource/chatModel';
 import TimeGap from '../assets/components/TimeGap';
@@ -143,6 +145,7 @@ function DetailScreen({ route, navigation }) {
     const [yPosition, setYposition] = useState(null);
     const [itemsArray, setOtherItem] = useState([]);
     const [itemInfos, setItemInfos] = useState({
+        user_profile: null,
         item_title: null,
         item_image_url: [],
         cmp_seq: null,
@@ -173,10 +176,12 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
+                console.log(ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
                     user_seq: user_seq,
+                    user_profile: ITEM_INFOs.CMP_INFOs.profile_uri,
                     items_seq: data.items_seq,
                     item_image_url: data.uri,
                     item_title: data.item_name,
@@ -290,20 +295,37 @@ function DetailScreen({ route, navigation }) {
                         navigation={navigation}
                     />
                     <View style={styles.ContentBox}>
-                        <View style={styles.SellerContent}>
-                            <View style={styles.SellerBox}>
-                                <Text>Image</Text>
-                                <View style={styles.SellerTxtBox}>
-                                    <Text>{itemInfos.cmp_name}</Text>
-                                    <Text>{itemInfos.cmp_location}</Text>
-                                </View>
+                        <View style={styles.ProfileContent}>
+                            <View style={styles.ProfileImageArea}>
+                                {
+                                    itemInfos.user_profile == null ? (
+                                        <Imgage source={require('../assets/images/defaultProfile.png')}
+                                            borderRadius={70}
+                                            resizeMode={'contain'}
+                                            style={{ width: width * 0.1, height: width * 0.1 }}
+                                        />
+                                    ) : (
+                                            <Image source={{ uri: itemInfos.user_profile }}
+                                                borderRadius={70}
+                                                resizeMode={'contain'}
+                                                style={{ width: width * 0.1, height: width * 0.1 }}
+                                            />
+                                        )
+                                }
                             </View>
-                            <View style={styles.SellerInfoBox}>
+                            <View style={styles.ProfileTextArea}>
+                                <Text>{itemInfos.cmp_name}</Text>
+                                <Text>{itemInfos.cmp_location}</Text>
+                            </View>
+                            <View style={styles.ProfileInfoBox}>
                                 <Text>{itemInfos.time_avg}</Text>
                             </View>
                         </View>
                         <ContentCard data={itemInfos} />
                         <CouponCard data={coupon} />
+                        <MapView
+
+                        />
                         <View style={styles.ItemBox}>
                             <View style={styles.TitleBox}>
                                 <View style={styles.TitleBorder}>
@@ -390,32 +412,31 @@ const styles = StyleSheet.create({
     },
     ScrollView: {
     },
-
     ContentBox: {
         flexDirection: 'column',
         alignItems: 'center',
-        marginBottom: height * 0.07,
-        paddingRight: 10,
-        paddingLeft: 10,
+        padding: 10,
     },
-    SellerContent: {
-        width: width * 0.9,
-        height: height * 0.10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: 'rgba(238, 238, 238, 1)'
-    },
-    SellerBox: {
+    ProfileContent: {
         flex: 1,
         flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
+    ProfileImageArea: {
+        justifyContent: 'center',
         alignItems: 'center',
+        margin: 10,
     },
-    SellerTxtBox: {
+    ProfileTextArea: {
+        flex: 3,
         flexDirection: 'column',
-        padding: 15
+        alignItems: 'flex-start',
+        justifyContent: 'center'
     },
-    SellerInfoBox: {
+    ProfileInfoBox: {
+        flex : 1,
+        padding : 10,
         flexDirection: 'row',
         justifyContent: 'flex-end'
     },

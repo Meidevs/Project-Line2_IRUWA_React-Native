@@ -70,6 +70,7 @@ function ChatListScreen({ route, navigation }) {
     useEffect(() => {
         var socket = GLOBAL.GET_SOCKET_IO();
         socket.on('receiveMessage', message => {
+            console.log(message)
             socket.emit('prevMessage', currentUser);
         })
         socket.on('prevMessage', message => {

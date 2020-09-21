@@ -114,6 +114,24 @@ class AUTHENTICATION {
         }
     }
 
+    GET_USER_PROFILE = async () => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/auth/userprofile', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     SAVE_PROFILE_IMAGE = async (formData) => {
         try {
             var response = await fetch('http://192.168.0.40:8888/api/auth/profileimage', {
