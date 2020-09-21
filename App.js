@@ -58,7 +58,7 @@ const LocationStackScreens = () => {
         name='Location'
         component={LocationScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
         }}
       />
     </LocationStack.Navigator>

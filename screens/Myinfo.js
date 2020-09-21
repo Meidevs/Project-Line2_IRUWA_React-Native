@@ -13,16 +13,18 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/AntDesign';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-
 import ProfileSetter from '../assets/components/ProfileSetter';
+import Directory from '../assets/components/Directory';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
 function MyinfoScreen({ route, navigation }) {
     const [hasComp, isUserHasComp] = useState(false);
+    const [userProfileUri, setUserProfileUri] = useState(null);
     const [infos, setInformations] = useState(null);
     useEffect(() => {
         navigation.setOptions({
@@ -34,7 +36,7 @@ function MyinfoScreen({ route, navigation }) {
             ),
             headerRight: () => (
                 <TouchableOpacity style={styles.SettingHeader} onPress={() => navigation.navigate('Settings')}>
-                    <Icon name={'ios-settings'} size={28} />
+                    <Icon name={'setting'} size={28} />
                 </TouchableOpacity>
             )
         })
@@ -46,10 +48,16 @@ function MyinfoScreen({ route, navigation }) {
                 var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
                 if (USER_INFOs.cmp_exist == 'Y')
                     isUserHasComp(true);
-
                 setInformations(USER_INFOs);
             }
-            USER_CMP_CHECK()
+            const GET_USER_PROFILE = async () => {
+                var USER_PROFILE_IMAGE = await Directory.GET_USER_PROFILE_URI();
+                if (USER_PROFILE_IMAGE) {
+                    setUserProfileUri(USER_PROFILE_IMAGE);
+                }
+            }
+            GET_USER_PROFILE();
+            USER_CMP_CHECK();
         }, [])
     );
 
@@ -57,7 +65,7 @@ function MyinfoScreen({ route, navigation }) {
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
                 <View style={styles.ProfileBox}>
-                    <ProfileSetter hasComp={hasComp} user={infos} />
+                    <ProfileSetter hasComp={hasComp} user={infos} profile={userProfileUri} />
                     <View style={styles.ProfileSettings}>
                         <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() => navigation.navigate('Profile')}>
                             <Text>  개인정보수정  </Text>
@@ -72,7 +80,7 @@ function MyinfoScreen({ route, navigation }) {
                                 cmp_seq: infos.cmp_seq
                             })}>
                                 <View style={styles.IconBox}>
-                                    <Icon name={'ios-list-box'} size={36} />
+                                    <Icon name={'bars'} size={32} />
                                 </View>
                                 <Text>등록 목록</Text>
                             </TouchableOpacity>
@@ -84,7 +92,7 @@ function MyinfoScreen({ route, navigation }) {
                         user_seq: infos.user_seq,
                     })}>
                         <View style={styles.IconBox}>
-                            <Icon name={'ios-heart'} size={36} />
+                            <Icon name={'heart'} size={32} />
                         </View>
                         <Text>관심 목록</Text>
                     </TouchableOpacity>
@@ -94,7 +102,7 @@ function MyinfoScreen({ route, navigation }) {
                         hasComp == true ? (
                             <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Add')}>
                                 <View style={styles.IconArea}>
-                                    <Icon name={'ios-create'} size={36} />
+                                    <Icon name={'form'} size={36} />
                                 </View>
                                 <View style={styles.SettingList}>
                                     <Text>업체 글쓰기</Text>
@@ -106,7 +114,7 @@ function MyinfoScreen({ route, navigation }) {
                     }
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Invite')}>
                         <View style={styles.IconArea}>
-                            <Icon name={'ios-mail'} size={36} />
+                            <Icon name={'mail'} size={36} />
                         </View>
                         <View style={styles.SettingList}>
                             <Text>친구 초대</Text>
@@ -114,7 +122,7 @@ function MyinfoScreen({ route, navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Notification')}>
                         <View style={styles.IconArea}>
-                            <Icon name={'ios-notifications-outline'} size={36} />
+                            <Icon name={'notification'} size={36} />
                         </View>
                         <View style={styles.SettingList}>
                             <Text>공지 사항</Text>
@@ -122,7 +130,7 @@ function MyinfoScreen({ route, navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('CustomerService')}>
                         <View style={styles.IconArea}>
-                            <Icon name={'ios-information-circle'} size={36} />
+                            <Icon name={'customerservice'} size={36} />
                         </View>
                         <View style={styles.SettingList}>
                             <Text>고객 센터</Text>

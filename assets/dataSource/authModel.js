@@ -113,6 +113,25 @@ class AUTHENTICATION {
             console.log(err);
         }
     }
+
+    SAVE_PROFILE_IMAGE = async (formData) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/auth/profileimage', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                credentials: 'include',
+                body: formData,
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 

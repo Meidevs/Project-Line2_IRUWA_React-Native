@@ -42,7 +42,7 @@ function CategoryScreen({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <ScrollView style={styles.ScrollView}>
+            <View style={styles.ScrollView}>
                 <View style={styles.AdsBox}>
                     <View style={styles.TitleContent}>
                         <Text style={styles.TitleTxtStyle}>프리미엄 서비스</Text>
@@ -50,7 +50,6 @@ function CategoryScreen({ route, navigation }) {
                     <View style={styles.CategoryBtnBox}>
                         <TouchableOpacity style={styles.CategoryBtn}>
                             <View style={styles.CategoryIconBox}>
-
                             </View>
                             <View style={styles.CategoryText}>
                                 <Text>프리미엄 광고 (이미지로 대체)</Text>
@@ -66,7 +65,7 @@ function CategoryScreen({ route, navigation }) {
                         <CategoryList navigation={navigation} />
                     </View>
                 </View>
-            </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }

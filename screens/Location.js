@@ -12,7 +12,7 @@ import {
     SafeAreaView,
     StatusBar, Platform
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/AntDesign';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import AddressSearchBox from '../assets/components/AddressSearchBox';
@@ -21,11 +21,6 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
-
-const scrollHandle = (event) => {
-    var yPosition = event.nativeEvent.contentOffset.y;
-    return yPosition;
-}
 const prevLocationExistence = async (location) => {
     var preArray = new Array();
     const allKeys = await AsyncStorage.getAllKeys();
@@ -40,7 +35,6 @@ const prevLocationExistence = async (location) => {
 
 
 function LocationScreen({ navigation }) {
-    const scrollY = useRef(new Animated.Value(0)).current;
     const [keys, setAllKeys] = useState([]);
     const [yPosition, setYposition] = useState(null);
     const [location, setLocation] = useState(null);
@@ -82,6 +76,28 @@ function LocationScreen({ navigation }) {
         GET_ALL_KEYS();
         GET_CURRENT_LOCATION();
         setIsLoading(true);
+    }, []);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: () =>
+                <View style={styles.HeaderStyle}>
+                    <TouchableOpacity style={styles.HeaderContent} onPress={() => navigation.navigate('Main')}>
+                        <Icon name={'close'} size={28} />
+                    </TouchableOpacity>
+                </View>,
+            headerTitle: () => (
+                <View style={styles.HeaderTitleBox}>
+                    <Text style={styles.HeaderTitleTxt}>주소검색</Text>
+                </View>
+            ),
+            headerRight: () => <View></View>,
+            headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+            }
+        })
     }, []);
 
     useEffect(() => {
@@ -160,36 +176,10 @@ function LocationScreen({ navigation }) {
     return (
         <SafeAreaView style={styles.Container}>
             <StatusBar />
-            <Animated.View style={styles.HeaderStyle} >
-                <TouchableOpacity style={styles.HeaderContent} onPress={() => navigation.navigate('Main')}>
-                    <Icon name={'ios-close'} size={40} />
-                    {yPosition >= height * 0.06 ? (
-                        <View style={styles.HeaderTitle}>
-                            <Text style={styles.HeaderText}>{currentLocation}</Text>
-                        </View>
-                    ) : (
-                            null
-                        )
-                    }
-                </TouchableOpacity>
-            </Animated.View>
-            <Animated.ScrollView
+            <ScrollView
                 style={styles.ScrollViewArea}
                 overScrollMode={'never'}
                 scrollEventThrottle={26}
-                onScroll={Animated.event(
-                    [
-                        {
-                            nativeEvent: { contentOffset: { y: scrollY } }
-                        }
-                    ],
-                    {
-                        useNativeDriver: false,
-                        listener: event => {
-                            setYposition(scrollHandle(event))
-                        }
-                    }
-                )}
             >
                 <View style={styles.ComponentForm}>
                     <View style={styles.TitleBox}>
@@ -204,21 +194,23 @@ function LocationScreen({ navigation }) {
                                 placeholderTextColor='#B4B4B4'
                                 onChangeText={(text) => setLocation(text)}
                             />
+                            <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setModalVisible(true)}>
+                                <Icon name={'search1'} size={32} />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setModalVisible(true)}>
-                            <Icon name={'ios-search'} size={32} />
-                        </TouchableOpacity>
                     </View>
                     <View style={styles.CurrentLocate}>
                         <TouchableOpacity style={styles.CLBtn} onPress={() => UPDATE_CURRENT_LOCATION()}>
-                            <Icon name={'ios-locate'} size={20} />
-                            <Text>현 위치로 주소 설정</Text>
+                            <Text>현위치 검색</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.LocationList}>
-                    <View style={styles.PrevSearchTitle}>
-                        <Text style={styles.PrevSearchText}>최근 주소</Text>
+                    <View style={styles.PrevSearch}>
+                        <View style={styles.PrevSearchTitle}>
+                            <Icon name={'home'} size={24} />
+                            <Text style={styles.PrevSearchText}>최근 주소</Text>
+                        </View>
                         <TouchableOpacity onPress={() => ClearAll()}>
                             <Text>전체 삭제</Text>
                         </TouchableOpacity>
@@ -227,14 +219,14 @@ function LocationScreen({ navigation }) {
                         prevLocate.map((data, index) => {
                             if (data[0] != undefined) {
                                 return (
-                                    <View style={styles.Locations}>
+                                    <View style={index % 2 == 0 ? styles.Locations_a : styles.Locations_b}>
                                         <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter} onPress={() => setUserLocation(JSON.parse(data[1]).location_name)}>
                                             <Text style={{ textAlignVertical: 'center' }}>
                                                 {JSON.parse(data[1]).location_name}
                                             </Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.ContentCenter} onPress={() => DELETE_PREV_LOCATION(index)}>
-                                            <Icon name={'ios-close'} size={32} />
+                                            <Text style={styles.DeleteTxt}>주소 삭제</Text>
                                         </TouchableOpacity>
                                     </View>
                                 )
@@ -245,7 +237,7 @@ function LocationScreen({ navigation }) {
                         })
                     }
                 </View>
-            </Animated.ScrollView>
+            </ScrollView>
             <AddressSearchBox data={location} visible={visible} location={LocateCallback} callback={Callback} />
         </SafeAreaView >
     )
@@ -257,13 +249,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(238, 238, 238, 1)',
     },
     HeaderStyle: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        width: width,
-        padding: 20,
-        height: height * 0.06,
         flexDirection: 'column',
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255, 255, 1)',
@@ -271,21 +256,22 @@ const styles = StyleSheet.create({
     },
     HeaderContent: {
         flex: 1,
-        flexDirection: 'row',
+        padding: 15,
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'center'
     },
-    HeaderTitle: {
+    HeaderTitleBox: {
         flex: 1,
-        padding: 10,
+        padding: 15,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    HeaderText: {
+    HeaderTitleTxt: {
         fontSize: 16,
         fontWeight: 'bold',
         alignSelf: 'center'
-    },
-    ScrollViewArea: {
-        marginTop: height * 0.06,
     },
     ComponentForm: {
         backgroundColor: 'rgba(255, 255, 255, 1)'
@@ -311,25 +297,23 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     SearchInput: {
-        width: width * 0.8,
+        flex: 1,
         height: 50,
         borderRadius: 5,
         padding: 10,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         borderWidth: 1,
-        borderColor: 'rgba(200, 200, 200, 1)',
-        backgroundColor: 'rgba(248, 249, 251, 1)',
+        borderColor: 'rgba(213, 213, 213, 1)',
+        backgroundColor: 'rgba(242, 242, 242, 1)',
     },
     SearchInputBtn: {
-        width: width * 0.1,
         height: 50,
         borderRadius: 5,
         padding: 10,
         justifyContent: 'center',
         alignItems: 'flex-start',
-        borderWidth: 1,
-        borderColor: 'rgba(200, 200, 200, 1)'
     },
     CurrentLocate: {
         paddingRight: 20,
@@ -352,22 +336,41 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     LocationList: {
-        marginTop: 15,
+        width: width,
+        borderTopWidth: 1,
         paddingTop: 20,
+        borderColor: 'rgba(235, 235, 235, 1)',
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
-    PrevSearchTitle: {
-        height: 20,
-        padding: 20,
+    PrevSearch: {
+        flex: 1,
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingBottom : 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    PrevSearchTitle : {
+        flexDirection : 'row',
+        justifyContent : 'center',
+        alignItems : 'center'
     },
     PrevSearchText: {
+        marginLeft : 10,
         fontSize: 16,
         fontWeight: 'bold',
     },
-    Locations: {
+    Locations_a: {
+        height: 80,
+        padding: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(230, 230, 230, 1)',
+    },
+    Locations_b: {
         height: 80,
         padding: 20,
         flexDirection: 'row',
@@ -375,10 +378,15 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         borderBottomWidth: 1,
         borderColor: 'rgba(230, 230, 230, 1)',
+        backgroundColor : 'rgba(250, 250, 250, 1)',
     },
     ContentCenter: {
         justifyContent: 'center',
         alignContent: 'center'
+    },
+    DeleteTxt : {
+        fontSize : 14,
+        color : 'rgba(140, 140, 140, 1)'
     }
 })
 

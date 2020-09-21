@@ -11,12 +11,10 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
-import io from 'socket.io-client';
-
 import { useFocusEffect } from '@react-navigation/native';
-import TimeGap from '../assets/components/TimeGap';
+import Icon from 'react-native-vector-icons/AntDesign';
+
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import CHATTING from '../assets/dataSource/chatModel';
 import GLOBAL from '../assets/dataSource/globalModel';
 const { width, height } = Dimensions.get('window');
 
@@ -40,6 +38,22 @@ function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [state, dispatch] = useReducer(reducer, initialValue);
     console.log(state)
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => <View></View>,
+            headerTitle: () => (
+                <View style={styles.HeaderTitleBox}>
+                    <Text style={styles.HeaderTitleTxt}>채팅 리스트</Text>
+                </View>
+            ),
+            headerRight: () =>
+                <View>
+
+                </View>
+        })
+    }, []);
+
     useFocusEffect(
         React.useCallback(() => {
             const SET_USER = async () => {
@@ -132,69 +146,17 @@ function ChatListScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-    TitleHeader: {
+    HeaderTitleBox: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
-    TitleHeaderTxtStyle: {
+    HeaderTitleTxt: {
         fontWeight: 'bold',
         fontSize: 18
     },
     Container: {
         backgroundColor: 'rgba(255, 255, 255, 1)'
-    },
-    ChatBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 10,
-        borderWidth: 1,
-        borderColor: 'rgba(238, 238, 238, 1)',
-    },
-    ChatItem: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    ProfileContent: {
-        padding: 5,
-        width: width * 0.12,
-        height: width * 0.12,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 50,
-        backgroundColor: 'rgba(238, 238, 238, 1)'
-    },
-    ChatContent: {
-        padding: 10,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start'
-    },
-    ItemContent: {
-        padding: 10,
-        borderRadius: 10,
-        width: width * 0.10,
-        height: width * 0.10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'pink'
-    },
-    UserInfo: {
-        flexDirection: 'row',
-
-    },
-    UserTitle: {
-        paddingRight: 5,
-        fontSize: 15,
-        fontWeight: '800',
-    },
-    TimeCal: {
-        color: 'rgba(140, 140, 140, 1)',
-        fontSize: 14,
-        fontWeight: '600'
     },
     ListBox: {
         width: width,

@@ -10,24 +10,16 @@ import Directory from './Directory';
 import AUTHENTICATION from '../dataSource/authModel';
 const { width, height } = Dimensions.get('window');
 
-const ProfileSetter = ({ hasComp, user }) => {
-    const [profileImage, setProfileImage] = useState(null);
+const ProfileSetter = ({ hasComp, user, profile }) => {
     const [infos, setUser] = useState(user);
     const [isLoaded, setIsLoad] = useState(false);
     useEffect(() => {
         if (user) {
-            const GET_PROFILE_IMAGE = async () => {
-                var PROFILE_IMAGE_LOCAL_URI = await Directory.GET_PROFILE_IMAGE();
-                if (PROFILE_IMAGE_LOCAL_URI) {
-                    setProfileImage(PROFILE_IMAGE_LOCAL_URI)
-                }
-            }
             const SET_USER_INFO = () => {
                 setUser(user);
             }
             setIsLoad(true)
             SET_USER_INFO();
-            GET_PROFILE_IMAGE();
         }
     }, [user]);
 
@@ -35,10 +27,13 @@ const ProfileSetter = ({ hasComp, user }) => {
         return (
             <View style={styles.ProfileContent}>
                 <View style={styles.ProfileImageArea}>
-                    {profileImage == null ? (
+                    {profile == null ? (
                         <Image source={require('../images/defaultProfile.png')} resizeMode={'contain'} style={{ width: width * 0.1, height: width * 0.1 }} />
                     ) : (
-                            <Image source={{ uri: profileImage }} />
+                            <Image source={{ uri: profile }} 
+                            borderRadius={30}
+                            resizeMode={'contain'} 
+                            style={{ width: width * 0.1, height: width * 0.1 }} />
                         )
                     }
                 </View>
@@ -81,9 +76,6 @@ const styles = StyleSheet.create({
     ProfileImageArea: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: width * 0.1,
-        height: width * 0.1,
-        borderRadius: 30,
         margin: 10,
     },
 })

@@ -156,21 +156,35 @@ class Directory {
         }
     }
 
-    GET_PROFILE_IMAGE = async () => {
-        try {
-            var fileDirectory = await FileSystem.documentDirectory;
-            var PROFILE_IMAGE = await FileSystem.readAsStringAsync(fileDirectory + 'ProfileImage');
-            return PROFILE_IMAGE;
-        } catch (err) {
-            return false;
-        }
-    }
-
     GET_CATEGORY_ICONS = async () => {
         try {
             var fileDirectory = await FileSystem.documentDirectory;
             var CATEGORY_ICON = await FileSystem.readAsStringAsync(fileDirectory + 'CATEGORY');
             return CATEGORY_ICON;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    GET_USER_PROFILE_URI = async () => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var PROFILE_IMAGE = await FileSystem.readAsStringAsync(fileDirectory + 'USER_PROFILE');
+            return PROFILE_IMAGE;
+        } catch (err) {
+            return false;
+        }
+    }
+    SET_USER_PROFILE_URI = async (data) => {
+        try {
+            var fileDirectory = await FileSystem.documentDirectory;
+            var EXISTENCE = await FileSystem.getInfoAsync(fileDirectory + 'USER_PROFILE');
+            if (EXISTENCE.exists) {
+                await FileSystem.deleteAsync(fileDirectory + 'USER_PROFILE');
+                await FileSystem.writeAsStringAsync(fileDirectory + 'USER_PROFILE', data);
+            } else {
+                await FileSystem.writeAsStringAsync(fileDirectory + 'USER_PROFILE', data);
+            }
         } catch (err) {
             return false;
         }
