@@ -114,14 +114,15 @@ class AUTHENTICATION {
         }
     }
 
-    GET_USER_PROFILE = async () => {
+    GET_USER_PROFILE = async (user_seq) => {
         try {
             var response = await fetch('http://192.168.0.40:8888/api/auth/userprofile', {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
+                body : JSON.stringify ({user_seq : user_seq})
             });
             var json = await response.json();
             if (response.ok) {

@@ -10,14 +10,13 @@ import {
     AsyncStorage,
     ScrollView,
     SafeAreaView,
-    StatusBar, Platform
+    StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import AddressSearchBox from '../assets/components/AddressSearchBox';
-import Constants from "expo-constants";
-import * as Permissions from 'expo-permissions';
+
 import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
@@ -31,59 +30,45 @@ const prevLocationExistence = async (location) => {
     }
     return preArray.includes(location);
 }
-
-
-
-function LocationScreen({ navigation }) {
+function LocationScreen({ route, navigation }) {
     const [keys, setAllKeys] = useState([]);
-    const [yPosition, setYposition] = useState(null);
     const [location, setLocation] = useState(null);
     const [prevLocate, setPrevLocate] = useState([[]]);
-    const [currentLocation, setUserLocation] = useState('');
+    const [currentLocation, setUserLocation] = useState(null);
     const [isLoaded, setIsLoading] = useState(false);
     const [visible, setModalVisible] = useState(false);
-
     useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestPermissionsAsync();
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-            }
-        }, []);
-        const getLocationAsync = async () => {
-            if (Constants.platform.ios || Constants.platform.android) {
-                const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-                console.log('permissions', permissions)
-                if (status !== 'granted') {
-                    throw new Error('CAMERA_ROLL permission not granted');
-                }
-            }
-        }
-        const GET_ALL_KEYS = async () => {
-            const allKeys = await AsyncStorage.getAllKeys();
-            var filtered = allKeys.filter(key => key != "@my_Key");
-            setAllKeys(filtered);
-        };
-
+        let isCancelled = true;
         const GET_CURRENT_LOCATION = async () => {
             let position = await Location.getCurrentPositionAsync({
                 accuracy: Location.Accuracy.Highest
             });
             var response = await ROADAPI.GET_CURRENT_LOCATION(position);
-            setUserLocation(response);
+
+            if (isCancelled) {
+                setUserLocation(response);
+                setIsLoading(true);
+            }
         };
-        getLocationAsync();
-        GET_ALL_KEYS();
         GET_CURRENT_LOCATION();
-        setIsLoading(true);
+        return () => isCancelled = false;
+    }, [currentLocation]);
+
+    useEffect(() => {
+        const GET_ALL_KEYS = async () => {
+            const allKeys = await AsyncStorage.getAllKeys();
+            var filtered = allKeys.filter(key => key != "@my_Key");
+            setAllKeys(filtered);
+        };
+        GET_ALL_KEYS();
     }, []);
 
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () =>
                 <View style={styles.HeaderStyle}>
-                    <TouchableOpacity style={styles.HeaderContent} onPress={() => navigation.navigate('Main')}>
-                        <Icon name={'close'} size={28} />
+                    <TouchableOpacity style={styles.HeaderContent} onPress={() => navigation.goBack()}>
+                        <Icon name={'close'} size={24} />
                     </TouchableOpacity>
                 </View>,
             headerTitle: () => (
@@ -93,6 +78,7 @@ function LocationScreen({ navigation }) {
             ),
             headerRight: () => <View></View>,
             headerStyle: {
+                height: 70,
                 elevation: 0,
                 shadowOpacity: 0,
                 borderBottomWidth: 0,
@@ -101,19 +87,26 @@ function LocationScreen({ navigation }) {
     }, []);
 
     useEffect(() => {
+        let isCancelled = true;
+
         const READ_PREVIOUSE_LOCATION = async () => {
             try {
                 const prevLocations = await AsyncStorage.multiGet(keys);
-                setPrevLocate(prevLocations);
+                if (isCancelled) {
+                    setPrevLocate(prevLocations);
+                }
             } catch (err) {
                 console.log(err);
             }
         };
         READ_PREVIOUSE_LOCATION();
+
+        return () => isCancelled = false;
     }, [keys]);
 
     const UPDATE_CURRENT_LOCATION = async () => {
         try {
+            if (!currentLocation) return alert('주소가 없습니다.')
             var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(currentLocation);
             if (UPDATE_RESULT) {
                 var object = {
@@ -125,29 +118,30 @@ function LocationScreen({ navigation }) {
                     var key = '@my_prev_location_' + (keys.length + 1);
                     setAllKeys([...keys, key]);
                     await AsyncStorage.setItem(key, JSON.stringify(object));
-                    navigation.goBack();
                 }
+                navigation.goBack();
             }
         } catch (err) {
             console.log(err);
         }
     };
 
-    const LocateCallback = async (ChildFrom) => {
+    const LocateCallback = async (Location) => {
         try {
-            var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(ChildFrom);
+            var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(Location);
             if (UPDATE_RESULT) {
                 var object = {
                     id: keys.length + 1,
-                    location_name: ChildFrom,
+                    location_name: Location,
                 }
-                var existence = await prevLocationExistence(ChildFrom);
+                setUserLocation(Location);
+                var existence = await prevLocationExistence(Location);
                 if (!existence) {
                     var key = '@my_prev_location_' + (keys.length + 1);
                     setAllKeys([...keys, key]);
                     await AsyncStorage.setItem(key, JSON.stringify(object));
-                    navigation.goBack();
                 }
+                navigation.goBack();
             }
         } catch (err) {
             console.log(err);
@@ -193,6 +187,7 @@ function LocationScreen({ navigation }) {
                                 placeholder={'예) 이루와동'}
                                 placeholderTextColor='#B4B4B4'
                                 onChangeText={(text) => setLocation(text)}
+                                style={{ flex: 1, }}
                             />
                             <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setModalVisible(true)}>
                                 <Icon name={'search1'} size={32} />
@@ -219,8 +214,11 @@ function LocationScreen({ navigation }) {
                         prevLocate.map((data, index) => {
                             if (data[0] != undefined) {
                                 return (
-                                    <View style={index % 2 == 0 ? styles.Locations_a : styles.Locations_b}>
-                                        <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter} onPress={() => setUserLocation(JSON.parse(data[1]).location_name)}>
+                                    <View
+                                        key={index.toString()}
+                                        style={index % 2 == 0 ? styles.Locations_a : styles.Locations_b}
+                                    >
+                                        <TouchableOpacity key={JSON.stringify(index)} style={styles.ContentCenter} onPress={() => LocateCallback(JSON.parse(data[1]).location_name)}>
                                             <Text style={{ textAlignVertical: 'center' }}>
                                                 {JSON.parse(data[1]).location_name}
                                             </Text>
@@ -249,20 +247,17 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(238, 238, 238, 1)',
     },
     HeaderStyle: {
-        flexDirection: 'column',
         justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        paddingTop: Platform.OS == 'ios' ? StatusBar.currentHeight : 0,
     },
     HeaderContent: {
-        flex: 1,
         padding: 15,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center'
     },
     HeaderTitleBox: {
-        flex: 1,
         padding: 15,
         flexDirection: 'column',
         alignItems: 'center',
@@ -346,18 +341,18 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingRight: 20,
         paddingLeft: 20,
-        paddingBottom : 20,
+        paddingBottom: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    PrevSearchTitle : {
-        flexDirection : 'row',
-        justifyContent : 'center',
-        alignItems : 'center'
+    PrevSearchTitle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     PrevSearchText: {
-        marginLeft : 10,
+        marginLeft: 10,
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -367,7 +362,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
-        borderWidth: 1,
+        borderWidth: 0.5,
         borderColor: 'rgba(230, 230, 230, 1)',
     },
     Locations_b: {
@@ -376,17 +371,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
-        borderBottomWidth: 1,
+        borderWidth: 0.5,
         borderColor: 'rgba(230, 230, 230, 1)',
-        backgroundColor : 'rgba(250, 250, 250, 1)',
+        backgroundColor: 'rgba(250, 250, 250, 1)',
     },
     ContentCenter: {
         justifyContent: 'center',
         alignContent: 'center'
     },
-    DeleteTxt : {
-        fontSize : 14,
-        color : 'rgba(140, 140, 140, 1)'
+    DeleteTxt: {
+        fontSize: 14,
+        color: 'rgba(140, 140, 140, 1)'
     }
 })
 

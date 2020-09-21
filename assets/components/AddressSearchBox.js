@@ -3,14 +3,16 @@ import {
     View,
     Modal,
     Text,
-    TextInput,
     StyleSheet,
     Dimensions,
     ScrollView,
+    ActivityIndicator,
     TouchableOpacity,
     SafeAreaView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Constants from "expo-constants";
+
 import ROADAPI from '../../assets/dataSource/roadAPI';
 import AddressFilter from './AddressFilter';
 const { width, height } = Dimensions.get('window');
@@ -18,21 +20,26 @@ const { width, height } = Dimensions.get('window');
 const AddrSearchBox = ({ data, visible, location, callback }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [address, setAddressList] = useState([]);
-
+    const [isLoaded, setIsLoaded] = useState(false);
     useEffect(() => {
+        let isCancelled = true;
         const SEARCH_DETAIL_ADDRESS = async () => {
-            
+
             if (AddressFilter(data) && data != null) {
                 var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(data);
-                if (DETAIL_SEARCH_RESPONSE.results.juso != null) {
-                    setAddressList(DETAIL_SEARCH_RESPONSE.results.juso);
-                } else {
-                    alert(DETAIL_SEARCH_RESPONSE.results.common.errorMessage);
+                if(isCancelled) { 
+                    if (DETAIL_SEARCH_RESPONSE.results.juso != null) {
+                        setAddressList(DETAIL_SEARCH_RESPONSE.results.juso);
+                        setIsLoaded(true);
+                    } else {
+                        alert(DETAIL_SEARCH_RESPONSE.results.common.errorMessage);
+                    }
                 }
             }
         };
         SEARCH_DETAIL_ADDRESS();
         setModalVisible(visible)
+        return () => isCancelled = false;
     }, [visible]);
 
     const onChangeVisible = (visibility) => {
@@ -51,13 +58,31 @@ const AddrSearchBox = ({ data, visible, location, callback }) => {
     const componentJSX = () => {
         return (
             address.map((data, index) => {
-                return (
-                    <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList} onPress={() => SetAddress(data.jibunAddr)}>
-                        <Text>{data.zipNo}</Text>
-                        <Text>{data.jibunAddr}</Text>
-                        <Text>{data.roadAddr}</Text>
-                    </TouchableOpacity>
-                )
+                if (index % 2 == 0) {
+                    return (
+                        <TouchableOpacity
+                            key={JSON.stringify(index)}
+                            style={styles.AddressList}
+                            onPress={() => SetAddress(data.jibunAddr)}
+                        >
+                            <Text>{data.zipNo}</Text>
+                            <Text>{data.jibunAddr}</Text>
+                            <Text>{data.roadAddr}</Text>
+                        </TouchableOpacity>
+                    )
+                } else {
+                    return (
+                        <TouchableOpacity
+                            key={JSON.stringify(index)}
+                            style={styles.AddressList_a}
+                            onPress={() => SetAddress(data.jibunAddr)}
+                        >
+                            <Text>{data.zipNo}</Text>
+                            <Text>{data.jibunAddr}</Text>
+                            <Text>{data.roadAddr}</Text>
+                        </TouchableOpacity>
+                    )
+                }
             })
         )
     }
@@ -71,45 +96,64 @@ const AddrSearchBox = ({ data, visible, location, callback }) => {
             <View style={styles.ModalHeader}>
                 <View style={styles.HeaderContent}>
                     <TouchableOpacity style={styles.CloseBtn} onPress={() => onChangeVisible(!modalVisible)}>
-                        <Icon name={'ios-close'} size={40} />
+                        <Icon name={'close'} size={24} />
                     </TouchableOpacity>
                 </View>
             </View>
-            <SafeAreaView style={styles.SafeAreaView}>
-                <ScrollView>
-                    {
-                        componentJSX()
-                    }
-                </ScrollView>
-            </SafeAreaView>
-        </Modal>
+            {
+                isLoaded == false ? (
+                    <View style={styles.Loading}>
+                        <ActivityIndicator
+                            animating={true} />
+                    </View>
+                ) : (
+                        <SafeAreaView style={styles.SafeAreaView}>
+                            <ScrollView>
+                                {
+                                    componentJSX()
+                                }
+                            </ScrollView>
+                        </SafeAreaView>
+                    )
+            }
+
+        </Modal >
     )
 }
 
 const styles = StyleSheet.create({
+    Loading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 1)'
+    },
     ModalHeader: {
         width: width,
-        padding: 20,
-        height: height * 0.06,
+        marginTop: Constants.statusBarHeight,
         flexDirection: 'column',
         justifyContent: 'center',
-        backgroundColor: "white",
+        backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     HeaderContent: {
-        flex: 1,
+        padding : 10,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
-    CloseBtn: {
-    },
     SafeAreaView: {
-        backgroundColor: 'rgba(255, 255, 255, 1)',
         width: width,
-        height: '70%'
+        backgroundColor: 'rgba(255, 255, 255, 1)'
     },
     AddressList: {
         padding: 20,
+    },
+    AddressList_a: {
+        padding: 20,
+        borderColor: 'rgba(230, 230, 230, 1)',
+        borderTopWidth: 0.5,
+        borderBottomWidth: 0.5,
+        backgroundColor: 'rgba(250, 250, 250, 1)'
     }
 })
 

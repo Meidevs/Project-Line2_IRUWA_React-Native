@@ -69,13 +69,13 @@ function ChatListScreen({ route, navigation }) {
 
     useEffect(() => {
         var socket = GLOBAL.GET_SOCKET_IO();
-        socket.on('receiveMessage', message => {
-            console.log(message)
+        const MessageSubscribe = socket.on('receiveMessage', message => {
             socket.emit('prevMessage', currentUser);
         })
         socket.on('prevMessage', message => {
             dispatch({ type: 'initial', params: message });
-        })
+        });
+        return () => MessageSubscribe;
     }, []);
 
     const ComponentJSX = () => {
@@ -122,7 +122,6 @@ function ChatListScreen({ route, navigation }) {
             data.sender_seq = currentUser
             data.receiver_seq = Tmp;
         }
-
         navigation.navigate('Chat', {
             items_seq: data.items_seq,
             item_name: data.item_name,

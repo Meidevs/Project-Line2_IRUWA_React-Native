@@ -4,17 +4,17 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
+    Image,
     StyleSheet,
     Dimensions,
     ScrollView,
-    SafeAreaView
+    SafeAreaView, Platform
 } from 'react-native';
-import io from 'socket.io-client';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import DateFunction from '../assets/components/DateFunction';
-import Directory from '../assets/components/Directory';
 import GLOBAL from '../assets/dataSource/globalModel';
 import Icon from 'react-native-vector-icons/AntDesign';
+
 const { width, height } = Dimensions.get('window');
 let socket;
 const ChatScreen = ({ route, navigation }) => {
@@ -31,64 +31,26 @@ const ChatScreen = ({ route, navigation }) => {
     } = route.params;
     const [message, setMessageText] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState([]);
-    const [chattings, setChattings] = useState([]);
-    const [chatIsLoaded, isChatLoaded] = useState(false);
     const [initialLoaded, setInitialValue] = useState(false);
-
+    const [profile, setChatUserProfile] = useState({ uri: null });
     useEffect(() => {
-        navigation.setOptions({
-            headerLeft: null,
-            headerTitle: () => (
-                <View>
-                    <View style={styles.TitleHeader}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Icon name={'arrowleft'} size={24} />
-                        </TouchableOpacity>
-                        <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={styles.TitleHeaderTxtStyle}>
-                                {cmp_name}님과의 채팅
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', height: 50 }}>
-                        <View style={{ borderRadius: 5, backgroundColor: 'rgba(180, 180, 180, 1)', width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>Image</Text>
-                        </View>
-                        <View style={{ padding: 10 }}>
-                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>{item_name}</Text>
-                        </View>
-                    </View>
-                </View>
-            ),
-            headerStyle: {
-                height: 110,
-            }
-        })
-    }, [route]);
-
-    useEffect(() => {
-        const INITIAL_SETTINGS = async () => {
-            try {
-                await Directory.CheckRootDirectory();
-            } catch (err) {
-                console.log(err);
+        const USER_PROFILE = async () => {
+            var USER_PROFILE = await AUTHENTICATION.GET_USER_PROFILE(receiver_seq);
+            if (USER_PROFILE.flags == 0) {
+                setChatUserProfile({ uri: USER_PROFILE.message })
             }
         }
         const GET_MAIN_INFOs = async () => {
             socket = GLOBAL.GET_SOCKET_IO();
-            socket.emit('prevMessage', sender_seq);
-
         }
         setInitialValue(true);
-
+        USER_PROFILE()
         GET_MAIN_INFOs();
-        INITIAL_SETTINGS();
     }, [route]);
 
     useEffect(() => {
         if (initialLoaded) {
             socket.emit('getRoomMessages', roomCode);
-
             socket.on('getRoomMessages', message => {
                 setReceiveMessage(message)
             })
@@ -96,10 +58,13 @@ const ChatScreen = ({ route, navigation }) => {
     }, [initialLoaded])
 
     useEffect(() => {
-        socket.on('receiveMessage', (message) => {
+
+        const MessageSubscribe = socket.on('receiveMessage', (message) => {
             var newData = [...receiveMessage, message];
             setReceiveMessage(newData);
         });
+
+        return () => MessageSubscribe;
     }, [receiveMessage]);
 
     const sendMessage = async () => {
@@ -119,7 +84,6 @@ const ChatScreen = ({ route, navigation }) => {
                 message: sendMessage,
                 reg_date: dateTime,
             }
-
             socket.emit('goMessage', form)
             setMessageText(null);
         }
@@ -130,64 +94,75 @@ const ChatScreen = ({ route, navigation }) => {
             return (
                 receiveMessage.map((data, index) => {
                     var currentTime;
-                    var currentDate = new Date().toISOString().substring(0, 10);
-                    var newTime = new Date(data.reg_date).toLocaleTimeString().substring(0, 5);
-                    var setAMPM = newTime.substring(0, 3);
-                    var am_pm = parseInt(setAMPM) >= 12;
-                    if (am_pm) {
-                        currentTime = '오후' + newTime;
+                    if (Platform.OS == 'ios') {
+                        var newTime = new Date(data.reg_date).toLocaleTimeString().substring(0, 7);
+                        var setAMPM = newTime.substring(0, 3);
+                        var am_pm = parseInt(setAMPM) >= 12;
+                        if (am_pm) {
+                            currentTime = newTime;
+                        } else {
+                            currentTime = newTime;
+                        }
                     } else {
-                        currentTime = '오전' + newTime;
+                        var newTime = new Date(data.reg_date).toLocaleTimeString().substring(0, 5);
+                        var setAMPM = newTime.substring(0, 3);
+                        var am_pm = parseInt(setAMPM) >= 12;
+                        if (am_pm) {
+                            currentTime = '오후 ' + newTime;
+                        } else {
+                            currentTime = '오전 ' + newTime;
+                        }
                     }
+
                     if (data.sender_seq == receiver_seq) {
                         return (
                             <View
+                                style={styles.ChattingBox}
                                 key={index.toString()}
                             >
-                                {data.reg_date.substring(0, 10) != currentDate ? (
-                                    <View style={styles.DateSeparator}>
-                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                                        <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>{currentDate}</Text>
-                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
+                                <View style={styles.ReceiverBox}>
+                                    <View style={styles.UserProfile}>
+                                        {
+                                            profile.uri == null ? (
+                                                <Image source={require('../assets/images/defaultProfile.png')} resizeMode={'cover'}
+                                                    style={{ height: 50, width: 50, borderRadius: 100 }}
+                                                />
+                                            ) : (
+                                                    <Image source={{ uri: profile.uri }}
+                                                        resizeMode={'cover'}
+                                                        style={{ height: 50, width: 50, borderRadius: 100 }}
+                                                    />
+                                                )
+                                        }
                                     </View>
-                                ) : (
-                                        null
-                                    )
-                                }
-                                <View style={styles.SenderBox}>
-                                    <View style={{ height: 50, width: 50, backgroundColor: 'rgba(180, 180, 180, 1)', borderRadius: 100, }}>
-
-                                    </View>
-                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-                                        <Text style={{ fontSize: 16, }}>{data.message}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, }}>
-                                        <Text style={{ fontSize: 12, }}>{currentTime}</Text>
+                                    <View style={styles.ReceiverMessages}>
+                                        <View style={styles.TalkBubble}>
+                                            <View style={styles.TalkBubbleSquare}>
+                                                <Text style={styles.ReceiverTxt}>{data.message}</Text>
+                                            </View>
+                                            <View style={styles.TalkBubbleTriangle} />
+                                            <Text style={styles.DateTime}>{currentTime}</Text>
+                                        </View>
                                     </View>
                                 </View>
+
                             </View>
                         )
                     } else {
                         return (
                             <View
+                                style={styles.ChattingBox}
                                 key={index.toString()}
                             >
-                                {data.reg_date.substring(0, 10) != currentDate ? (
-                                    <View style={styles.DateSeparator}>
-                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                                        <Text style={{ padding: 10, color: 'rgba(70, 70, 70, 1)' }}>{currentDate}</Text>
-                                        <View style={{ borderWidth: 1, width: width * 0.3, borderColor: 'rgba(180, 180, 180, 1)' }} />
-                                    </View>
-                                ) : (
-                                        null
-                                    )
-                                }
-                                <View style={styles.ReceiverBox}>
-                                    <View style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 40, paddingLeft: 10, marginRight: 10, }}>
-                                        <Text style={{ fontSize: 12, }}>{currentTime}</Text>
-                                    </View>
-                                    <View style={{ borderRadius: 10, backgroundColor: 'rgba(238, 238, 238, 1)', padding: 10, }}>
-                                        <Text style={{ fontSize: 16, }}>{data.message}</Text>
+                                <View style={styles.SenderBox}>
+                                    <View style={styles.SenderMessages}>
+                                        <View style={styles.TalkBubble}>
+                                            <View style={styles.TalkBubbleSquare_R}>
+                                                <Text style={styles.SenderTxt}>{data.message}</Text>
+                                            </View>
+                                            <View style={styles.TalkBubbleTriangle_R} />
+                                            <Text style={styles.DateTime_R}>{currentTime}</Text>
+                                        </View>
                                     </View>
                                 </View>
                             </View>
@@ -198,7 +173,29 @@ const ChatScreen = ({ route, navigation }) => {
     }
     return (
         <SafeAreaView style={styles.Container}>
-            <ScrollView>
+            <View style={styles.HeaderStyle}>
+                <View style={styles.TitleBackBtn}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name={'arrowleft'} size={30} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.TitleHeader}>
+                    <View style={styles.Title}>
+                        <Text style={styles.TitleHeaderTxtStyle}>
+                            {receiver_name}님과의 채팅
+                            </Text>
+                    </View>
+                    <View style={styles.RoomInfo}>
+                        <View style={{ borderRadius: 5, backgroundColor: 'rgba(180, 180, 180, 1)', width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>Image</Text>
+                        </View>
+                        <View style={{ padding: 10 }}>
+                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>{item_name}</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+            <ScrollView style={styles.MessageArea}>
                 {
                     componentJSX_Chat()
                 }
@@ -210,74 +207,172 @@ const ChatScreen = ({ route, navigation }) => {
                         placeholder={'메세지를 입력해주세요'}
                         placeholderTextColor='#B4B4B4'
                         onChangeText={(text) => setMessageText(text)}
-
+                        style={styles.InputStyle}
                     />
+                    <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>
+                        <Icon name={'caretright'} size={28} />
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>
-                    <Icon name={'caretright'} size={28} />
-                </TouchableOpacity>
             </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
-    TitleHeader: {
-        height: 50,
+    Container: {
+        flex: 1,
+        backgroundColor: 'rgba(235, 235, 235, 1)'
+    },
+    HeaderStyle: {
+        width: width,
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start'
+        backgroundColor: 'rgba(255, 255, 255, 1)'
+    },
+    TitleBackBtn: {
+        padding: 10,
+    },
+    TitleHeader: {
+        flex: 1,
+        padding: 15,
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center'
+    },
+    Title: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
         fontSize: 18
     },
-    Container: {
-        flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
-    },
-    DateSeparator: {
-        padding: 15,
+    RoomInfo: {
+        marginTop: 5,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
     },
     MessageInputBox: {
-        height: 60,
         width: width,
-        borderTopWidth: 0.5,
+        padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        borderColor: 'rgba(180, 180, 180, 1)',
     },
     InputBox: {
-        flex: 10,
-        margin: 5,
-        paddingLeft: 10,
-        borderWidth: 0.8,
-        borderColor: 'rgba(180, 180, 180, 1)',
-        borderRadius: 10,
-        justifyContent: 'center',
-    },
-    SendBtn: {
         flex: 1,
         margin: 5,
-
-    },
-    SenderBox: {
-        margin: 15,
-        height: 70,
-        flexDirection: "row",
+        padding: 10,
+        borderWidth: 0.8,
+        borderColor: 'rgba(210, 210, 210, 1)',
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        borderRadius: 10,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'space-between',
+    },
+    InputStyle: {
+        flex: 1,
+    },
+    ChattingBox: {
+        width: width,
     },
     ReceiverBox: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    UserProfile: {
+        flex: 1,
+        margin: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    ReceiverMessages: {
+        flex: 8,
+        margin: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+    },
+    ReceiverTxt: {
+        fontWeight: '600',
+        fontSize: 14,
+        color: 'rgba(87, 91, 110, 1)'
+    },
+    DateTime: {
+        marginTop: 5,
+        fontSize: 10,
+        fontWeight: '600',
+        color: 'rgba(191, 191, 191, 1)',
+        alignSelf: 'flex-end',
+    },
+    TalkBubble: {
+        backgroundColor: 'transparent'
+    },
+    TalkBubbleSquare: {
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+    },
+    TalkBubbleTriangle: {
+        position: 'absolute',
+        left: -7,
+        top: 6,
+        width: 0,
+        height: 0,
+        borderTopColor: 'transparent',
+        borderTopWidth: 10,
+        borderRightWidth: 10,
+        borderRightColor: 'rgba(255, 255, 255, 1)',
+        borderBottomWidth: 10,
+        borderBottomColor: 'transparent'
+    },
+    SenderBox: {
+        flex: 1,
         margin: 15,
         height: 70,
         flexDirection: "row",
         alignItems: 'center',
-        justifyContent: 'flex-end'
-    }
+        justifyContent: 'flex-end',
+    },
+    SenderMessages: {
+        flex: 8,
+        margin: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-end'
+    },
+    TalkBubbleSquare_R: {
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: 'rgba(21, 186, 192, 1)',
+    },
+    TalkBubbleTriangle_R: {
+        position: 'absolute',
+        top: 6,
+        right: -7,
+        width: 0,
+        height: 0,
+        borderTopColor: 'transparent',
+        borderTopWidth: 10,
+        borderLeftWidth: 10,
+        borderLeftColor: 'rgba(21, 186, 192, 1)',
+        borderBottomWidth: 10,
+        borderBottomColor: 'transparent'
+    },
+    DateTime_R: {
+        marginTop: 5,
+        fontSize: 10,
+        fontWeight: '600',
+        color: 'rgba(191, 191, 191, 1)',
+        alignSelf: 'flex-start',
+    },
+    SenderTxt: {
+        fontWeight: '600',
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 1)'
+    },
 })
 
 export default ChatScreen;

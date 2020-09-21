@@ -43,7 +43,7 @@ function MyinfoScreen({ route, navigation }) {
     useEffect(() => {
         if (infos) {
             const GET_USER_PROFILE = async () => {
-                var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE();
+                var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE(infos.user_seq);
                 if (PROFILE_IMAGE.flags == 0) {
                     setUserProfileUri(PROFILE_IMAGE.message);
                 }
@@ -70,7 +70,9 @@ function MyinfoScreen({ route, navigation }) {
                 <View style={styles.ProfileBox}>
                     <ProfileSetter hasComp={hasComp} user={infos} profile={userProfileUri} />
                     <View style={styles.ProfileSettings}>
-                        <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() => navigation.navigate('Profile')}>
+                        <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() => navigation.navigate('Profile', {
+                            user_seq : infos.user_seq
+                        })}>
                             <Text>  개인정보수정  </Text>
                         </TouchableOpacity>
                     </View>

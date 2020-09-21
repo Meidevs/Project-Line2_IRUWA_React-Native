@@ -85,7 +85,7 @@ const CategoryListUp = ({ navigation }) => {
                 data={categories}
                 initialNumToRender={10}
                 renderItem={({ item }) => <Item data={item} navigation={navigation} />}
-                keyExtractor={item => item.category_seq}
+                keyExtractor={item => item.category_seq.toString()}
                 getItemCount={getItemCount}
                 getItem={getItem}
             />

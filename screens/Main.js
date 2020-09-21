@@ -65,6 +65,7 @@ function MainScreen({ route, navigation }) {
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
     const [isError, setIsError] = useState(true);
+    console.log('user_location', user_location)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -121,7 +122,11 @@ function MainScreen({ route, navigation }) {
                     networkActivityIndicatorVisible={true}
                 />
                 <View>
-                    <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location')} activeOpacity={0.6}>
+                    <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location', {
+                        a : 'hi'
+                    })}
+                        activeOpacity={0.6}
+                    >
                         <View style={styles.LocationBtn}>
                             <Text style={styles.CurrentLocationTxt}>{user_location}</Text>
                             <Icon name={'ios-arrow-dropdown-circle'} size={24} />

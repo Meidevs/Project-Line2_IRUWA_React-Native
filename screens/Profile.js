@@ -29,6 +29,9 @@ async function getImageRollAsync() {
 }
 
 function ProfileScreen({ route, navigation }) {
+    const {
+        user_seq 
+    } = route.params;
     const [profileImage, setProfileImage] = useState({ uri: null });
     const [isLoaded, setIsLoad] = useState(false);
     useEffect(() => {
@@ -48,7 +51,7 @@ function ProfileScreen({ route, navigation }) {
 
     useEffect(() => {
         const GET_PROFILE_IMAGE = async () => {
-            var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE();
+            var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE(user_seq);
             if (PROFILE_IMAGE.flags == 0) {
                 setProfileImage({uri : PROFILE_IMAGE.message});
             }

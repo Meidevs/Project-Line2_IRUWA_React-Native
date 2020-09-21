@@ -8,10 +8,30 @@ import {
     TouchableOpacity,
     StatusBar
 } from 'react-native';
+import Constants from "expo-constants";
+import * as Permissions from 'expo-permissions';
 
 const { width, height } = Dimensions.get('window');
 
 function BeforeLoginScreen({ navigation }) {
+
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+            }
+        }, []);
+        const getLocationAsync = async () => {
+            if (Constants.platform.ios || Constants.platform.android) {
+                const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+                if (status !== 'granted') {
+                    throw new Error('CAMERA_ROLL permission not granted');
+                }
+            }
+        }
+        getLocationAsync();
+    }, []);
 
     return (
         <ImageBackground source={require('../assets/images/BackgroundImage.jpg')} style={styles.ImageBackground}>

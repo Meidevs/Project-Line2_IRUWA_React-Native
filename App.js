@@ -122,6 +122,9 @@ const ChatStackScreens = () => {
       <ChatStack.Screen
         name='Chat'
         component={ChatScreen}
+        options={{
+          headerShown: false,
+        }}
       />
     </ChatStack.Navigator>
   )
@@ -202,6 +205,9 @@ const MainStackScreens = () => {
       <ChatStack.Screen
         name='Chat'
         component={ChatScreen}
+        options={{
+          headerShown: false,
+        }}
       />
     </MainStack.Navigator>
   )

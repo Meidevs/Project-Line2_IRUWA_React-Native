@@ -9,9 +9,10 @@ import {
     Dimensions,
     Image,
     StatusBar,
-    ActivityIndicator
+    ActivityIndicator, Platform
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Constants from "expo-constants";
 import MapView from 'react-native-maps';
 
 import DATA_SOURCE from '../assets/dataSource/dataModel';
@@ -168,6 +169,7 @@ function DetailScreen({ route, navigation }) {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
         setBorderColor(BorderColor)
+        console.log(Color)
         setColor(Color)
     }, [])
 
@@ -176,7 +178,6 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
-                console.log(ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
@@ -244,7 +245,6 @@ function DetailScreen({ route, navigation }) {
         setIsLoad(false);
         navigation.goBack();
     }
-
     if (isLoad) {
         return (
             <SafeAreaView style={styles.Container}>
@@ -263,10 +263,11 @@ function DetailScreen({ route, navigation }) {
                     style={[styles.HeaderStyle, {
                         backgroundColor: yColor,
                         borderBottomWidth: 1,
-                        borderColor: ybColor
+                        borderColor: ybColor,
                     }]}>
                     <View style={styles.HeaderBackBtn}>
-                        <Icon name='ios-arrow-back' size={30} color={yiColor} onPress={() => NavigationBack()} />
+                        <Icon name={'arrowleft'} size={30} 
+                        color={yiColor} onPress={() => NavigationBack()} />
                     </View>
                     <View style={styles.HeaderTitle}>
                         <Text style={styles.HeaderTitleTxtStyle}>
@@ -343,8 +344,8 @@ function DetailScreen({ route, navigation }) {
                     >
                         {
                             itemInfos.pick_status == true ?
-                                (<Icon name={'ios-heart-empty'} size={30} color={'red'} />) :
-                                (<Icon name={'ios-heart-empty'} size={30} />)
+                                (<Icon name={'hearto'} size={30} color={'red'} />) :
+                                (<Icon name={'hearto'} size={30} />)
                         }
                     </TouchableOpacity>
                     <View style={styles.ChatContent}>
@@ -380,31 +381,26 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     HeaderStyle: {
-        height: height * 0.06,
         position: 'absolute',
         zIndex: 1,
-        left: 0,
-        right: 0,
-        top: 0,
         width: width,
         padding: 10,
+        marginTop : Platform.OS == 'ios' ? Constants.statusBarHeight : null,
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'center',
     },
     HeaderBackBtn: {
         flex: 1,
-        padding: 10,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
     },
     HeaderTitle: {
         flex: 5,
-        padding: 10,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
     HeaderTitleTxtStyle: {
         fontSize: 20,
@@ -464,7 +460,6 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: width,
         padding: 10,
-        height: height * 0.07,
         flexDirection: 'row',
         backgroundColor: 'rgba(255, 255, 255, 1)',
         borderTopWidth: 1,
@@ -486,7 +481,7 @@ const styles = StyleSheet.create({
     ChatBtn: {
         flex: 1,
         marginRight: 30,
-        height: height * 0.05,
+        padding : 10,
         borderRadius: 5,
         backgroundColor: 'rgba(255, 138, 60, 1)',
         elevation: 2,
