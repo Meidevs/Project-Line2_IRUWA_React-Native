@@ -65,7 +65,6 @@ function MainScreen({ route, navigation }) {
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
     const [isError, setIsError] = useState(true);
-    console.log('user_location', user_location)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,

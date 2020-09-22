@@ -15,6 +15,7 @@ import CateScreen from './screens/Category';
 import AddScreen from './screens/Add';
 import ChatListScreen from './screens/ChatList';
 import ChatScreen from './screens/Chat';
+import ChatInitialScreen from './screens/ChatInitial';
 import MyinfoScreen from './screens/Myinfo';
 import SearchScreen from './screens/Search';
 import AlarmScreen from './screens/Alarm';
@@ -203,8 +204,8 @@ const MainStackScreens = () => {
         component={CateListScreen}
       />
       <ChatStack.Screen
-        name='Chat'
-        component={ChatScreen}
+        name='ChatInitial'
+        component={ChatInitialScreen}
         options={{
           headerShown: false,
         }}

@@ -16,7 +16,7 @@ class GLOBE {
             reconnectionAttempts: 5000,
             transports: ['websocket']/// you need to explicitly tell it to use websockets
         };
-        var socket = io('http://192.168.0.40:8888', connectionConfig);
+        var socket = io('http://192.168.25.41:8888', connectionConfig);
         this.GLOBE_SOCKET = socket;
     }
 

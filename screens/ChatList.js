@@ -19,26 +19,40 @@ import GLOBAL from '../assets/dataSource/globalModel';
 const { width, height } = Dimensions.get('window');
 
 const initialValue = {
-    params: [],
+    params: []
 }
 
 const reducer = (state, action) => {
     switch (action.type) {
         case 'initial':
             return {
-                ...state,
                 params: action.params
             }
-        // default:
-        //     throw new Error();
+
+        case 'update':
+            return {
+                ...state.params.filter((data) => {
+                    if (data.roomCode == action.params.roomCode) {
+                        return data.messages.push(action.params.messages)
+                    } else {
+                        action.params.roomInfo.messages.push(action.params.message);
+                        return {
+                            ...state.params.push(action.params.roomInfo)
+                        }
+                    }
+                })
+            }
+        case 'default':
+            return {
+                params: state.params
+            }
     }
 }
-
 function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
+    const [isSocket, setSocket] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialValue);
     console.log(state)
-
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -56,61 +70,97 @@ function ChatListScreen({ route, navigation }) {
 
     useFocusEffect(
         React.useCallback(() => {
-            const SET_USER = async () => {
-                var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
-                var socket = GLOBAL.GET_SOCKET_IO();
-                socket.emit('prevMessage', USER_INFO.user_seq);
-                setCurrentUser(USER_INFO.user_seq);
+            let isCancelled = true;
+            if (isCancelled) {
+                const SET_USER = async () => {
+                    var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
+                    setCurrentUser(USER_INFO.user_seq);
+                }
+                SET_USER();
             }
-            SET_USER();
+            return () => isCancelled = false;
         }, [])
     );
 
+    useEffect(() => {
+        var socket = GLOBAL.GET_SOCKET_IO();
+        if (currentUser) {
+            socket.emit('GetRoomList', currentUser);
+            setSocket(true)
+        }
+    }, [currentUser]);
 
     useEffect(() => {
         var socket = GLOBAL.GET_SOCKET_IO();
-        const MessageSubscribe = socket.on('receiveMessage', message => {
-            socket.emit('prevMessage', currentUser);
-        })
-        socket.on('prevMessage', message => {
-            dispatch({ type: 'initial', params: message });
-        });
-        return () => MessageSubscribe;
-    }, []);
-
+        if (isSocket) {
+            socket.on('GetRoomList', message => {
+                dispatch({ type: 'initial', params: message });
+            })
+        }
+    }, [isSocket]);
+    // useEffect(() => {
+    //     if (isSocket) {
+    //         socket.on('receiveMessage', message => {
+    //             console.log('receiveMessage', message)
+    //             dispatch({ type: 'update', params: message })
+    //         })
+    //     }
+    // }, [isSocket]);
     const ComponentJSX = () => {
         if (state.params.length > 0) {
             return (
                 state.params.map((data, index) => {
+                    console.log(data)
+                    let sender = data.sender_seq;
                     var MESSAGE_LENGTH = data.messages.length;
-                    return (
-                        <View
-                            key={index.toString()}>
-                            <TouchableOpacity
-                                style={styles.ListBox}
-                                onPress={() => setNavigationParams(data)}
 
-                            >
-                                <View style={styles.LeftArea}>
-                                    {
-                                        currentUser === data.sender_seq ? (
-                                            <Text>판매자</Text>
-                                        ) : (
-                                                <Text>구매자</Text>
-                                            )
-                                    }
-                                </View>
-                                <View style={styles.RightArea}>
-                                    <View style={styles.UserInfo}>
-                                        <Text>{data.sender_name}</Text><Text>{data.receiver_name}</Text>
+                    if (currentUser === sender) {
+                        return (
+                            <View
+                                key={index.toString()} >
+                                <TouchableOpacity
+                                    style={styles.ListBox}
+                                    onPress={() => setNavigationParams(data)}
+
+                                >
+                                    <View style={styles.LeftArea}>
+                                        <Text>판매자</Text>
                                     </View>
-                                    <View style={styles.LatestMessage}>
-                                        <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
+                                    <View style={styles.RightArea}>
+                                        <View style={styles.UserInfo}>
+                                            <Text>{data.receiver_name}</Text>
+                                        </View>
+                                        <View style={styles.LatestMessage}>
+                                            <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
+                                        </View>
                                     </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    )
+                                </TouchableOpacity>
+                            </View >
+                        )
+                    } else {
+                        return (
+                            <View
+                                key={index.toString()} >
+                                <TouchableOpacity
+                                    style={styles.ListBox}
+                                    onPress={() => setNavigationParams(data)}
+
+                                >
+                                    <View style={styles.LeftArea}>
+                                        <Text>구매자</Text>
+                                    </View>
+                                    <View style={styles.RightArea}>
+                                        <View style={styles.UserInfo}>
+                                            <Text>{data.sender_name}</Text>
+                                        </View>
+                                        <View style={styles.LatestMessage}>
+                                            <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            </View >
+                        )
+                    }
                 })
             )
         }

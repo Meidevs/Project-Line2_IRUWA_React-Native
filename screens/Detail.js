@@ -169,7 +169,6 @@ function DetailScreen({ route, navigation }) {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
         setBorderColor(BorderColor)
-        console.log(Color)
         setColor(Color)
     }, [])
 
@@ -215,7 +214,7 @@ function DetailScreen({ route, navigation }) {
         var ITEMS_INFOs = await CHATTING.ITEM_INFO(items_seq);
         var roomCode = 'RoomU' + user_seq + 'C' + cmp_seq + 'I' + items_seq;
         const keyString = await KeyGenerator(roomCode);
-        navigation.navigate('Chat', {
+        navigation.navigate('ChatInitial', {
             items_seq: ITEMS_INFOs.items_seq,
             item_name: ITEMS_INFOs.item_name,
             sender_seq: USER_INFOs.user_seq,
