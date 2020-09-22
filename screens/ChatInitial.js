@@ -56,19 +56,23 @@ const ChatInitialScreen = ({ route, navigation }) => {
             item_name: item_name,
             cmp_seq: cmp_seq,
             cmp_name: cmp_name,
-            sender_seq : sender_seq,
-            sender_name : sender_name,
-            receiver_seq : receiver_seq,
-            receiver_name : receiver_name
+            sender_seq: sender_seq,
+            sender_name: sender_name,
+            receiver_seq: receiver_seq,
+            receiver_name: receiver_name
         });
     }, [])
 
     useEffect(() => {
+        let isCancelled = true;
         socket.on('receiveMessage', (message) => {
+            console.log('hi')
             var newData = [...receiveMessage, message];
-            setReceiveMessage(newData);
+            if (isCancelled) {
+                setReceiveMessage(newData);
+            }
         });
-     
+        return () => isCancelled = false;
     }, [receiveMessage]);
 
     const sendMessage = async () => {
@@ -77,9 +81,9 @@ const ChatInitialScreen = ({ route, navigation }) => {
             var sendMessage = message;
             var form = {
                 sender_seq: sender_seq,
-                sender_name : sender_name,
-                receiver_seq : receiver_seq,
-                receiver_name : receiver_name,
+                sender_name: sender_name,
+                receiver_seq: receiver_seq,
+                receiver_name: receiver_name,
                 roomCode: roomCode,
                 message: sendMessage,
                 reg_date: dateTime,

@@ -49,22 +49,15 @@ const ChatScreen = ({ route, navigation }) => {
     }, [route]);
 
     useEffect(() => {
-        if (initialLoaded) {
-            socket.emit('getRoomMessages', roomCode);
-            socket.on('getRoomMessages', message => {
-                setReceiveMessage(message)
-            })
-        }
-    }, [initialLoaded])
-
-    useEffect(() => {
-
-        const MessageSubscribe = socket.on('receiveMessage', (message) => {
+        let isCancelled = true;
+        socket.on('receiveMessage', (message) => {
             var newData = [...receiveMessage, message];
-            setReceiveMessage(newData);
+            if (isCancelled) {
+                setReceiveMessage(newData);
+            }
         });
 
-        return () => MessageSubscribe;
+        return () => isCancelled = false;
     }, [receiveMessage]);
 
     const sendMessage = async () => {

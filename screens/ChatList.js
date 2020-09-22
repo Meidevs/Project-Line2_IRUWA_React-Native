@@ -9,11 +9,11 @@ import {
     Image,
     Dimensions,
     ScrollView,
-    SafeAreaView
+    SafeAreaView, Platform
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
-
+import ChatListUp from '../assets/components/ChatList/ChatListUp';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import GLOBAL from '../assets/dataSource/globalModel';
 const { width, height } = Dimensions.get('window');
@@ -48,6 +48,7 @@ const reducer = (state, action) => {
             }
     }
 }
+let socket;
 function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [isSocket, setSocket] = useState(false);
@@ -74,7 +75,10 @@ function ChatListScreen({ route, navigation }) {
             if (isCancelled) {
                 const SET_USER = async () => {
                     var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
+                    socket = GLOBAL.GET_SOCKET_IO();
+                    socket.emit('GetRoomList', USER_INFO.user_seq);
                     setCurrentUser(USER_INFO.user_seq);
+                    setSocket(true)
                 }
                 SET_USER();
             }
@@ -83,114 +87,26 @@ function ChatListScreen({ route, navigation }) {
     );
 
     useEffect(() => {
-        var socket = GLOBAL.GET_SOCKET_IO();
-        if (currentUser) {
-            socket.emit('GetRoomList', currentUser);
-            setSocket(true)
-        }
-    }, [currentUser]);
-
-    useEffect(() => {
-        var socket = GLOBAL.GET_SOCKET_IO();
         if (isSocket) {
             socket.on('GetRoomList', message => {
                 dispatch({ type: 'initial', params: message });
             })
         }
+        return () => setSocket(false)
     }, [isSocket]);
-    // useEffect(() => {
-    //     if (isSocket) {
-    //         socket.on('receiveMessage', message => {
-    //             console.log('receiveMessage', message)
-    //             dispatch({ type: 'update', params: message })
-    //         })
-    //     }
-    // }, [isSocket]);
-    const ComponentJSX = () => {
-        if (state.params.length > 0) {
-            return (
-                state.params.map((data, index) => {
-                    console.log(data)
-                    let sender = data.sender_seq;
-                    var MESSAGE_LENGTH = data.messages.length;
 
-                    if (currentUser === sender) {
-                        return (
-                            <View
-                                key={index.toString()} >
-                                <TouchableOpacity
-                                    style={styles.ListBox}
-                                    onPress={() => setNavigationParams(data)}
-
-                                >
-                                    <View style={styles.LeftArea}>
-                                        <Text>판매자</Text>
-                                    </View>
-                                    <View style={styles.RightArea}>
-                                        <View style={styles.UserInfo}>
-                                            <Text>{data.receiver_name}</Text>
-                                        </View>
-                                        <View style={styles.LatestMessage}>
-                                            <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </View >
-                        )
-                    } else {
-                        return (
-                            <View
-                                key={index.toString()} >
-                                <TouchableOpacity
-                                    style={styles.ListBox}
-                                    onPress={() => setNavigationParams(data)}
-
-                                >
-                                    <View style={styles.LeftArea}>
-                                        <Text>구매자</Text>
-                                    </View>
-                                    <View style={styles.RightArea}>
-                                        <View style={styles.UserInfo}>
-                                            <Text>{data.sender_name}</Text>
-                                        </View>
-                                        <View style={styles.LatestMessage}>
-                                            <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </View >
-                        )
-                    }
-                })
-            )
+    useEffect(() => {
+        if (isSocket) {
+            socket.on('receiveMessage', message => {
+                console.log('receiveMessage', message)
+            })
         }
-    }
-    const setNavigationParams = (data) => {
-        var Tmp;
-        if (data.sender_seq != currentUser) {
-            Tmp = data.sender_seq;
-            data.sender_seq = currentUser
-            data.receiver_seq = Tmp;
-        }
-        navigation.navigate('Chat', {
-            items_seq: data.items_seq,
-            item_name: data.item_name,
-            sender_seq: data.sender_seq,
-            sender_name: data.sender_name,
-            receiver_seq: data.receiver_seq,
-            receiver_name: data.receiver_name,
-            cmp_seq: data.cmp_seq,
-            cmp_name: data.cmp_name,
-            roomCode: data.roomCode
-        })
-    }
+    }, [isSocket]);
+
+    
     return (
         <SafeAreaView style={styles.Container}>
-            <ScrollView>
-                {
-                    ComponentJSX()
-                }
-            </ScrollView>
+            <ChatListUp data={state} user={currentUser} navigation={navigation} />
         </SafeAreaView>
     )
 }
