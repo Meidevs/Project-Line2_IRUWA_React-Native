@@ -20,11 +20,14 @@ const PremiumBanner = ({ data, navigation }) => {
     let position = Animated.divide(scrollX, width);
 
     useEffect(() => {
+        let isCancelled = true;
         const PREMIUM_ITEMS = async () => {
             var PREMIUM_LIST = await DATA_SOURCE.GET_PREMIUM_ITEMS(data);
             setPremiumItems(PREMIUM_LIST.data);
         }
         PREMIUM_ITEMS();
+        return () => isCancelled = false;
+
     }, [data])
 
 

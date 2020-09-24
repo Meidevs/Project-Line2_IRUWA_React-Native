@@ -3,15 +3,11 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
+    Image,
     StyleSheet,
     Dimensions,
-    SafeAreaView,
-    ScrollView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import SEARCH_API from '../../dataSource/searchModel';
-import DATA_SOURCE from '../../dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
 const initialState = {
@@ -119,14 +115,18 @@ const PrevSearch = ({ status, newData, callback }) => {
                             <View style={styles.PrevContentList} key={JSON.stringify(index)}>
                                 <View style={styles.PrevContentLeft}>
                                     <View style={styles.PrevIconBack} >
-                                        <Icon name={'tago'} size={24} />
+                                        <Image source={require('../../images/tag_ico.png')} 
+                                        style={{width : 20, height : 20}}
+                                        />
                                     </View>
                                     <TouchableOpacity style={styles.PrevContentName} onPress={() => ReturnPrev(data.keyword)}>
                                         <Text>{data.keyword}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TouchableOpacity style={styles.PrevCancel} onPress={() => DELETE_PREV_SEARCH(data.keyword)}>
-                                    <Icon name={'close'} size={18} />
+                                    <Image source={require('../../images/close_button.png')} 
+                                    style={{width : 10, height : 10}}
+                                    />
                                 </TouchableOpacity>
                             </View>
                         )
@@ -163,7 +163,9 @@ const styles = StyleSheet.create({
     PrevContentList: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderWidth : 0.5,
+        borderColor : '#ebebeb'
     },
     PrevContentLeft: {
         flexDirection: 'row',
@@ -180,8 +182,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    PrevContentName : {
-        width : width * 0.6
+    PrevContentName: {
+        width: width * 0.6
     },
     PrevCancel: {
         margin: 10,

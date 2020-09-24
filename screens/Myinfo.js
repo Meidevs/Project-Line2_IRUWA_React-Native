@@ -3,8 +3,6 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    StatusBar,
     StyleSheet,
     Image,
     Dimensions,
@@ -14,7 +12,6 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 
 import Icon from 'react-native-vector-icons/AntDesign';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ProfileSetter from '../assets/components/ProfileSetter';
 
@@ -34,23 +31,14 @@ function MyinfoScreen({ route, navigation }) {
             ),
             headerRight: () => (
                 <TouchableOpacity style={styles.SettingHeader} onPress={() => navigation.navigate('Settings')}>
-                    <Icon name={'setting'} size={28} />
+                    <Image source={require('../assets/images/more_button.png')}
+                        resizeMode={'contain'}
+                        style={{ width: 20, height: 20 }}
+                    />
                 </TouchableOpacity>
             )
         })
     }, []);
-
-    useEffect(() => {
-        if (infos) {
-            const GET_USER_PROFILE = async () => {
-                var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE(infos.user_seq);
-                if (PROFILE_IMAGE.flags == 0) {
-                    setUserProfileUri(PROFILE_IMAGE.message);
-                }
-            }
-            GET_USER_PROFILE();
-        }
-    }, [infos]);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -67,50 +55,50 @@ function MyinfoScreen({ route, navigation }) {
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
-                <View style={styles.ProfileBox}>
-                    <ProfileSetter hasComp={hasComp} user={infos} profile={userProfileUri} />
-                    <View style={styles.ProfileSettings}>
-                        <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() => navigation.navigate('Profile', {
-                            user_seq : infos.user_seq
-                        })}>
-                            <Text>  개인정보수정  </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <ProfileSetter hasComp={hasComp} user={infos} navigation={navigation} />
                 <View style={styles.ContentBox}>
                     {
                         hasComp == true ? (
-                            <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('ItemList', {
+                            <TouchableOpacity style={[styles.BtnContent, { marginRight: 7.5 }]} onPress={() => navigation.navigate('ItemList', {
                                 user_seq: infos.user_seq,
                                 cmp_seq: infos.cmp_seq
                             })}>
                                 <View style={styles.IconBox}>
-                                    <Icon name={'bars'} size={32} />
+                                    <Image source={require('../assets/images/registered_list_ico.png')}
+                                    />
                                 </View>
-                                <Text>등록 목록</Text>
+                                <Text style={styles.ListTxt}>등록 목록</Text>
                             </TouchableOpacity>
                         ) : (
                                 null
                             )
                     }
-                    <TouchableOpacity style={styles.BtnContent} onPress={() => navigation.navigate('PickList', {
+                    <TouchableOpacity style={[styles.BtnContent, { marginLeft: 7.5 }]} onPress={() => navigation.navigate('PickList', {
                         user_seq: infos.user_seq,
                     })}>
                         <View style={styles.IconBox}>
-                            <Icon name={'heart'} size={32} />
+                            <Image source={require('../assets/images/liked_list_ico.png')}
+                            />
                         </View>
-                        <Text>관심 목록</Text>
+                        <Text style={styles.ListTxt}>관심 목록</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.MyinfoContent}>
                     {
                         hasComp == true ? (
                             <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Add')}>
-                                <View style={styles.IconArea}>
-                                    <Icon name={'form'} size={36} />
+                                <View style={styles.IconText}>
+                                    <View style={styles.IconArea}>
+                                        <Image source={require('../assets/images/my_profile_ico1.png')} />
+                                    </View>
+                                    <View style={styles.SettingList}>
+                                        <Text style={styles.SetListTxt}>업체 글쓰기</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.SettingList}>
-                                    <Text>업체 글쓰기</Text>
+                                <View style={styles.MovingBtn}>
+                                    <Image source={require('../assets/images/right_arrow_ico.png')}
+                                        style={{ width: 17, height: 17 }}
+                                    />
                                 </View>
                             </TouchableOpacity>
                         ) : (
@@ -118,27 +106,49 @@ function MyinfoScreen({ route, navigation }) {
                             )
                     }
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Invite')}>
-                        <View style={styles.IconArea}>
-                            <Icon name={'mail'} size={36} />
+
+                        <View style={styles.IconText}>
+                            <View style={styles.IconArea}>
+                                <Image source={require('../assets/images/my_profile_ico2.png')} />
+                            </View>
+                            <View style={styles.SettingList}>
+                                <Text style={styles.SetListTxt}>친구 초대</Text>
+                            </View>
                         </View>
-                        <View style={styles.SettingList}>
-                            <Text>친구 초대</Text>
+                        <View style={styles.MovingBtn}>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 17, height: 17 }}
+                            />
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Notification')}>
-                        <View style={styles.IconArea}>
-                            <Icon name={'notification'} size={36} />
+                        <View style={styles.IconText}>
+                            <View style={styles.IconArea}>
+                                <Image source={require('../assets/images/my_profile_ico3.png')} />
+                            </View>
+                            <View style={styles.SettingList}>
+                                <Text style={styles.SetListTxt}>공지 사항</Text>
+                            </View>
                         </View>
-                        <View style={styles.SettingList}>
-                            <Text>공지 사항</Text>
+                        <View style={styles.MovingBtn}>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 17, height: 17 }}
+                            />
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('CustomerService')}>
-                        <View style={styles.IconArea}>
-                            <Icon name={'customerservice'} size={36} />
+                        <View style={styles.IconText}>
+                            <View style={styles.IconArea}>
+                                <Image source={require('../assets/images/my_profile_ico4.png')} />
+                            </View>
+                            <View style={styles.SettingList}>
+                                <Text style={styles.SetListTxt}>고객 센터</Text>
+                            </View>
                         </View>
-                        <View style={styles.SettingList}>
-                            <Text>고객 센터</Text>
+                        <View style={styles.MovingBtn}>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 17, height: 17 }}
+                            />
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -169,71 +179,80 @@ const styles = StyleSheet.create({
     },
     ScrollView: {
     },
-    ProfileBox: {
-        height: 80,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderWidth: 0.8,
-        borderColor: 'rgba(238, 238, 238, 1)'
-    },
-    ProfileSettings: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'center'
-    },
-    ProfilleSetBtn: {
-        margin: 10,
-        padding: 10,
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: 'rgba(180, 180, 180, 1)'
-    },
+
     ContentBox: {
-        height: 150,
+        marginRight: 25,
+        marginLeft: 25,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
     },
     BtnContent: {
-        padding: 10,
+        flex: 1,
+        paddingTop: 30,
+        paddingBottom: 30,
+        paddingRight: 38,
+        paddingLeft: 38,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#ebebeb',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 50,
-        marginLeft: 50,
     },
     IconBox: {
-        backgroundColor: 'rgba(225, 225, 225, 1)',
-        borderRadius: 30,
-        width: 50,
-        height: 50,
+        backgroundColor: '#15bac1',
+        borderRadius: 80,
+        width: 80,
+        height: 80,
+        marginBottom: 20,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    ListTxt: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#000000'
     },
     MyinfoContent: {
+        margin: 25,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'flex-start',
     },
     ContentArea: {
+        marginBottom: 15,
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        height: width * 0.15,
-        width: width,
         borderWidth: 0.8,
-        borderColor: 'rgba(238, 238, 238, 1)'
+        borderRadius: 10,
+        borderColor: '#ebebeb'
+    },
+    IconText: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start'
     },
     IconArea: {
-        padding: 10,
-        width: 60,
-        height: 60,
+        marginTop: 30,
+        marginBottom: 30,
+        margin: 20,
         justifyContent: 'center',
         alignItems: 'center',
     },
     SettingList: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    SetListTxt : {
+        fontSize : 13,
+        fontWeight : '700',
+        color : '#000000'
+    },
+    MovingBtn: {
+        marginTop: 30,
+        marginBottom: 30,
+        margin: 20,
         justifyContent: 'center',
         alignItems: 'center'
     }

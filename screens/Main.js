@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/stack';
-import { useFonts } from 'expo-font';
 
 
 import DATA_SOURCE from '../assets/dataSource/dataModel';
@@ -83,10 +82,7 @@ function MainScreen({ route, navigation }) {
     const [user_location, setUserLocation] = useState('');
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
-    let [isFont] = useFonts({
-        'Fonia-Regular': require('../assets/Fonts/Fonia_Regular.ttf'),
-    });
-    console.log(isFont)
+
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -109,10 +105,11 @@ function MainScreen({ route, navigation }) {
                 backgroundColor: '#ffffff'
             }
         })
-    }, [user_location, isFont]);
+    }, [user_location]);
 
     useFocusEffect(
         React.useCallback(() => {
+            let isCancelled = true;
             const GET_MAIN_INFOs = async () => {
                 try {
                     const data = await AUTHENTICATION.GET_USER_INFOs();
@@ -126,6 +123,7 @@ function MainScreen({ route, navigation }) {
             }
             setIsLoad(true);
             GET_MAIN_INFOs();
+            return () => isCancelled = false;
         }, [user_location])
     );
 

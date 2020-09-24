@@ -177,6 +177,7 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
+                console.log(ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
@@ -237,9 +238,7 @@ function DetailScreen({ route, navigation }) {
         } else {
             alert(RESULT.message);
         }
-
     }
-
     const NavigationBack = () => {
         setIsLoad(false);
         navigation.goBack();
@@ -264,10 +263,9 @@ function DetailScreen({ route, navigation }) {
                         borderBottomWidth: 1,
                         borderColor: ybColor,
                     }]}>
-                    <View style={styles.HeaderBackBtn}>
-                        <Icon name={'arrowleft'} size={30} 
-                        color={yiColor} onPress={() => NavigationBack()} />
-                    </View>
+                    <TouchableOpacity style={styles.HeaderBackBtn} onPress={() => NavigationBack()} >
+                        <Image source={require('../assets/images/back_button.png')} />
+                    </TouchableOpacity>
                     <View style={styles.HeaderTitle}>
                         <Text style={styles.HeaderTitleTxtStyle}>
                             {yPosition > 300 ?
@@ -302,23 +300,38 @@ function DetailScreen({ route, navigation }) {
                                         <Imgage source={require('../assets/images/defaultProfile.png')}
                                             borderRadius={70}
                                             resizeMode={'contain'}
-                                            style={{ width: width * 0.1, height: width * 0.1 }}
+                                            style={{ width: 45, height: 45, marginRight: 15, }}
                                         />
                                     ) : (
                                             <Image source={{ uri: itemInfos.user_profile }}
                                                 borderRadius={70}
                                                 resizeMode={'contain'}
-                                                style={{ width: width * 0.1, height: width * 0.1 }}
+                                                style={{ width: 45, height: 45, marginRight: 15, }}
                                             />
                                         )
                                 }
-                            </View>
-                            <View style={styles.ProfileTextArea}>
-                                <Text>{itemInfos.cmp_name}</Text>
-                                <Text>{itemInfos.cmp_location}</Text>
+                                <Text style={styles.CmpNameTxt}>{itemInfos.cmp_name}</Text>
                             </View>
                             <View style={styles.ProfileInfoBox}>
-                                <Text>{itemInfos.time_avg}</Text>
+                                <TouchableOpacity
+                                    style={styles.PickContent}
+                                    onPress={() => InterestList()}
+                                >
+                                    {
+                                        itemInfos.pick_status == true ?
+                                            (
+                                                <Image source={require('../assets/images/like_ico_selected.png')} />
+                                            ) : (
+                                                <Image source={require('../assets/images/like_ico_default.png')} />
+                                            )
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.CmpInfo}>
+                            <View style={styles.CmpAddress}>
+                                <Text style={styles.AddresForm}>주소.</Text>
+                                <Text style={styles.AddressTxt}>{itemInfos.cmp_location}</Text>
                             </View>
                         </View>
                         <ContentCard data={itemInfos} />
@@ -329,7 +342,7 @@ function DetailScreen({ route, navigation }) {
                         <View style={styles.ItemBox}>
                             <View style={styles.TitleBox}>
                                 <View style={styles.TitleBorder}>
-                                    <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 광고 목록</Text>
+                                    <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 다른 광고</Text>
                                 </View>
                             </View>
                             <AdvertisementList data={itemInfos} list={itemsArray} navigation={navigation} />
@@ -338,23 +351,11 @@ function DetailScreen({ route, navigation }) {
                 </Animated.ScrollView>
                 <View style={styles.ContentBtn}>
                     <TouchableOpacity
-                        style={styles.PickContent}
-                        onPress={() => InterestList()}
+                        style={styles.ChatBtn}
+                        onPress={() => setNavigationParams()}
                     >
-                        {
-                            itemInfos.pick_status == true ?
-                                (<Icon name={'hearto'} size={30} color={'red'} />) :
-                                (<Icon name={'hearto'} size={30} />)
-                        }
+                        <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
-                    <View style={styles.ChatContent}>
-                        <TouchableOpacity
-                            style={styles.ChatBtn}
-                            onPress={() => setNavigationParams()}
-                        >
-                            <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
             </SafeAreaView>
         )
@@ -383,23 +384,19 @@ const styles = StyleSheet.create({
         position: 'absolute',
         zIndex: 1,
         width: width,
-        padding: 10,
-        marginTop : Platform.OS == 'ios' ? Constants.statusBarHeight : null,
+        marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : null,
         flexDirection: 'row',
         alignItems: 'flex-start',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
     },
     HeaderBackBtn: {
-        flex: 1,
+        padding: 15,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
     },
     HeaderTitle: {
-        flex: 5,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        padding: 15,
     },
     HeaderTitleTxtStyle: {
         fontSize: 20,
@@ -408,32 +405,58 @@ const styles = StyleSheet.create({
     ScrollView: {
     },
     ContentBox: {
+        width: width,
         flexDirection: 'column',
         alignItems: 'center',
-        padding: 10,
     },
     ProfileContent: {
+        margin: 25,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    ProfileImageArea: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    CmpNameTxt: {
+        fontSize: 35,
+        fontWeight: 'bold',
+        color: '#000000'
+    },
+    ProfileInfoBox: {
         flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
+    },
+    PickContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRightWidth: 1,
+        borderColor: 'rgba(238, 238, 238, 1)'
+    },
+    CmpInfo: {
+        width: width,
+    },
+    CmpAddress: {
+        marginRight: 25,
+        marginLeft: 25,
+        marginBottom: 25,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center'
     },
-    ProfileImageArea: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 10,
+    AddresForm: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#a2a2a2',
+        marginRight: 10,
     },
-    ProfileTextArea: {
-        flex: 3,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
-    },
-    ProfileInfoBox: {
-        flex : 1,
-        padding : 10,
-        flexDirection: 'row',
-        justifyContent: 'flex-end'
+    AddressTxt: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#000000',
     },
     ItemBox: {
         width: width * 0.9,
@@ -444,9 +467,9 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     ItemTitleTxtStyle: {
-        fontSize: 24,
-        fontWeight: '900',
-        color: 'rgba(50, 50, 50, 1)'
+        fontSize: 13,
+        fontWeight: 'bold',
+        color: '#000000'
     },
     ItemSimpleInfo: {
         marginTop: 5,
@@ -458,32 +481,12 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         width: width,
-        padding: 10,
         flexDirection: 'row',
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        borderTopWidth: 1,
-        borderColor: 'rgba(238, 238, 238, 1)'
-    },
-    PickContent: {
-        flex: 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRightWidth: 1,
-        borderColor: 'rgba(238, 238, 238, 1)'
-    },
-    ChatContent: {
-        flex: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#15bac1',
     },
     ChatBtn: {
-        flex: 1,
-        marginRight: 30,
-        padding : 10,
-        borderRadius: 5,
-        backgroundColor: 'rgba(255, 138, 60, 1)',
-        elevation: 2,
+        flex : 1,
+        padding: 20,
         justifyContent: 'center',
         alignItems: 'center'
     },

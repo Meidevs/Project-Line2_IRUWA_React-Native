@@ -120,7 +120,7 @@ function SearchScreen({ navigation, route }) {
                         onTouchStart={() => toggleSearchHistory()}
                     />
                     <TouchableOpacity onPress={() => SearchItem()}>
-                        <Icon name={'search1'} size={28} color={'rgba(140, 140, 140, 1)'} />
+                        <Image source={require('../assets/images/search_ico.png')} />
                     </TouchableOpacity>
                 </View>
             </View>

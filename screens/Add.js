@@ -46,9 +46,7 @@ function AddScreen({ route, navigation }) {
                 </View>
             ),
             headerRight: () => (
-                <TouchableOpacity style={styles.RightHeader} onPress={() => SaveImages()}>
-                    <Text style={styles.TitleHeaderTxtStyle}>완료</Text>
-                </TouchableOpacity>
+                <View></View>
             )
         })
     }, [images, title, content, adsType]);
@@ -62,6 +60,7 @@ function AddScreen({ route, navigation }) {
 
     const IMAGE_PICKER = async () => {
         try {
+            if (images.length >= 10) return alert('이미지는 10개 이상 업로드 하실 수 없습니다.')
             let IMAGE_INFOs = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 aspect: [400, 400],
@@ -74,7 +73,7 @@ function AddScreen({ route, navigation }) {
                 [{ resize: { width: 400, height: 400 } }],
                 { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
             );
-            console.log('resizedImage', resizedImage)
+
             if (!IMAGE_INFOs.cancelled) {
                 setImage([
                     ...images,
@@ -129,27 +128,23 @@ function AddScreen({ route, navigation }) {
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
-                <View style={styles.ImageUploadBox}>
-                    <TouchableOpacity style={styles.ImageUploadBtn} onPress={() => IMAGE_PICKER()}>
-                        <Icon name={'ios-camera'} size={30} />
-                        <Text>{images.length}/10</Text>
-                    </TouchableOpacity>
-                    <View style={styles.ImageList}>
-                        {
-                            images.map((data, index) => {
-                                return (
-                                    <TouchableOpacity
-                                        key={index.toString()}
-                                        style={styles.ImageListForm}
-                                        onPress={() => DELETE_IMAGE(index)}>
-                                        <View style={styles.DeleteIcon}>
-                                            <Icon name={'ios-close'} size={20} />
-                                        </View>
-                                        <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
+                <View style={styles.SwitchBtnForm}>
+                    <View style={styles.SwitchTitle}>
+                        <Text style={styles.TitleTxt}>게시물 광고 타입을 선택해 주세요.</Text>
+                    </View>
+                    <View style={styles.SwitchBtnArea}>
+                        <TouchableOpacity onPress={() => SelectAdsType(0)} style={styles.SwitchBtnContent}>
+                            <View style={styles.SwitchBtn}>
+                                <View style={adsType == 0 ? styles.InnerSwitch : styles.NonInnerSwitch} />
+                            </View>
+                            <Text style={styles.SwitchBtnTxt}>일반</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => SelectAdsType(1)} style={styles.SwitchBtnContent}>
+                            <View style={styles.SwitchBtn}>
+                                <View style={adsType == 1 ? styles.InnerSwitch : styles.NonInnerSwitch} />
+                            </View>
+                            <Text style={styles.SwitchBtnTxt}>프리미엄</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.ItemTitleBox}>
@@ -161,21 +156,7 @@ function AddScreen({ route, navigation }) {
                         onChangeText={(text) => setItemTitle(text)}
                     />
                 </View>
-                <View style={styles.SwitchBtnForm}>
-                    <View style={styles.SwitchTitle}>
-                        <Text style={styles.TitleTxt}>게시물 광고 타입을 선택해 주세요.</Text>
-                    </View>
-                    <View style={styles.SwitchBtnArea}>
-                        <TouchableOpacity onPress={() => SelectAdsType(0)} style={styles.SwitchBtnContent}>
-                            <View style={adsType == 0 ? styles.SwitchBtn : styles.NonSwitchBtn} />
-                            <Text style={adsType == 0 ? styles.SwitchBtnTxt : styles.NonSwitchBtnTxt}>일반</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => SelectAdsType(1)} style={styles.SwitchBtnContent}>
-                            <View style={adsType == 1 ? styles.SwitchBtn : styles.NonSwitchBtn} />
-                            <Text style={adsType == 1 ? styles.SwitchBtnTxt : styles.NonSwitchBtnTxt}>프리미엄</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+
                 <View style={styles.ItemTextArea}>
                     <TextInput
                         value={content}
@@ -186,7 +167,37 @@ function AddScreen({ route, navigation }) {
                         style={styles.ItemTextTxt}
                     />
                 </View>
+                <View style={styles.ImageList}>
+                    {
+                        images.map((data, index) => {
+                            return (
+                                <TouchableOpacity
+                                    key={index.toString()}
+                                    style={styles.ImageListForm}
+                                    onPress={() => DELETE_IMAGE(index)}>
+                                    <View style={styles.DeleteIcon}>
+                                        <Image source={require('../assets/images/close_button.png')}
+                                            style={{ width: 10, height: 10 }}
+                                        />
+                                    </View>
+                                    <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                </View>
+                <View style={styles.ImageUploadBox}>
+                    <TouchableOpacity style={styles.ImageUploadBtn} onPress={() => IMAGE_PICKER()}>
+                        <Image source={require('../assets/images/photo_ico.png')}
+                        />
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
+            <View style={styles.SaveBtnForm}>
+                <TouchableOpacity style={styles.SaveBtn} onPress={() => SaveImages()}>
+                    <Text style={styles.SaveTxt}>작성하기</Text>
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     )
 }
@@ -197,10 +208,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,1)'
     },
     ScrollView: {
+        flex: 1,
     },
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
@@ -214,77 +226,79 @@ const styles = StyleSheet.create({
     },
     ImageUploadBox: {
         width: width,
-        height: height * 0.1,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderBottomWidth: 2,
-        borderColor: 'rgba(238, 238, 238, 1)'
     },
     ImageUploadBtn: {
         flex: 1,
+        marginRight: 25,
+        marginLeft: 25,
+        marginBottom : 25,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: '#4C4C4C',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center'
     },
     ImageList: {
-        flex: 5,
+        padding: 25,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center'
     },
     ItemTitleBox: {
-        width: width,
-        height: height * 0.08,
-        padding: 10,
+        marginRight: 25,
+        marginLeft: 25,
+        marginBottom: 15,
+        padding: 25,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: 'rgba(238, 238, 238, 1)',
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#ebebeb',
     },
     ItemTitleTxt: {
-        fontSize: 20,
-        width: width * 0.9,
-        height: height * 0.06,
-        backgroundColor: 'white'
+        fontSize: 15,
     },
     ItemTextArea: {
-        width: width,
-        height: height * 0.7,
+        marginRight: 25,
+        marginLeft: 25,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ebebeb',
+        padding: 25,
+        height: 400,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
     },
     ItemTextTxt: {
-        padding: 10,
-        width: width * 0.95,
-        height: height * 0.65,
-        backgroundColor: 'rgba(238, 238, 238, 1)',
+        flex: 1,
         textAlignVertical: 'top',
         flexDirection: 'column',
-        justifyContent: 'center',
-        borderRadius: 5,
-        fontSize: 16
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        fontSize: 15
     },
     ImageListForm: {
-        margin: 3,
-        width: 40,
-        height: 40,
-        borderRadius: 5,
+        width: 60,
+        height: 60,
+        borderRadius: 10,
+        marginRight: 15,
     },
     DeleteIcon: {
-        flex: 1,
         position: 'absolute',
-        zIndex: 5,
-        top: -1,
-        left: 30,
+        zIndex: 2,
+        top: 5,
+        right: 5,
     },
     SwitchBtnForm: {
-        padding: 10,
+        margin: 25,
     },
     SwitchTitle: {
-        marginBottom: 10,
     },
     TitleTxt: {
         fontSize: 16,
@@ -297,36 +311,53 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     SwitchBtnContent: {
+        marginTop: 20,
+        marginRight : 50,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
     SwitchBtn: {
-        margin: 10,
+        marginRight : 13,
         borderRadius: 10,
         width: 15,
         height: 15,
-        borderWidth: 3,
-        backgroundColor: 'red',
-        borderColor: 'red'
+        borderWidth: 1,
+        borderColor: '#ebebeb',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    NonSwitchBtn: {
-        margin: 10,
-        borderRadius: 10,
-        width: 15,
-        height: 15,
-        borderWidth: 3,
-        borderColor: 'black'
+    InnerSwitch: {
+        width: 9,
+        height: 9,
+        borderRadius: 9,
+        backgroundColor: '#15bac1'
+    },
+    NonInnerSwitch: {
+        width: 9,
+        height: 9,
+        borderRadius: 9,
     },
     SwitchBtnTxt: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '800',
-        color: 'red'
+        letterSpacing: -0.3,
+        color: '#000000'
     },
-    NonSwitchBtnTxt: {
-        fontSize: 16,
+    SaveBtnForm: {
+        height: 62,
+        width: width,
+        backgroundColor: '#000000'
+    },
+    SaveBtn: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    SaveTxt: {
         fontWeight: '800',
-        color: 'black'
+        fontSize: 15,
+        color: '#ffffff'
     }
 })
 

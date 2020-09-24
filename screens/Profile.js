@@ -3,12 +3,12 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    StatusBar,
+    Image,
     StyleSheet,
     Dimensions,
     ScrollView,
-    SafeAreaView, ImageBackground
+    SafeAreaView,
+    ImageBackground
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Constants from "expo-constants";
@@ -30,7 +30,7 @@ async function getImageRollAsync() {
 
 function ProfileScreen({ route, navigation }) {
     const {
-        user_seq 
+        user_seq
     } = route.params;
     const [profileImage, setProfileImage] = useState({ uri: null });
     const [isLoaded, setIsLoad] = useState(false);
@@ -53,7 +53,7 @@ function ProfileScreen({ route, navigation }) {
         const GET_PROFILE_IMAGE = async () => {
             var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE(user_seq);
             if (PROFILE_IMAGE.flags == 0) {
-                setProfileImage({uri : PROFILE_IMAGE.message});
+                setProfileImage({ uri: PROFILE_IMAGE.message });
             }
             setIsLoad(true);
         }
@@ -107,7 +107,8 @@ function ProfileScreen({ route, navigation }) {
                         >
                             <TouchableOpacity onPress={() => IMAGE_PICKER()}>
                                 <View style={styles.IconBox}>
-                                    <Icon name={'camera'} size={28} />
+                                    <Image source={require('../assets/images/photo_ico.png')}
+                                    />
                                 </View>
                             </TouchableOpacity>
                         </ImageBackground>
