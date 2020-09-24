@@ -22,16 +22,19 @@ const PremiumBannerItem = ({ item, navigation }) => {
                 })}>
                 <ImageBackground source={{ uri: item.uri[0] }} imageStyle={{ borderRadius: 25, resizeMode: 'cover' }} style={styles.ImageSlider}>
                     <View style={styles.ImageArea}>
+                        <View style={styles.PremiumIntro}>
+                            <Text style={styles.IntroTxt}>프리미엄 광고</Text>
+                        </View>
                         <View style={styles.PremiumTitle}>
                             <Text style={styles.TitleTxt}>{item.item_name}</Text>
                         </View>
                         <View style={styles.PremiumContent}>
                             <Text style={styles.ContentTxt}>
                                 {
-                            JSON.parse(item.item_content).length > 18 ? 
-                            JSON.parse(item.item_content).substring(0,18) + '...' :
-                            JSON.parse(item.item_content)
-                            }</Text>
+                                    JSON.parse(item.item_content).length > 18 ?
+                                        JSON.parse(item.item_content).substring(0, 18) + '...' :
+                                        JSON.parse(item.item_content)
+                                }</Text>
                         </View>
                     </View>
                 </ImageBackground>
@@ -61,6 +64,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'rgba(40, 40, 40, 0.6)'
     },
+    PremiumIntro: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    IntroTxt : {
+        fontSize: 13,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
     PremiumTitle: {
         flex: 1,
         justifyContent: 'center',
@@ -69,17 +82,17 @@ const styles = StyleSheet.create({
     TitleTxt: {
         fontSize: 20,
         color: '#fff',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     PremiumContent: {
-        flex: 2,
+        flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
     ContentTxt: {
-        fontSize: 18,
+        fontSize: 13,
         color: '#fff',
-        fontWeight: '800'
+        fontWeight: 'bold'
     }
 })
 

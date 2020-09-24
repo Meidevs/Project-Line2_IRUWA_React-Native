@@ -35,6 +35,8 @@ const ChatInitialScreen = ({ route, navigation }) => {
     const [profile, setChatUserProfile] = useState({ uri: null });
 
     useEffect(() => {
+        let isCancelled = true;
+
         const USER_PROFILE = async () => {
             var USER_PROFILE = await AUTHENTICATION.GET_USER_PROFILE(receiver_seq);
             if (USER_PROFILE.flags == 0) {
@@ -43,30 +45,29 @@ const ChatInitialScreen = ({ route, navigation }) => {
         }
         const GET_MAIN_INFOs = () => {
             socket = GLOBAL.GET_SOCKET_IO();
+            socket.emit('CreateRoom', {
+                roomCode: roomCode,
+                items_seq: items_seq,
+                item_name: item_name,
+                cmp_seq: cmp_seq,
+                cmp_name: cmp_name,
+                sender_seq: sender_seq,
+                sender_name: sender_name,
+                receiver_seq: receiver_seq,
+                receiver_name: receiver_name
+            });
         }
         setInitialValue(true);
         USER_PROFILE()
         GET_MAIN_INFOs();
-    }, [route]);
+        return () => isCancelled = false;
 
-    useEffect(() => {
-        socket.emit('CreateRoom', {
-            roomCode: roomCode,
-            items_seq: items_seq,
-            item_name: item_name,
-            cmp_seq: cmp_seq,
-            cmp_name: cmp_name,
-            sender_seq: sender_seq,
-            sender_name: sender_name,
-            receiver_seq: receiver_seq,
-            receiver_name: receiver_name
-        });
-    }, [])
+    }, [route]);
 
     useEffect(() => {
         let isCancelled = true;
         socket.on('receiveMessage', (message) => {
-            console.log('hi')
+            console.log(message)
             var newData = [...receiveMessage, message];
             if (isCancelled) {
                 setReceiveMessage(newData);

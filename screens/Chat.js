@@ -51,6 +51,7 @@ const ChatScreen = ({ route, navigation }) => {
     useEffect(() => {
         let isCancelled = true;
         socket.on('receiveMessage', (message) => {
+            console.log(message)
             var newData = [...receiveMessage, message];
             if (isCancelled) {
                 setReceiveMessage(newData);

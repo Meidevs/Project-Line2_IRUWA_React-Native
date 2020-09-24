@@ -3,14 +3,11 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Image,
     Dimensions,
     SafeAreaView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 import CategoryList from '../assets/components/Category/CategoryList';
 
@@ -33,7 +30,10 @@ function CategoryScreen({ route, navigation }) {
             headerRight: () => (
                 <View style={styles.RightHeader}>
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                        <Icon name="ios-search" size={28} color={'#000000'} style={{ padding: 10, }} />
+                        <Image
+                            source={require('../assets/images/search_ico.png')}
+                            style={{ margin: 10, width: 18, height: 18 }}
+                        />
                     </TouchableOpacity>
                 </View>
             )
@@ -42,30 +42,35 @@ function CategoryScreen({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.Container}>
-            <View style={styles.ScrollView}>
-                <View style={styles.AdsBox}>
-                    <View style={styles.TitleContent}>
-                        <Text style={styles.TitleTxtStyle}>프리미엄 서비스</Text>
-                    </View>
-                    <View style={styles.CategoryBtnBox}>
-                        <TouchableOpacity style={styles.CategoryBtn}>
-                            <View style={styles.CategoryIconBox}>
-                            </View>
-                            <View style={styles.CategoryText}>
-                                <Text>프리미엄 광고 (이미지로 대체)</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+            <View style={styles.AdsBox}>
+                <View style={styles.TitleContent}>
+                    <Text style={styles.TitleTxtStyle}>프리미엄 서비스</Text>
                 </View>
-                <View style={styles.CategoryBox}>
-                    <View style={styles.TitleContent}>
-                        <Text style={styles.TitleTxtStyle}>유흥업체 분류</Text>
-                    </View>
-                    <View style={styles.CategoryContent}>
-                        <CategoryList navigation={navigation} />
-                    </View>
+                <View style={styles.CategoryBtnBox}>
+                    <TouchableOpacity style={styles.CategoryBtn}>
+                        <View style={styles.CategoryIconBox}>
+                            <Image
+                            source={require('../assets/images/category_ico_premium.png')}
+                            style={{width : 27, height : 27}}
+                            />
+                        </View>
+                        <View style={styles.PremiumTitle}>
+                            <Text style={styles.PremiumTxt}>프리미엄</Text>
+                        </View>
+                        <View style={styles.PremiumBtn}>
+                            <Image source={require('../assets/images/right_arrow_ico_white.png')}
+                            style={{width : 17, height : 17, alignContent:'flex-start'}}
+                            />
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
+            <View style={styles.CategoryBox}>
+                <View style={styles.TitleContent}>
+                    <Text style={styles.TitleTxtStyle}>유흥업체 분류</Text>
+                </View>
+            </View>
+            <CategoryList navigation={navigation} />
         </SafeAreaView>
     )
 }
@@ -88,25 +93,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    ScrollView: {
-    },
     AdsBox: {
-        padding: 10,
+        margin : 25,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'flex-start',
-        backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     CategoryBox: {
-        padding : 10,
+        marginRight : 25,
+        marginLeft : 25,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     TitleContent: {
-        width : width,
-        padding: 5,
+        width: width,
+        marginBottom : 10,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -116,30 +118,40 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     CategoryBtnBox: {
-        height: height * 0.13,
-        padding: 10,
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     CategoryBtn: {
         flex: 1,
-        height : height * 0.1,
         borderRadius: 10,
-        borderWidth: 1,
-        paddingTop: 10,
-        paddingBottom: 10,
+        paddingTop: 5,
+        paddingBottom: 5,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        backgroundColor : 'rgba(0, 176, 183, 0.8)'
     },
     CategoryIconBox: {
+        margin: 20,
+        borderRadius : 45,
+        width: 45,
+        height: 45,
+        backgroundColor : '#0d9da2',
         justifyContent: 'center',
         alignItems: 'center',
-        margin : 10,
-        width : width * 0.13,
-        height : width * 0.13,
     },
+    PremiumTitle : {
+        flex : 6,
+    },
+    PremiumTxt : {
+        fontSize : 15,
+        fontWeight : '800',
+        color : '#ffffff',
+    },
+    PremiumBtn : {
+        flex : 1,
+    }
 })
 
 export default CategoryScreen;

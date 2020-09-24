@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)'
     },
     SearchUserArea: {
         flex: 1,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     SearchUserTxt: {
         color: 'rgba(205, 205, 205, 1)',
         fontWeight: '700',
-        fontSize: 16,
+        fontSize: 15,
     },
     IntroTextArea: {
         flex: 5,
@@ -103,11 +103,10 @@ const styles = StyleSheet.create({
     },
     IntroSub: {
         padding: 25,
-
     },
     IntroSubTxt: {
-        fontSize: 14,
-        color: 'rgba(205, 205, 205, 1)',
+        fontSize: 13,
+        color: 'rgba(255, 255, 255, 1)',
         fontWeight: '800'
     },
     Intro: {
@@ -115,8 +114,8 @@ const styles = StyleSheet.create({
         paddingBottom: 25,
     },
     IntroTxt: {
-        fontSize: 36,
-        color: 'rgba(245, 245, 245, 1)',
+        fontSize: 35,
+        color: 'rgba(255, 255, 255, 1)',
         fontWeight: 'bold'
     },
     BtnArea: {
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)'
     },
     LoginTxt: {
-        fontSize: 18,
+        fontSize: 15,
         color: 'rgba(21, 186, 193, 1)'
     },
     RegisterBtn: {
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     RegisterTxt: {
-        fontSize: 18,
+        fontSize: 15,
         color: 'rgba(255, 255, 255, 1)'
     },
 })

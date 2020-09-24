@@ -4,7 +4,7 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    Animated,
+    Image,
     TextInput,
     Dimensions,
     AsyncStorage,
@@ -12,7 +12,6 @@ import {
     SafeAreaView,
     StatusBar,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import AddressSearchBox from '../assets/components/AddressSearchBox';
@@ -68,7 +67,10 @@ function LocationScreen({ route, navigation }) {
             headerLeft: () =>
                 <View style={styles.HeaderStyle}>
                     <TouchableOpacity style={styles.HeaderContent} onPress={() => navigation.goBack()}>
-                        <Icon name={'close'} size={24} />
+                        <Image 
+                        source={require('../assets/images/close_button.png')} 
+                        style={{width : 18, height : 18}}
+                        />
                     </TouchableOpacity>
                 </View>,
             headerTitle: () => (
@@ -190,7 +192,10 @@ function LocationScreen({ route, navigation }) {
                                 style={{ flex: 1, }}
                             />
                             <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setModalVisible(true)}>
-                                <Icon name={'search1'} size={32} />
+                                <Image 
+                                    source={require('../assets/images/search_ico.png')}
+                                    style={{width : 23, height : 23}}
+                                />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -203,7 +208,10 @@ function LocationScreen({ route, navigation }) {
                 <View style={styles.LocationList}>
                     <View style={styles.PrevSearch}>
                         <View style={styles.PrevSearchTitle}>
-                            <Icon name={'home'} size={24} />
+                            <Image 
+                            source={require('../assets/images/address_ico.png')}
+                                style={{width : 22, height : 20}}
+                            />
                             <Text style={styles.PrevSearchText}>최근 주소</Text>
                         </View>
                         <TouchableOpacity onPress={() => ClearAll()}>

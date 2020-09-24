@@ -64,17 +64,16 @@ const Item = ({ data, user, navigation }) => {
                 <TouchableOpacity
                     style={styles.ListBox}
                     onPress={() => setNavigationParams(data)}
-
                 >
                     <View style={styles.LeftArea}>
-                        <Image source={data.receiver_profile} style={{ width: width * 0.1, height: width * 0.1 }} />
+                        <Image source={data.receiver_profile} style={styles.ImageAround} />
                     </View>
                     <View style={styles.RightArea}>
                         <View style={styles.UserInfo}>
-                            <Text>{data.receiver_name}</Text>
+                            <Text style={styles.NameSpace}>{data.cmp_name}</Text>
                         </View>
                         <View style={styles.LatestMessage}>
-                            <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
+                            <Text style={styles.MessageArea}>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -88,14 +87,14 @@ const Item = ({ data, user, navigation }) => {
                     onPress={() => setNavigationParams(data)}
                 >
                     <View style={styles.LeftArea}>
-                        <Image source={data.sender_profile} style={{ width: width * 0.1, height: width * 0.1 }} />
+                        <Image source={data.sender_profile} style={styles.ImageAround} />
                     </View>
                     <View style={styles.RightArea}>
                         <View style={styles.UserInfo}>
-                            <Text>{data.sender_name}</Text>
+                            <Text style={styles.NameSpace}>{data.sender_name}</Text>
                         </View>
                         <View style={styles.LatestMessage}>
-                            <Text>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
+                            <Text style={styles.MessageArea}>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -105,23 +104,20 @@ const Item = ({ data, user, navigation }) => {
 }
 
 const ChatListUp = ({ data, user, navigation }) => {
-    console.log('data', data)
     const [items, setData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
-    console.log('items', items)
     useEffect(() => {
         let isCancelled = true;
         const GET_USER_PROFILE = async () => {
             var newArray = data.params;
             for (var i = 0; i < newArray.length; i++) {
                 var sender_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].sender_seq);
-                console.log('sender_profile', sender_profile)
                 if (sender_profile.flags == 0) {
                     newArray[i].sender_profile = { uri: sender_profile.message }
                 } else {
                     newArray[i].sender_profile = require('../../images/defaultProfile.png')
                 }
-                var receiver_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].sender_seq);
+                var receiver_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].receiver_seq);
                 if (receiver_profile.flags == 0) {
                     newArray[i].receiver_profile = { uri: receiver_profile.message }
                 } else {
@@ -158,28 +154,44 @@ const ChatListUp = ({ data, user, navigation }) => {
 const styles = StyleSheet.create({
     ListBox: {
         width: width,
-        height: height * 0.1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255, 255, 1)',
         marginTop: 1,
         padding: 15,
+        borderTopWidth : 0.5,
+        borderBottomWidth : 0.5,
+        borderColor : 'rgba(235, 235, 235, 1)'
     },
     LeftArea: {
         flex: 1,
+        alignItems : 'center',
         justifyContent: 'center'
+    },
+    ImageAround : {
+        width : width * 0.1,
+        height : width * 0.1,
+        borderRadius : 100,
     },
     RightArea: {
         flex: 4,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-start'
     },
     UserInfo: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    NameSpace : {
+        fontSize : 18,
+        fontWeight : '700',
+    },
+    MessageArea : {
+        fontSize : 16,
+        fontWeight : '600'
     },
     LatestMessage: {
         justifyContent: 'center',

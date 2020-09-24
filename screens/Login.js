@@ -4,15 +4,15 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
+    Image,
     StatusBar,
     StyleSheet,
     Dimensions,
     Animated,
     Keyboard, Platform
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import Icon from 'react-native-vector-icons/AntDesign';
+
 const { width, height } = Dimensions.get('window');
 
 function LoginScreen({ navigation }) {
@@ -89,14 +89,14 @@ function LoginScreen({ navigation }) {
                 //allowing light, but not detailed shapes
                 networkActivityIndicatorVisible={true}
             />
-            <Animated.View style={{ flex : 1, bottom: Platform.OS == 'ios' ? keyboardHeight : keyboardHeight, }}>
+            <Animated.View style={{ flex: 1, bottom: Platform.OS == 'ios' ? keyboardHeight : keyboardHeight, }}>
                 <View style={styles.HeaderStyle}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name={'arrowleft'} size={32} />
+                        <Image source={require('../assets/images/back_button.png')} />
                     </TouchableOpacity>
-                    <View style={{ marginTop: height * 0.05 }}>
-                        <Text style={{ fontSize: 44, fontWeight: 'bold' }}>로그인</Text>
-                    </View>
+                    <View style={{ marginTop: height * 0.05, }}>
+                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>로그인</Text>
+                    </View> 
                 </View>
                 <View style={styles.MainContainer}>
                     <View style={styles.MainForm}>
@@ -141,12 +141,12 @@ function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     Container: {
-        width : width,
-        height : height,
+        width: width,
+        height: height,
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     HeaderStyle: {
-        flex : 1,
+        flex: 1,
         padding: 25,
         marginTop: 25,
         flexDirection: 'column',
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        alignItems : 'center'
+        alignItems: 'center'
     },
     MainForm: {
         width: width,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     TitleTxt: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: 'bold',
     },
     InputForm: {
@@ -192,12 +192,11 @@ const styles = StyleSheet.create({
         height: height * 0.07,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(21, 186, 193, 1)'
+        backgroundColor: '#15BAC1'
     },
     LoginBtnTxt: {
         color: 'rgba(255, 255, 255, 1)',
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 15,
     },
 })
 

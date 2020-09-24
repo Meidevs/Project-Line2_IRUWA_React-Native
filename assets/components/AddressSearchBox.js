@@ -3,6 +3,7 @@ import {
     View,
     Modal,
     Text,
+    Image,
     StyleSheet,
     Dimensions,
     ScrollView,
@@ -10,9 +11,7 @@ import {
     TouchableOpacity,
     SafeAreaView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import Constants from "expo-constants";
-
 import ROADAPI from '../../assets/dataSource/roadAPI';
 import AddressFilter from './AddressFilter';
 const { width, height } = Dimensions.get('window');
@@ -27,7 +26,7 @@ const AddrSearchBox = ({ data, visible, location, callback }) => {
 
             if (AddressFilter(data) && data != null) {
                 var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(data);
-                if(isCancelled) { 
+                if (isCancelled) {
                     if (DETAIL_SEARCH_RESPONSE.results.juso != null) {
                         setAddressList(DETAIL_SEARCH_RESPONSE.results.juso);
                         setIsLoaded(true);
@@ -96,7 +95,10 @@ const AddrSearchBox = ({ data, visible, location, callback }) => {
             <View style={styles.ModalHeader}>
                 <View style={styles.HeaderContent}>
                     <TouchableOpacity style={styles.CloseBtn} onPress={() => onChangeVisible(!modalVisible)}>
-                        <Icon name={'close'} size={24} />
+                        <Image
+                            source={require('../images/close_button.png')}
+                            style={{ width: 18, height: 18 }}
+                        />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     HeaderContent: {
-        padding : 10,
+        padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',

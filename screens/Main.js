@@ -8,11 +8,14 @@ import {
     Dimensions,
     VirtualizedList,
     SafeAreaView,
-    StatusBar
+    StatusBar,
+    ImageBackground, Platform
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useHeaderHeight } from '@react-navigation/stack';
+import { useFonts } from 'expo-font';
 
-import Icon from 'react-native-vector-icons/Ionicons';
+
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
@@ -29,7 +32,8 @@ const getItem = (data, index) => {
             cmp_location: items.cmp_location,
             reg_date: items.reg_date,
             cmp_seq: items.cmp_seq,
-            uri: items.uri
+            uri: items.uri,
+            ads_type: items.ads_type,
         }
     }
 }
@@ -42,46 +46,70 @@ const getItemCount = (data) => {
 const Item = ({ data, user, navigation }) => {
     var time_gap = TimeGap(data.reg_date);
     return (
-        <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
-            items_seq: data.items_seq,
-            cmp_seq: data.cmp_seq,
-            user_seq: user
-        })}>
-            <View style={styles.LeftArea}>
-                <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
-            </View>
-            <View style={styles.RightArea}>
-                <Text>{data.item_name}</Text>
-                <Text>{data.cmp_location}</Text>
-                <Text>{time_gap}</Text>
-            </View>
-        </TouchableOpacity>
+        <View>
+            <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
+                items_seq: data.items_seq,
+                cmp_seq: data.cmp_seq,
+                user_seq: user
+            })}>
+                <View style={styles.LeftArea}>
+                    <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
+                </View>
+                <View style={styles.RightArea}>
+                    <Text style={styles.ItemName}>{data.item_name}</Text>
+                    <Text style={styles.CmpLocation}>{data.cmp_location}</Text>
+                    <Text style={styles.Time_Gap}>{time_gap}</Text>
+                </View>
+                {
+                    data.ads_type == 1 ? (
+                        <View style={styles.AdsType}>
+                            <Image
+                                source={require('../assets/images/category_ico_premium_green.png')}
+                                style={{ width: 18, height: 18 }}
+                            />
+                        </View>
+                    ) : (
+                            null
+                        )
+                }
+            </TouchableOpacity>
+        </View>
     );
 }
 
 function MainScreen({ route, navigation }) {
+    const headerHeight = useHeaderHeight();
     const [data, setData] = useState([]);
     const [user_location, setUserLocation] = useState('');
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
-    const [isError, setIsError] = useState(true);
+    let [isFont] = useFonts({
+        'Fonia-Regular': require('../assets/Fonts/Fonia_Regular.ttf'),
+    });
+    console.log(isFont)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
             headerTitle: () => (
                 <View style={styles.HeaderTitleBox}>
-                    <Text style={styles.HeaderTitleTxt}>IRUWA</Text>
+                    <Text style={[styles.HeaderTitleTxt]}>IRUWA</Text>
                 </View>
             ),
             headerRight: () => (
                 <View style={styles.RightHeader}>
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                        <Icon name="ios-search" size={28} color={'#000000'} style={{ padding: 10, }} />
+                        <Image
+                            source={require('../assets/images/search_ico_white.png')}
+                            style={{ width: 23, height: 23, }}
+                        />
                     </TouchableOpacity>
                 </View>
-            )
+            ),
+            headerStyle: {
+                backgroundColor: '#ffffff'
+            }
         })
-    }, [user_location]);
+    }, [user_location, isFont]);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -93,22 +121,26 @@ function MainScreen({ route, navigation }) {
                     setUserLocation(data.user_location);
                     setUserSeq(data.user_seq);
                 } catch (err) {
-                    setIsError(true);
+                    alert(err)
                 }
-                setIsLoad(true);
             }
+            setIsLoad(true);
             GET_MAIN_INFOs();
         }, [user_location])
     );
 
     useEffect(() => {
-        GLOBAL.SET_SOCKET_IO();
-        GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
+        let isCancelled = true;
+        if (isCancelled) {
+            GLOBAL.SET_SOCKET_IO();
+            GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
+        }
+        return () => isCancelled = false;
     }, [user_seq]);
 
     if (isLoad) {
         return (
-            <SafeAreaView style={styles.Container}>
+            <SafeAreaView style={[styles.Container,]}>
                 <StatusBar
                     barStyle="dark-content"
                     // dark-content, light-content and default
@@ -120,47 +152,78 @@ function MainScreen({ route, navigation }) {
                     //allowing light, but not detailed shapes
                     networkActivityIndicatorVisible={true}
                 />
+                <ImageBackground source={require('../assets/images/MainBackground.png')}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        width: width,
+                        height: width * 0.7,
+                    }}
+                >
+                    <View style={styles.MainBackground} />
+                </ImageBackground>
                 <View>
-                    <TouchableOpacity style={styles.HeaderTitle} onPress={() => navigation.navigate('Location', {
-                        a : 'hi'
-                    })}
+                    <TouchableOpacity style={[styles.HeaderTitle, { marginTop: headerHeight }]} onPress={() => navigation.navigate('Location')}
                         activeOpacity={0.6}
                     >
                         <View style={styles.LocationBtn}>
                             <Text style={styles.CurrentLocationTxt}>{user_location}</Text>
-                            <Icon name={'ios-arrow-dropdown-circle'} size={24} />
+                            <View style={styles.DropDownBtn}>
+                                <Image
+                                    source={require('../assets/images/down_arrow_ico.png')}
+                                    style={{ width: 15, height: 8 }}
+                                />
+                            </View>
+                            <View style={styles.SearchBtn}>
+                                <Image
+                                    source={require('../assets/images/search_ico_white.png')}
+                                    style={{ width: 15, height: 15 }}
+                                />
+                            </View>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <PremiumBanner data={user_location} navigation={navigation} />
-                <VirtualizedList
-                    data={data}
-                    initialNumToRender={10}
-                    renderItem={({ item }) => <Item data={item} user={user_seq} navigation={navigation} />}
-                    keyExtractor={(item, index) => JSON.stringify(index)}
-                    getItemCount={getItemCount}
-                    getItem={getItem}
-                />
+                <View>
+                    <VirtualizedList
+                        data={data}
+                        initialNumToRender={10}
+                        ListHeaderComponent={() => {
+                            return <PremiumBanner data={user_location} navigation={navigation} />
+                        }}
+                        renderItem={({ item }) => <Item data={item} location={user_location} user={user_seq} navigation={navigation} />}
+                        keyExtractor={(item, index) => JSON.stringify(index)}
+                        getItemCount={getItemCount}
+                        getItem={getItem}
+                    />
+                </View>
             </SafeAreaView>
         )
     } else {
         return null
     }
-
 }
 
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        backgroundColor: '#fafafa'
+    },
+    MainBackground: {
+        position: 'absolute',
+        top: 0,
+        width: width,
+        height: width * 0.7,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)'
     },
     ContentBox: {
-        height: 120,
+        marginTop: 1,
+        margin: 20,
+        padding: 15,
+        borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        marginTop: 1,
-        padding: 15,
+        elevation: 0.5,
     },
     LeftArea: {
         flex: 1,
@@ -171,16 +234,43 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-start'
     },
+    ItemName: {
+        flex: 1,
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#000000'
+    },
+    CmpLocation: {
+        flex: 1,
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#000000'
+    },
+    Time_Gap: {
+        flex: 1,
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#a2a2a2',
+        letterSpacing: -0.2,
+    },
+    AdsType: {
+        position: 'absolute',
+        top: 10,
+        right: 20,
+    },
     RightHeader: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        margin: 20,
     },
     HeaderTitleBox: {
         justifyContent: 'center',
         alignItems: 'center'
     },
     HeaderTitleTxt: {
-        fontSize: 18,
+        fontSize: 15,
+        color: '#ffffff',
         fontWeight: 'bold'
     },
     HeaderTitle: {
@@ -197,14 +287,29 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     CurrentLocationTxt: {
-        fontSize: 18,
+        fontSize: 25,
         fontWeight: '800',
-        marginRight: 10,
+        color: '#ffffff',
+    },
+    DropDownBtn: {
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    SearchBtn: {
+        width: 30,
+        height: 30,
+        padding: 8,
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(21, 186, 193, 0.45)'
     },
     ImageContent: {
         resizeMode: 'contain',
-        width: 100,
-        height: 100,
+        borderRadius: 100,
+        width: 80,
+        height: 80,
     }
 })
 

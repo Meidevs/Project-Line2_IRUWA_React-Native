@@ -160,6 +160,7 @@ const MainStackScreens = () => {
         component={MainScreen}
         options={{
           headerLeft: null,
+          headerTransparent : true,
           gestureDirection: 'horizontal'
         }}
       />

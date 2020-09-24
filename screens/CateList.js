@@ -24,7 +24,8 @@ const getItem = (data, index) => {
             cmp_location: items.cmp_location,
             reg_date: items.reg_date,
             cmp_seq: items.cmp_seq,
-            uri: items.uri
+            uri: items.uri,
+            ads_type: items.ads_type,
         }
     }
 }
@@ -35,6 +36,7 @@ const getItemCount = (data) => {
 }
 
 const Item = ({ data, user, navigation }) => {
+    console.log(data)
     var time_gap = TimeGap(data.reg_date);
     return (
         <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
@@ -46,10 +48,22 @@ const Item = ({ data, user, navigation }) => {
                 <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
             </View>
             <View style={styles.RightArea}>
-                <Text>{data.item_name}</Text>
-                <Text>{data.cmp_location}</Text>
-                <Text>{time_gap}</Text>
+                <Text style={styles.ItemName}>{data.item_name}</Text>
+                <Text style={styles.CmpLocation}>{data.cmp_location}</Text>
+                <Text style={styles.Time_Gap}>{time_gap}</Text>
             </View>
+            {
+                data.ads_type == 1 ? (
+                    <View style={styles.AdsType}>
+                        <Image
+                            source={require('../assets/images/category_ico_premium_green.png')}
+                            style={{ width: 18, height: 18 }}
+                        />
+                    </View>
+                ) : (
+                        null
+                    )
+            }
         </TouchableOpacity>
     );
 }
@@ -103,12 +117,14 @@ function CateListScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
     ContentBox: {
-        height: 120,
+        marginTop: 1,
+        margin: 20,
+        padding: 15,
+        borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        marginTop: 1,
-        padding: 15,
+        elevation: 0.5,
     },
     LeftArea: {
         flex: 1,
@@ -118,6 +134,30 @@ const styles = StyleSheet.create({
         flex: 2,
         justifyContent: 'flex-start',
         alignItems: 'flex-start'
+    },
+    ItemName: {
+        flex: 1,
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#000000'
+    },
+    CmpLocation: {
+        flex: 1,
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#000000'
+    },
+    Time_Gap: {
+        flex: 1,
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#a2a2a2',
+        letterSpacing: -0.2,
+    },
+    AdsType: {
+        position: 'absolute',
+        top: 10,
+        right: 20,
     },
     RightHeader: {
         flexDirection: 'row',
@@ -151,8 +191,9 @@ const styles = StyleSheet.create({
     },
     ImageContent: {
         resizeMode: 'contain',
-        width: 100,
-        height: 100,
+        borderRadius: 100,
+        width: 80,
+        height: 80,
     }
 })
 
