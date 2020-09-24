@@ -3,6 +3,7 @@ import {
     View,
     Modal,
     Text,
+    Image,
     StyleSheet,
     Dimensions,
     TouchableOpacity,
@@ -18,7 +19,6 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
     }, [visible]);
 
     const _handleDismiss = () => {
-        console.log('a')
         callback(!modalVisible)
     }
     const goToEdit = () => {
@@ -47,7 +47,7 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
             <View style={styles.ContentArea}>
                 <TouchableOpacity style={styles.ContentForm} onPress={() => goToEdit()}>
                     <View style={styles.IconArea}>
-                        <Icon name={'edit'} size={28} color={'gray'} />
+                        <Image source={require('../../images/my_profile_ico1.png')} />
                     </View>
                     <View style={styles.ExplaArea}>
                         <Text style={styles.ExplaTitleTxt}>
@@ -60,7 +60,7 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.ContentForm} onPress={() => DELETE_ITEM()}>
                     <View style={styles.IconArea}>
-                        <Icon name={'delete'} size={28} color={'red'} />
+                        <Image source={require('../../images/delete_ico.png')} />
                     </View>
                     <View style={styles.ExplaArea}>
                         <Text style={styles.ExplaTitleTxt_delete}>
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     ContentForm: {
+        padding : 15,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -93,10 +94,10 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(235, 235, 235, 1)'
     },
     IconArea: {
-        padding: 15,
+        marginRight : 15,
     },
     ExplaArea: {
-        padding: 15,
+        
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start'

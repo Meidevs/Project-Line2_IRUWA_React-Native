@@ -12,7 +12,6 @@ import {
     SafeAreaView, Platform
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import ChatListUp from '../assets/components/ChatList/ChatListUp';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import GLOBAL from '../assets/dataSource/globalModel';
@@ -53,7 +52,6 @@ function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [isSocket, setSocket] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialValue);
-    console.log(state)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,

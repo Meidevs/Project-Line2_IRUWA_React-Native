@@ -38,7 +38,7 @@ const getItemCount = (data) => {
     return cnt;
 }
 
-const Item = ({ data, user, navigation, callback}) => {
+const Item = ({ data, user, navigation, callback }) => {
     var time_gap = TimeGap(data.reg_date);
 
     const ReturnCallback = () => {
@@ -65,7 +65,10 @@ const Item = ({ data, user, navigation, callback}) => {
                         <Text>{time_gap}</Text>
                     </View>
                     <View style={styles.Icon}>
-                        <Icon name={'hearto'} size={18} />
+                        <Image source={require('../assets/images/like_ico_default.png')}
+                            resizeMode={'contain'}
+                            style={{ width: 18, height: 18, marginRight : 10,}}
+                        />
                         <Text>{data.cnt}</Text>
                     </View>
                 </View>
@@ -118,7 +121,7 @@ function PickListScreen({ route, navigation }) {
     const DELETE_PICK = async (ChildFrom) => {
         await DATA_SOURCE.UPDATE_ITEM_PICK(ChildFrom);
         setIsLoad(false)
-    }  
+    }
 
     if (isLoaded) {
         return (
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
     Icon: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     DownerBox: {
@@ -208,24 +211,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderTopWidth: 1,
-        borderBottomWidth : 1,
+        borderBottomWidth: 1,
         borderColor: 'rgba(235, 235, 235, 1)',
         padding: 8,
     },
-    Btn : {
-        flex : 1,
-        flexDirection : 'row',
-        justifyContent : 'center',
-        alignItems : 'center'
+    Btn: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    BtnTxt : {
-        fontSize : 14,
-        fontWeight : '700',
-        color : 'rgba(0, 0, 0, 1)'
+    BtnTxt: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: 'rgba(0, 0, 0, 1)'
     },
-    Border : {
-        color : 'rgba(235, 235, 235, 1)',
-        fontSize : 18
+    Border: {
+        color: 'rgba(235, 235, 235, 1)',
+        fontSize: 18
     }
 })
 

@@ -32,7 +32,7 @@ function CategoryScreen({ route, navigation }) {
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <Image
                             source={require('../assets/images/search_ico.png')}
-                            style={{ margin: 10, width: 18, height: 18 }}
+                            style={{ margin: 10}}
                         />
                     </TouchableOpacity>
                 </View>

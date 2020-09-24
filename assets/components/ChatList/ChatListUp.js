@@ -9,12 +9,14 @@ import {
     Dimensions
 } from 'react-native';
 import AUTHENTICATION from '../../dataSource/authModel';
+import DATA_SOURCE from '../../dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
 const getItem = (data, index) => {
     const items = data[index];
     if (data[index] != undefined) {
         return {
+            item_uri : items.item_uri,
             items_seq: items.items_seq,
             item_name: items.item_name,
             sender_seq: items.sender_seq,
@@ -26,6 +28,7 @@ const getItem = (data, index) => {
             cmp_name: items.cmp_name,
             receiver_profile: items.receiver_profile,
             sender_profile: items.sender_profile,
+            roomCode : items.roomCode,
             messages : items.messages,
         }
     }
@@ -37,14 +40,20 @@ const getItemCount = (data) => {
 }
 
 const Item = ({ data, user, navigation }) => {
-    const setNavigationParams = (data) => {
-        var Tmp;
+    const setNavigationParams =(data) => {
+        var Tmp_seq;
+        var Tmp_name;
         if (data.sender_seq != user) {
-            Tmp = data.sender_seq;
-            data.sender_seq = user
-            data.receiver_seq = Tmp;
+            Tmp_seq = data.sender_seq;
+            Tmp_name = data.sender_name;
+            data.sender_seq = data.receiver_seq;
+            data.sender_name = data.receiver_name;
+            data.receiver_seq = Tmp_seq;
+            data.receiver_name = Tmp_name;
         }
+        console.log('????', data)
         navigation.navigate('Chat', {
+            item_uri : data.item_uri,
             items_seq: data.items_seq,
             item_name: data.item_name,
             sender_seq: data.sender_seq,
@@ -58,7 +67,7 @@ const Item = ({ data, user, navigation }) => {
     }
 
     var MESSAGE_LENGTH = data.messages.length;
-    if (user === data.sender_seq) {
+    if (user === data.sender_seq && MESSAGE_LENGTH > 0) {
         return (
             <View>
                 <TouchableOpacity
@@ -79,7 +88,7 @@ const Item = ({ data, user, navigation }) => {
                 </TouchableOpacity>
             </View >
         )
-    } else {
+    } else if (user !== data.sender_seq && MESSAGE_LENGTH > 0) {
         return (
             <View>
                 <TouchableOpacity
@@ -100,6 +109,8 @@ const Item = ({ data, user, navigation }) => {
                 </TouchableOpacity>
             </View >
         )
+    } else {
+        return null;
     }
 }
 
@@ -110,6 +121,7 @@ const ChatListUp = ({ data, user, navigation }) => {
         let isCancelled = true;
         const GET_USER_PROFILE = async () => {
             var newArray = data.params;
+            console.log('newArray', newArray)
             for (var i = 0; i < newArray.length; i++) {
                 var sender_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].sender_seq);
                 if (sender_profile.flags == 0) {

@@ -36,6 +36,7 @@ function AddScreen({ route, navigation }) {
     const [title, setItemTitle] = useState('');
     const [content, setItemContent] = useState('');
     const [adsType, setAdsType] = useState(0);
+    const [adsText, setAdsText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
     useEffect(() => {
@@ -156,7 +157,6 @@ function AddScreen({ route, navigation }) {
                         onChangeText={(text) => setItemTitle(text)}
                     />
                 </View>
-
                 <View style={styles.ItemTextArea}>
                     <TextInput
                         value={content}
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: 25,
         marginLeft: 25,
-        marginBottom : 25,
+        marginBottom: 25,
         padding: 20,
         borderWidth: 1,
         borderColor: '#4C4C4C',
@@ -312,13 +312,13 @@ const styles = StyleSheet.create({
     },
     SwitchBtnContent: {
         marginTop: 20,
-        marginRight : 50,
+        marginRight: 50,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
     SwitchBtn: {
-        marginRight : 13,
+        marginRight: 13,
         borderRadius: 10,
         width: 15,
         height: 15,

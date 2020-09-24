@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, { useEffect, useState, useCallback, useContext, useRef } from 'react';
 import {
     View,
     Text,
@@ -8,17 +8,19 @@ import {
     StyleSheet,
     Dimensions,
     ScrollView,
-    SafeAreaView, Platform
+    SafeAreaView,
+    Animated, 
+    Platform
 } from 'react-native';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import DateFunction from '../assets/components/DateFunction';
 import GLOBAL from '../assets/dataSource/globalModel';
-import Icon from 'react-native-vector-icons/AntDesign';
 
 const { width, height } = Dimensions.get('window');
 let socket;
 const ChatInitialScreen = ({ route, navigation }) => {
     const {
+        item_uri,
         items_seq,
         item_name,
         sender_seq,
@@ -29,11 +31,22 @@ const ChatInitialScreen = ({ route, navigation }) => {
         cmp_name,
         roomCode
     } = route.params;
+    console.log(
+        item_uri,
+        items_seq,
+        item_name,
+        sender_seq,
+        sender_name,
+        receiver_seq,
+        receiver_name,
+        cmp_seq,
+        cmp_name,
+        roomCode)
     const [message, setMessageText] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState([]);
     const [initialLoaded, setInitialValue] = useState(false);
     const [profile, setChatUserProfile] = useState({ uri: null });
-
+    const scrollComponent = useRef(null)
     useEffect(() => {
         let isCancelled = true;
 
@@ -47,6 +60,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
             socket = GLOBAL.GET_SOCKET_IO();
             socket.emit('CreateRoom', {
                 roomCode: roomCode,
+                item_uri : item_uri,
                 items_seq: items_seq,
                 item_name: item_name,
                 cmp_seq: cmp_seq,
@@ -67,8 +81,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
     useEffect(() => {
         let isCancelled = true;
         socket.on('receiveMessage', (message) => {
-            console.log(message)
-            var newData = [...receiveMessage, message];
+            var newData = [...receiveMessage, message.messages];
             if (isCancelled) {
                 setReceiveMessage(newData);
             }
@@ -178,34 +191,44 @@ const ChatInitialScreen = ({ route, navigation }) => {
     }
     return (
         <SafeAreaView style={styles.Container}>
-            <View style={styles.HeaderStyle}>
-                <View style={styles.TitleBackBtn}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name={'arrowleft'} size={30} />
+            <Animated.View style={styles.MainHeader}>
+                <View style={styles.HeaderBox}>
+                    <TouchableOpacity style={styles.HeaderBackBtn} onPress={() => navigation.goBack()}>
+                        <Image source={require('../assets/images/back_button.png')} />
+                    </TouchableOpacity>
+                    <View style={styles.HeaderTitleBox}>
+                        <Text style={styles.HeaderTitleTxt}>{receiver_name}님과의 채팅</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.RightHeader}
+                        onPress={() => navigation.navigate('Search')}>
+                        <Image
+                            source={require('../assets/images/more_button.png')}
+                            resizeMode={'contain'}
+                        />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.TitleHeader}>
-                    <View style={styles.Title}>
-                        <Text style={styles.TitleHeaderTxtStyle}>
-                            {receiver_name}님과의 채팅
-                            </Text>
-                    </View>
+                <View style={styles.RoomHeader}>
                     <View style={styles.RoomInfo}>
-                        <View style={{ borderRadius: 5, backgroundColor: 'rgba(180, 180, 180, 1)', width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>Image</Text>
+                        <View style={{ width: 45, height: 45, justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={{ uri: item_uri }}
+                                resizeMode={'cover'}
+                                borderRadius={45}
+                                style={{ width: 45, height: 45 }}
+                            />
                         </View>
                         <View style={{ padding: 10 }}>
-                            <Text style={{ color: 'rgba(70, 70, 70, 1)', fontSize: 16, fontWeight: 'bold' }}>{item_name}</Text>
+                            <Text style={styles.RoomTxt}>{item_name}</Text>
                         </View>
                     </View>
                 </View>
-            </View>
-            <ScrollView style={styles.MessageArea}>
+            </Animated.View>
+            <Animated.ScrollView style={styles.MessageArea}>
                 {
                     componentJSX_Chat()
                 }
-            </ScrollView>
-            <View style={styles.MessageInputBox}>
+            </Animated.ScrollView>
+            <Animated.View style={styles.MessageInputBox}>
                 <View style={styles.InputBox}>
                     <TextInput
                         value={message}
@@ -215,10 +238,10 @@ const ChatInitialScreen = ({ route, navigation }) => {
                         style={styles.InputStyle}
                     />
                     <TouchableOpacity style={styles.SendBtn} onPress={() => sendMessage()}>
-                        <Icon name={'caretright'} size={28} />
+                        <Image source={require('../assets/images/Group408.png')} />
                     </TouchableOpacity>
                 </View>
-            </View>
+            </Animated.View>
         </SafeAreaView>
     )
 }
@@ -226,36 +249,56 @@ const ChatInitialScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(235, 235, 235, 1)'
+        backgroundColor: '#ebebeb'
     },
-    HeaderStyle: {
-        width: width,
+    MainHeader: {
+        backgroundColor: '#ffffff',
+        padding: 20,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 0.1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 0.2,
+    },
+    HeaderBox: {
         flexDirection: 'row',
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    TitleBackBtn: {
-        padding: 10,
+    HeaderBackBtn: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    TitleHeader: {
-        flex: 1,
-        padding: 15,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center'
-    },
-    Title: {
+    HeaderTitleBox: {
         justifyContent: 'center',
         alignItems: 'center'
     },
-    TitleHeaderTxtStyle: {
-        fontWeight: 'bold',
-        fontSize: 18
+    HeaderTitleTxt: {
+        fontSize: 15,
+        color: '#000000',
+        fontWeight: 'bold'
+    },
+    RightHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    RoomHeader: {
+        marginTop: 20,
+        backgroundColor: '#ffffff',
     },
     RoomInfo: {
         marginTop: 5,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
+    },
+    RoomTxt: {
+        fontSize: 15,
+        fontWeight: '800',
+        fontWeight: 'bold',
+        letterSpacing: -0.3,
+        color: '#000000',
     },
     MessageInputBox: {
         width: width,

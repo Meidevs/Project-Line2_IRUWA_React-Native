@@ -177,7 +177,6 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
-                console.log(ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
@@ -216,6 +215,7 @@ function DetailScreen({ route, navigation }) {
         var roomCode = 'RoomU' + user_seq + 'C' + cmp_seq + 'I' + items_seq;
         const keyString = await KeyGenerator(roomCode);
         navigation.navigate('ChatInitial', {
+            item_uri : itemInfos.item_image_url[0],
             items_seq: ITEMS_INFOs.items_seq,
             item_name: ITEMS_INFOs.item_name,
             sender_seq: USER_INFOs.user_seq,

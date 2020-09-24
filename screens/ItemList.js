@@ -77,7 +77,7 @@ function ItemListScreen({ route, navigation }) {
                     {
                         items.map((data, index) => {
                             var content;
-                            if (data.item_content.length > 18 ) {
+                            if (data.item_content.length > 18) {
                                 var tmp = JSON.parse(data.item_content).substring(0, 18);
                                 content = tmp + '...'
                             } else {
@@ -98,7 +98,9 @@ function ItemListScreen({ route, navigation }) {
                                             }
                                         </View>
                                         <TouchableOpacity style={styles.UploadTime} onPress={() => setStatus(data)}>
-                                            <Icon name={'dots-three-vertical'} color={'gray'} size={18} />
+                                            <Image source={require('../assets/images/more_button.png')}
+                                            
+                                            />
                                         </TouchableOpacity>
                                     </View>
                                     <View style={styles.DownerContent}>
