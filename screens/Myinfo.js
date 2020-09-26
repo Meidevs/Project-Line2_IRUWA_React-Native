@@ -103,7 +103,8 @@ function MyinfoScreen({ route, navigation }) {
                                     </View>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Ringing',{
-                                    cmp_seq : infos.cmp_seq
+                                    cmp_seq : infos.cmp_seq,
+                                    cmp_name : infos.cmp_name
                                 })}>
                                     <View style={styles.IconText}>
                                         <View style={styles.IconArea}>

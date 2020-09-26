@@ -206,7 +206,62 @@ class DATA_SORUCE {
                 return json;
             }
         } catch (err) {
+            console.log(err);
+        }
+    }
+    INSERT_RINGING_LIST = async (data) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/phone', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ data: data })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
+    DELETE_RINGING_LIST = async (phone_seq) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/removephone', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body : JSON.stringify({phone_seq : phone_seq})
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    GET_RINGING_LIST = async () => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/phonelist', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 }

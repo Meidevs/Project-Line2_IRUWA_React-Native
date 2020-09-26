@@ -27,6 +27,11 @@ const AdvertisementList = ({ data, list, navigation }) => {
     if (isLoad && list.length > 0) {
         return (
             <View style={styles.ADSBox}>
+                <View style={styles.TitleBox}>
+                    <View style={styles.TitleBorder}>
+                        <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 다른 광고</Text>
+                    </View>
+                </View>
                 {
                     items.map((data) => {
                         return (
@@ -63,6 +68,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    TitleBox: {
+        paddingTop: 20,
+        paddingBottom: 20,
+    },
+    ItemTitleTxtStyle: {
+        fontSize: 13,
+        fontWeight: 'bold',
+        color: '#000000'
     },
     ADSContent: {
         padding: 5,

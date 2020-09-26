@@ -23,6 +23,7 @@ import ContentCard from '../assets/components/Detail/ContentCard';
 import CouponCard from '../assets/components/Detail/CouponCard';
 import KeyGenerator from '../assets/components/KeyGenerator';
 import AdvertisementList from '../assets/components/Detail/AdvertisementList';
+import PhoneList from '../assets/components/Detail/PhoneList';
 const { width, height } = Dimensions.get('window');
 
 const _getHeaderBackgroundColor = (scrollY) => {
@@ -160,6 +161,7 @@ function DetailScreen({ route, navigation }) {
         view_coount: null,
     });
     const [coupon, setCoupon] = useState([]);
+    const [phoneList, setPhoneList] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const items_seq = route.params.items_seq;
     const cmp_seq = route.params.cmp_seq;
@@ -196,6 +198,7 @@ function DetailScreen({ route, navigation }) {
                     view_count: ITEM_INFOs.VIEW_COUNT,
                 })
                 setCoupon(ITEM_INFOs.COUPON);
+                setPhoneList(ITEM_INFOs.PHONE_LIST);
                 setOtherItem(ITEM_INFOs.NonSELECTED);
                 setIsLoad(true);
             } catch (err) {
@@ -215,7 +218,7 @@ function DetailScreen({ route, navigation }) {
         var roomCode = 'RoomU' + user_seq + 'C' + cmp_seq + 'I' + items_seq;
         const keyString = await KeyGenerator(roomCode);
         navigation.navigate('ChatInitial', {
-            item_uri : itemInfos.item_image_url[0],
+            item_uri: itemInfos.item_image_url[0],
             items_seq: ITEMS_INFOs.items_seq,
             item_name: ITEMS_INFOs.item_name,
             sender_seq: USER_INFOs.user_seq,
@@ -340,12 +343,10 @@ function DetailScreen({ route, navigation }) {
 
                         />
                         <View style={styles.ItemBox}>
-                            <View style={styles.TitleBox}>
-                                <View style={styles.TitleBorder}>
-                                    <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 다른 광고</Text>
-                                </View>
-                            </View>
                             <AdvertisementList data={itemInfos} list={itemsArray} navigation={navigation} />
+                        </View>
+                        <View style={styles.ItemBox}>
+                            <PhoneList data={itemInfos} list={phoneList} />
                         </View>
                     </View>
                 </Animated.ScrollView>
@@ -462,30 +463,18 @@ const styles = StyleSheet.create({
         width: width * 0.9,
         justifyContent: 'flex-start',
     },
-    TitleBox: {
-        paddingTop: 20,
-        paddingBottom: 20,
-    },
-    ItemTitleTxtStyle: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#000000'
-    },
+    
     ItemSimpleInfo: {
         marginTop: 5,
         flexDirection: 'row',
     },
     ContentBtn: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
         width: width,
         flexDirection: 'row',
         backgroundColor: '#15bac1',
     },
     ChatBtn: {
-        flex : 1,
+        flex: 1,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center'
