@@ -2,14 +2,9 @@ import React, { useEffect, useState, useCallback, useContext, useReducer } from 
 import {
     View,
     Text,
-    TouchableOpacity,
-    TextInput,
-    StatusBar,
     StyleSheet,
-    Image,
     Dimensions,
-    ScrollView,
-    SafeAreaView, Platform
+    SafeAreaView
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import ChatListUp from '../assets/components/ChatList/ChatListUp';
@@ -22,6 +17,7 @@ const initialValue = {
 }
 
 const reducer = (state, action) => {
+    console.log('State : ', state.params)
     switch (action.type) {
         case 'initial':
             return {
@@ -30,16 +26,11 @@ const reducer = (state, action) => {
 
         case 'update':
             return {
-                ...state.params.filter((data) => {
-                    if (data.roomCode == action.params.roomCode) {
-                        return data.messages.push(action.params.messages)
-                    } else {
-                        action.params.roomInfo.messages.push(action.params.message);
-                        return {
-                            ...state.params.push(action.params.roomInfo)
-                        }
-                    }
-                })
+                ...state.params = [...state.params.filter(data => {
+                   if ( data.roomCode == action.params.roomCode ) {
+                       return data.messages.push(action.params)
+                   }
+                })]
             }
         case 'default':
             return {
@@ -50,8 +41,9 @@ const reducer = (state, action) => {
 let socket;
 function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
-    const [isSocket, setSocket] = useState(false);
+    const [isLoaded, setIsLoad] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialValue);
+    console.log(state)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -69,37 +61,38 @@ function ChatListScreen({ route, navigation }) {
         React.useCallback(() => {
             let isCancelled = true;
             if (isCancelled) {
-                const SET_USER = async () => {
-                    var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
-                    socket = GLOBAL.GET_SOCKET_IO();
-                    socket.emit('GetRoomList', USER_INFO.user_seq);
-                    setCurrentUser(USER_INFO.user_seq);
-                    setSocket(true)
+                const INITIAL = async () => {
+                    try {
+                        var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
+                        setCurrentUser(USER_INFO.user_seq);
+                        socket = GLOBAL.GET_SOCKET_IO();
+                        socket.emit('GetRoomList', USER_INFO.user_seq);
+                    } catch (err) {
+                        console.log(err);
+                    }
                 }
-                SET_USER();
+
+                INITIAL();
             }
             return () => isCancelled = false;
         }, [])
     );
-
     useEffect(() => {
-        if (isSocket) {
-            socket.on('GetRoomList', message => {
-                console.log('GetRoomList', message)
-                dispatch({ type: 'initial', params: message });
-            })
-        }
-        return () => setSocket(false)
-    }, [isSocket]);
-
+        socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('GetRoomList', message => {
+            dispatch({ type: 'initial', params: message });
+        });
+        setIsLoad(true);
+    }, []);
     useEffect(() => {
-        if (isSocket) {
+        if (isLoaded) {
+            socket = GLOBAL.GET_SOCKET_IO();
             socket.on('receiveMessage', message => {
-                console.log('receiveMessage', message)
+                dispatch({ type: 'update', params: message.messages });
             })
         }
-    }, [isSocket]);
-    
+    }, [isLoaded]);
+
     return (
         <SafeAreaView style={styles.Container}>
             <ChatListUp data={state} user={currentUser} navigation={navigation} />

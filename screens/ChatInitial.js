@@ -9,7 +9,7 @@ import {
     Dimensions,
     ScrollView,
     SafeAreaView,
-    Animated, 
+    Animated,
     Platform
 } from 'react-native';
 import AUTHENTICATION from '../assets/dataSource/authModel';
@@ -17,6 +17,7 @@ import DateFunction from '../assets/components/DateFunction';
 import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
+
 let socket;
 const ChatInitialScreen = ({ route, navigation }) => {
     const {
@@ -31,17 +32,6 @@ const ChatInitialScreen = ({ route, navigation }) => {
         cmp_name,
         roomCode
     } = route.params;
-    console.log(
-        item_uri,
-        items_seq,
-        item_name,
-        sender_seq,
-        sender_name,
-        receiver_seq,
-        receiver_name,
-        cmp_seq,
-        cmp_name,
-        roomCode)
     const [message, setMessageText] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState([]);
     const [initialLoaded, setInitialValue] = useState(false);
@@ -60,7 +50,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
             socket = GLOBAL.GET_SOCKET_IO();
             socket.emit('CreateRoom', {
                 roomCode: roomCode,
-                item_uri : item_uri,
+                item_uri: item_uri,
                 items_seq: items_seq,
                 item_name: item_name,
                 cmp_seq: cmp_seq,
@@ -75,7 +65,6 @@ const ChatInitialScreen = ({ route, navigation }) => {
         USER_PROFILE()
         GET_MAIN_INFOs();
         return () => isCancelled = false;
-
     }, [route]);
 
     useEffect(() => {
@@ -87,7 +76,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
             }
         });
         return () => isCancelled = false;
-    }, [receiveMessage]);
+    }, [receiveMessage, socket]);
 
     const sendMessage = async () => {
         if (message) {
@@ -197,7 +186,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
                         <Image source={require('../assets/images/back_button.png')} />
                     </TouchableOpacity>
                     <View style={styles.HeaderTitleBox}>
-                        <Text style={styles.HeaderTitleTxt}>{receiver_name}님과의 채팅</Text>
+                        <Text style={styles.HeaderTitleTxt}>{cmp_name}님과의 채팅</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.RightHeader}

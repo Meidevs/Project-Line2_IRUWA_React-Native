@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import io from 'socket.io-client';
 
 class GLOBE {

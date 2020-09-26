@@ -16,7 +16,7 @@ const getItem = (data, index) => {
     const items = data[index];
     if (data[index] != undefined) {
         return {
-            item_uri : items.item_uri,
+            item_uri: items.item_uri,
             items_seq: items.items_seq,
             item_name: items.item_name,
             sender_seq: items.sender_seq,
@@ -28,8 +28,8 @@ const getItem = (data, index) => {
             cmp_name: items.cmp_name,
             receiver_profile: items.receiver_profile,
             sender_profile: items.sender_profile,
-            roomCode : items.roomCode,
-            messages : items.messages,
+            roomCode: items.roomCode,
+            messages: items.messages,
         }
     }
 }
@@ -40,7 +40,7 @@ const getItemCount = (data) => {
 }
 
 const Item = ({ data, user, navigation }) => {
-    const setNavigationParams =(data) => {
+    const setNavigationParams = (data) => {
         var Tmp_seq;
         var Tmp_name;
         if (data.sender_seq != user) {
@@ -52,7 +52,7 @@ const Item = ({ data, user, navigation }) => {
             data.receiver_name = Tmp_name;
         }
         navigation.navigate('Chat', {
-            item_uri : data.item_uri,
+            item_uri: data.item_uri,
             items_seq: data.items_seq,
             item_name: data.item_name,
             sender_seq: data.sender_seq,
@@ -112,41 +112,34 @@ const Item = ({ data, user, navigation }) => {
         return null;
     }
 }
-var index = 0;
 const ChatListUp = ({ data, user, navigation }) => {
     const [items, setData] = useState([]);
-    const [isLoaded, setIsLoaded] = useState(false);
-    index++;
-    console.log('Items  Count : ', index, items)
     useEffect(() => {
-        console.log('a')
-        let isCancelled = true;
         const GET_USER_PROFILE = async () => {
             var newArray = data.params;
-            for (var i = 0; i < newArray.length; i++) {
-                var sender_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].sender_seq);
-                if (sender_profile.flags == 0) {
-                    newArray[i].sender_profile = { uri: sender_profile.message }
-                } else {
-                    newArray[i].sender_profile = require('../../images/defaultProfile.png')
-                }
-                var receiver_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].receiver_seq);
-                if (receiver_profile.flags == 0) {
-                    newArray[i].receiver_profile = { uri: receiver_profile.message }
-                } else {
-                    newArray[i].receiver_profile = require('../../images/defaultProfile.png')
+            if (newArray.length > 0) {
+                for (var i = 0; i < newArray.length; i++) {
+                    var sender_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].sender_seq);
+                    if (sender_profile.flags == 0) {
+                        newArray[i].sender_profile = { uri: sender_profile.message }
+                    } else {
+                        newArray[i].sender_profile = require('../../images/defaultProfile.png')
+                    }
+                    var receiver_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].receiver_seq);
+                    if (receiver_profile.flags == 0) {
+                        newArray[i].receiver_profile = { uri: receiver_profile.message }
+                    } else {
+                        newArray[i].receiver_profile = require('../../images/defaultProfile.png')
+                    }
                 }
             }
-            if (isCancelled) {
-                setData(newArray);
-                setIsLoaded(true);
-            }
+            setData(newArray);
+
         }
         GET_USER_PROFILE();
-        return () => isCancelled = false;
     }, [data]);
 
-    if (isLoaded) {
+    if (items.length > 0) {
         return (
             <View>
                 <VirtualizedList
@@ -173,19 +166,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
         marginTop: 1,
         padding: 15,
-        borderTopWidth : 0.5,
-        borderBottomWidth : 0.5,
-        borderColor : 'rgba(235, 235, 235, 1)'
+        borderTopWidth: 0.5,
+        borderBottomWidth: 0.5,
+        borderColor: 'rgba(235, 235, 235, 1)'
     },
     LeftArea: {
         flex: 1,
-        alignItems : 'center',
+        alignItems: 'center',
         justifyContent: 'center'
     },
-    ImageAround : {
-        width : width * 0.1,
-        height : width * 0.1,
-        borderRadius : 100,
+    ImageAround: {
+        width: width * 0.1,
+        height: width * 0.1,
+        borderRadius: 100,
     },
     RightArea: {
         flex: 4,
@@ -198,13 +191,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    NameSpace : {
-        fontSize : 18,
-        fontWeight : '700',
+    NameSpace: {
+        fontSize: 18,
+        fontWeight: '700',
     },
-    MessageArea : {
-        fontSize : 16,
-        fontWeight : '600'
+    MessageArea: {
+        fontSize: 16,
+        fontWeight: '600'
     },
     LatestMessage: {
         justifyContent: 'center',
