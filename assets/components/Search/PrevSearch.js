@@ -54,7 +54,6 @@ const PrevSearch = ({ status, newData, callback }) => {
                 obj = keyword;
                 dispatch({ type: 'delete', data: { keyword: obj } })
             }
-            setSearchText(null);
         } catch (err) {
             console.log(err)
         }
@@ -65,7 +64,6 @@ const PrevSearch = ({ status, newData, callback }) => {
             if (DELETE_ALL_RESPONSE.flags == 0) {
                 dispatch({ type: 'delete_all' })
             }
-            setSearchText(null);
         } catch (err) {
             console.log(err);
         }

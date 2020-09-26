@@ -86,21 +86,40 @@ function MyinfoScreen({ route, navigation }) {
                 <View style={styles.MyinfoContent}>
                     {
                         hasComp == true ? (
-                            <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Add')}>
-                                <View style={styles.IconText}>
-                                    <View style={styles.IconArea}>
-                                        <Image source={require('../assets/images/my_profile_ico1.png')} />
+                            <View>
+                                <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Add')}>
+                                    <View style={styles.IconText}>
+                                        <View style={styles.IconArea}>
+                                            <Image source={require('../assets/images/my_profile_ico1.png')} />
+                                        </View>
+                                        <View style={styles.SettingList}>
+                                            <Text style={styles.SetListTxt}>업체 글쓰기</Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.SettingList}>
-                                        <Text style={styles.SetListTxt}>업체 글쓰기</Text>
+                                    <View style={styles.MovingBtn}>
+                                        <Image source={require('../assets/images/right_arrow_ico.png')}
+                                            style={{ width: 17, height: 17 }}
+                                        />
                                     </View>
-                                </View>
-                                <View style={styles.MovingBtn}>
-                                    <Image source={require('../assets/images/right_arrow_ico.png')}
-                                        style={{ width: 17, height: 17 }}
-                                    />
-                                </View>
-                            </TouchableOpacity>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Ringing',{
+                                    cmp_seq : infos.cmp_seq
+                                })}>
+                                    <View style={styles.IconText}>
+                                        <View style={styles.IconArea}>
+                                            <Image source={require('../assets/images/my_profile_ico5.png')} />
+                                        </View>
+                                        <View style={styles.SettingList}>
+                                            <Text style={styles.SetListTxt}>띵동 등록</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.MovingBtn}>
+                                        <Image source={require('../assets/images/right_arrow_ico.png')}
+                                            style={{ width: 17, height: 17 }}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         ) : (
                                 null
                             )
@@ -244,10 +263,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    SetListTxt : {
-        fontSize : 13,
-        fontWeight : '700',
-        color : '#000000'
+    SetListTxt: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#000000'
     },
     MovingBtn: {
         marginTop: 30,

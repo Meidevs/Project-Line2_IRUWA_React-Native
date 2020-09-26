@@ -51,7 +51,6 @@ const Item = ({ data, user, navigation }) => {
             data.receiver_seq = Tmp_seq;
             data.receiver_name = Tmp_name;
         }
-        console.log('????', data)
         navigation.navigate('Chat', {
             item_uri : data.item_uri,
             items_seq: data.items_seq,
@@ -113,15 +112,17 @@ const Item = ({ data, user, navigation }) => {
         return null;
     }
 }
-
+var index = 0;
 const ChatListUp = ({ data, user, navigation }) => {
     const [items, setData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    index++;
+    console.log('Items  Count : ', index, items)
     useEffect(() => {
+        console.log('a')
         let isCancelled = true;
         const GET_USER_PROFILE = async () => {
             var newArray = data.params;
-            console.log('newArray', newArray)
             for (var i = 0; i < newArray.length; i++) {
                 var sender_profile = await AUTHENTICATION.GET_USER_PROFILE(newArray[i].sender_seq);
                 if (sender_profile.flags == 0) {

@@ -61,9 +61,7 @@ function ChatListScreen({ route, navigation }) {
                 </View>
             ),
             headerRight: () =>
-                <View>
-
-                </View>
+                <View></View>
         })
     }, []);
 
@@ -87,6 +85,7 @@ function ChatListScreen({ route, navigation }) {
     useEffect(() => {
         if (isSocket) {
             socket.on('GetRoomList', message => {
+                console.log('GetRoomList', message)
                 dispatch({ type: 'initial', params: message });
             })
         }
@@ -100,7 +99,6 @@ function ChatListScreen({ route, navigation }) {
             })
         }
     }, [isSocket]);
-
     
     return (
         <SafeAreaView style={styles.Container}>

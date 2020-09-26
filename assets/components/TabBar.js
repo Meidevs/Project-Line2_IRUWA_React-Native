@@ -27,12 +27,12 @@ const TabBar = ({ state, descriptors, navigation }) => {
                             : route.name;
                 const icons =
                     options.tabBarLabel == '홈'
-                        ? [require('../icon.png'), require('../icon.png')]
+                        ? [require('../bottom_menu_ico1.png'), require('../bottom_menu_ico1_selected.png')]
                         : options.tabBarLabel == '카테고리'
-                            ? [require('../icon.png'), require('../icon.png')]
+                            ? [require('../bottom_menu_ico2.png'), require('../bottom_menu_ico2_selected.png')]
                             : options.tabBarLabel == '채팅'
-                                ? [require('../icon.png'), require('../icon.png')]
-                                : [require('../icon.png'), require('../icon.png')]
+                                ? [require('../bottom_menu_ico3.png'), require('../bottom_menu_ico3_selected.png')]
+                                : [require('../bottom_menu_ico4.png'), require('../bottom_menu_ico4_selected.png')]
 
                 const isFocused = state.index === index;
                 const onPress = () => {
@@ -64,7 +64,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
                         key={index}
                         style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', marginBottom: 5, }}
                     >{isFocused ? <Image source={icons[1]} style={{ marginTop: 10, width: 20, height: 20, resizeMode: 'contain' }} /> : <Image source={icons[0]} style={{ marginTop: 10, width: 20, height: 20, resizeMode: 'contain' }} />}
-                        <Text style={{ fontSize: 12, color: isFocused ? '#4F79D5' : '#000000' }}>
+                        <Text style={{ fontSize: 12, color: isFocused ? '#000000' : '#C4C4C4' }}>
                             {label}
                         </Text>
                     </TouchableOpacity>

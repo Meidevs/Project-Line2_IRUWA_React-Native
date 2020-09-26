@@ -64,23 +64,24 @@ function SearchScreen({ navigation, route }) {
     const [user_seq, setCurrentUser] = useState(null);
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => (
-                <View></View>
-            ),
             headerTitle: () => (
+                <View style={styles.HeaderTitleBox}>
+                    <Text style={[styles.HeaderTitleTxt]}>검색</Text>
+                </View>
+            ),
+            headerRight: () => (
                 <View>
-                    <Text>검색</Text>
                 </View>
             ),
         })
-    });
+    },[]);
 
     useEffect(() => {
         const GET_USER_INFOs = async () => {
             var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
             setCurrentUser(USER_INFOs.user_seq)
         }
-        GET_USER_INFOs()
+        GET_USER_INFOs();
     }, [])
 
     const toggleSearchHistory = () => {
@@ -139,6 +140,15 @@ function SearchScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
+    HeaderTitleBox: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    HeaderTitleTxt: {
+        fontSize: 15,
+        color: '#000000',
+        fontWeight: 'bold'
+    },
     Container: {
         flex: 1,
         backgroundColor: 'rgba(255, 255, 255, 1)'

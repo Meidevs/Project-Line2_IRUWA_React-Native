@@ -30,6 +30,7 @@ const ChatScreen = ({ route, navigation }) => {
         cmp_name,
         roomCode
     } = route.params;
+
     const [message, setMessageText] = useState(null);
     const [receiveMessage, setReceiveMessage] = useState([]);
     const [initialLoaded, setInitialValue] = useState(false);

@@ -36,7 +36,6 @@ const getItemCount = (data) => {
 }
 
 const Item = ({ data, user, navigation }) => {
-    console.log(data)
     var time_gap = TimeGap(data.reg_date);
     return (
         <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
@@ -81,6 +80,8 @@ function CateListScreen({ route, navigation }) {
                     <Text style={styles.TitleHeaderTxtStyle}>근처 {category_name}</Text>
                 </View>
             ),
+            headerRight: () =>
+                <View></View>
         })
     }, [category_name]);
 
@@ -116,6 +117,15 @@ function CateListScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+    TitleHeader: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    TitleHeaderTxtStyle: {
+        fontWeight: 'bold',
+        fontSize: 15
+    },
     ContentBox: {
         marginTop: 1,
         margin: 20,
@@ -158,25 +168,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         right: 20,
-    },
-    RightHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    HeaderTitleBox: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    HeaderTitleTxt: {
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-    HeaderTitle: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        width: width,
-        height: width * 0.15,
     },
     LocationBtn: {
         flexDirection: 'row',

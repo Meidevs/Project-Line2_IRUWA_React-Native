@@ -23,14 +23,12 @@ const PremiumBanner = ({ data, navigation }) => {
         let isCancelled = true;
         const PREMIUM_ITEMS = async () => {
             var PREMIUM_LIST = await DATA_SOURCE.GET_PREMIUM_ITEMS(data);
-            setPremiumItems(PREMIUM_LIST.data);
+            if (isCancelled)
+                setPremiumItems(PREMIUM_LIST.data);
         }
         PREMIUM_ITEMS();
         return () => isCancelled = false;
-
     }, [data])
-
-
 
     useEffect(() => {
         if (items && items.length > 0) {

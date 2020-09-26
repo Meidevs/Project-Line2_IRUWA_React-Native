@@ -13,12 +13,12 @@ import MainScreen from './screens/Main';
 import DetailScreen from './screens/Detail';
 import CateScreen from './screens/Category';
 import AddScreen from './screens/Add';
+import RingingScreen from './screens/Ringing';
 import ChatListScreen from './screens/ChatList';
 import ChatScreen from './screens/Chat';
 import ChatInitialScreen from './screens/ChatInitial';
 import MyinfoScreen from './screens/Myinfo';
 import SearchScreen from './screens/Search';
-import AlarmScreen from './screens/Alarm';
 import LocationScreen from './screens/Location';
 import InviteScreen from './screens/Invite';
 import NotificationScreen from './screens/Notification';
@@ -76,6 +76,10 @@ const MyinfoStackScreens = () => {
       <MyinfoStack.Screen
         name='Add'
         component={AddScreen}
+      />
+      <MyinfoStack.Screen
+        name='Ringing'
+        component={RingingScreen}
       />
       <MyinfoStack.Screen
         name='Invite'
@@ -178,15 +182,6 @@ const MainStackScreens = () => {
       <MainStack.Screen
         name="Search"
         component={SearchScreen}
-        options={{
-          headerStyle: {
-            elevation: 0,
-          },
-        }}
-      />
-      <MainStack.Screen
-        name="Alarm"
-        component={AlarmScreen}
         options={{
           headerStyle: {
             elevation: 0,
