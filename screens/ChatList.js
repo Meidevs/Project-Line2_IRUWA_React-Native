@@ -18,6 +18,7 @@ const initialValue = {
 
 const reducer = (state, action) => {
     console.log('State : ', state.params)
+    console.log('Action : ', action.params)
     switch (action.type) {
         case 'initial':
             return {
@@ -25,13 +26,23 @@ const reducer = (state, action) => {
             }
 
         case 'update':
-            return {
-                ...state.params = [...state.params.filter(data => {
-                   if ( data.roomCode == action.params.roomCode ) {
-                       return data.messages.push(action.params)
-                   }
-                })]
+            var result = state.params.findIndex(data => data.roomCode == action.params.roomInfo.roomCode);
+            console.log('result', result);
+            if (result == -1) {
+                return {
+                    ...state.params,
+                    params : [action.params.roomInfo]
+                }
+            } else {
+                return {
+                    params: state.params.filter(data => {
+                        if (data.roomCode == action.params.messages.roomCode) {
+                            return data.messages.push(action.params.messages)
+                        }
+                    })
+                }
             }
+
         case 'default':
             return {
                 params: state.params
@@ -88,7 +99,7 @@ function ChatListScreen({ route, navigation }) {
         if (isLoaded) {
             socket = GLOBAL.GET_SOCKET_IO();
             socket.on('receiveMessage', message => {
-                dispatch({ type: 'update', params: message.messages });
+                dispatch({ type: 'update', params: message });
             })
         }
     }, [isLoaded]);
