@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     HeaderTitleTxt: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: 'bold',
         alignSelf: 'center'
     },

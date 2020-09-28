@@ -1,16 +1,19 @@
-import React, { useState, useEffect, useCallback, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Modal,
     Text,
     TextInput,
+    Image,
     StyleSheet,
     Dimensions,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView
+    SafeAreaView,
+    ActivityIndicator,
+    Platform
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Constants from "expo-constants";
 import ROADAPI from '../../assets/dataSource/roadAPI';
 import AddressFilter from './AddressFilter';
 const { width, height } = Dimensions.get('window');
@@ -19,10 +22,11 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [keyword, setKeywords] = useState(null);
     const [address, setAddressList] = useState([]);
-    const [searchBtn, setSearchStart] = useState(false);
+    const [isStart, setSearchStart] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    const SEARCH_DETAIL_ADDRESS = useCallback(async () => {
+    const SEARCH_DETAIL_ADDRESS = async () => {
+        setSearchStart(true)
         if (AddressFilter(keyword) && keyword != null) {
             var DETAIL_SEARCH_RESPONSE = await ROADAPI.SEARCH_DETAIL_ADDRESS(keyword);
             if (DETAIL_SEARCH_RESPONSE.results.juso != null) {
@@ -33,21 +37,18 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
         }
         setIsLoaded(true)
         setSearchStart(false)
-    }, [searchBtn]);
-
-    useEffect(() => {
-        SEARCH_DETAIL_ADDRESS()
-    }, [SEARCH_DETAIL_ADDRESS]);
-
+    };
     useEffect(() => {
         setModalVisible(visible)
     }, [visible]);
 
     const onChangeVisible = (visibility) => {
         if (visibility == false) {
-            setKeywords(null)
+            setKeywords(null);
         }
-        callback(false)
+        callback(false);
+        setIsLoaded(false);
+        setAddressList([]);
     }
 
     const SetAddress = async (cmp_location) => {
@@ -58,21 +59,42 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
         var lon = SEARCH_ADDRESS.documents[0].address.y;
         var lat = SEARCH_ADDRESS.documents[0].address.x;
         location([cmp_location, locationString, lon, lat])
-        callback(false)
+        callback(false);
+        setIsLoaded(false);
+        setAddressList([]);
     }
 
     const componentJSX = () => {
-        return (
-            address.map((data, index) => {
-                return (
-                    <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList} onPress={() => SetAddress(data.jibunAddr)}>
-                        <Text>{data.zipNo}</Text>
-                        <Text>{data.jibunAddr}</Text>
-                        <Text>{data.roadAddr}</Text>
-                    </TouchableOpacity>
-                )
-            })
-        )
+        if (!isStart) {
+            return (
+                address.map((data, index) => {
+                    if (index % 2 == 0) {
+                        return (
+                            <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList_a} onPress={() => SetAddress(data.jibunAddr)}>
+                                <Text>{data.zipNo}</Text>
+                                <Text>{data.jibunAddr}</Text>
+                                <Text>{data.roadAddr}</Text>
+                            </TouchableOpacity>
+                        )
+                    } else {
+                        return (
+                            <TouchableOpacity key={JSON.stringify(index)} style={styles.AddressList_b} onPress={() => SetAddress(data.jibunAddr)}>
+                                <Text>{data.zipNo}</Text>
+                                <Text>{data.jibunAddr}</Text>
+                                <Text>{data.roadAddr}</Text>
+                            </TouchableOpacity>
+                        )
+                    }
+                })
+            )
+        } else {
+            return (
+                <View style={styles.Loading}>
+                    <ActivityIndicator
+                        animating={true} />
+                </View>
+            )
+        }
     }
 
     return (
@@ -80,16 +102,17 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
             animationType="slide"
             transparent={true}
             visible={modalVisible}
+
         >
-            <View style={styles.ModalHeader}>
-                <View style={styles.HeaderContent}>
-                    <TouchableOpacity style={styles.CloseBtn} onPress={() => onChangeVisible(!modalVisible)}>
-                        <Icon name={'ios-close'} size={40} />
-                    </TouchableOpacity>
+            <View style={styles.Container}>
+                <View style={styles.ModalHeader}>
+                    <View style={styles.HeaderContent}>
+                        <TouchableOpacity style={styles.CloseBtn} onPress={() => onChangeVisible(!modalVisible)}>
+                            <Image source={require('../images/close_button.png')} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-            <View style={styles.ModalView}>
-                <View>
+                <View style={styles.ModalView}>
                     <View style={styles.TitleBox}>
                         <Text style={styles.TitleText}>업체 주소를</Text>
                         <Text style={styles.TitleText}>입력하세요</Text>
@@ -101,53 +124,56 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
                                 placeholder={'예) 배민동'}
                                 placeholderTextColor='#B4B4B4'
                                 onChangeText={(text) => setKeywords(text)}
+                                style={styles.SearchInputText}
                             />
+                            <TouchableOpacity style={styles.SearchInputBtn} onPress={() => SEARCH_DETAIL_ADDRESS()}>
+                                <Image source={require('../images/search_ico.png')} />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setSearchStart(true)}>
-                            <Icon name={'ios-search'} size={32} />
-                        </TouchableOpacity>
                     </View>
                 </View>
+                <SafeAreaView style={styles.SafeAreaView}>
+                    <ScrollView>
+                        {
+                            componentJSX()
+                        }
+                    </ScrollView>
+                </SafeAreaView>
             </View>
-            <SafeAreaView style={styles.SafeAreaView}>
-                <ScrollView>
-                    {
-                        componentJSX()
-                    }
-                </ScrollView>
-            </SafeAreaView>
         </Modal>
     )
 }
 
 const styles = StyleSheet.create({
-    ModalView: {
+    Container: {
         width: width,
-        height: height * 0.15,
-        zIndex: 5,
-        backgroundColor: "white",
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        borderBottomWidth: 1,
-        borderColor: 'rgba(180, 180, 180, 1)'
+        height: height,
+        marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : null,
+        backgroundColor: '#ffffff'
     },
     ModalHeader: {
-        width: width,
         padding: 20,
-        height: height * 0.06,
         flexDirection: 'column',
         justifyContent: 'center',
-        backgroundColor: "white",
+        backgroundColor: "#ffffff",
     },
     HeaderContent: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
+    },
+    ModalView: {
+        width: width,
+        zIndex: 5,
+        backgroundColor: "#ffffff",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        borderBottomWidth: 1,
+        borderColor: '#ebebeb'
     },
     CloseBtn: {
     },
@@ -163,34 +189,29 @@ const styles = StyleSheet.create({
         fontWeight: '800'
     },
     SearchBox: {
-        paddingRight: 20,
-        paddingLeft: 20,
-        width: width,
-        height: 70,
+        margin: 20,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
     },
     SearchInput: {
-        width: width * 0.8,
-        height: 50,
         borderRadius: 5,
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        marginRight: 5,
+        padding: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         borderWidth: 1,
-        borderColor: 'rgba(200, 200, 200, 1)',
-        backgroundColor: 'rgba(248, 249, 251, 1)',
+        borderColor: '#cecece',
+        backgroundColor: '#f2f2f2',
+    },
+    SearchInputText: {
+        flex: 9,
     },
     SearchInputBtn: {
-        width: width * 0.1,
-        height: 50,
+        flex: 1,
         borderRadius: 5,
-        padding: 10,
         justifyContent: 'center',
-        alignItems: 'flex-start',
-        borderWidth: 1,
-        borderColor: 'rgba(200, 200, 200, 1)'
+        alignItems: 'center',
     },
     CurrentLocate: {
         paddingRight: 20,
@@ -212,15 +233,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    SafeAreaView: {
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        width: width,
-        height: '70%'
-    },
-    AddressList: {
+    AddressList_a: {
         padding: 20,
+        borderBottomWidth: 0.8,
+        borderColor: '#f2f2f2',
+    },
+    AddressList_b: {
+        padding: 20,
+        borderBottomWidth: 0.8,
+        borderColor: '#f2f2f2',
+        backgroundColor: '#fafafa'
+    },
+    Loading : {
+        padding : 20,
     }
-})
+});
 
 
 export default CmpAddrSearchBox;

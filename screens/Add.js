@@ -13,11 +13,10 @@ import {
     Platform
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Ionicons';
 import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
 import * as ImageManipulator from "expo-image-manipulator";
+import * as Permissions from 'expo-permissions';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');

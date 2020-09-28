@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Modal,
@@ -8,8 +8,8 @@ import {
     Dimensions,
     TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-const { width, height } = Dimensions.get('window');
+
+import DATA_SOURCE from '../../dataSource/dataModel';
 
 const ModalBox = ({ data, visible, callback, navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -31,6 +31,11 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
             ads_type: data.ads_type
         })
     }
+    const DELETE_ITEM = async () => {
+        callback(!modalVisible);
+        await DATA_SOURCE.DELETE_ITEM(data.items_seq)
+    }
+
     return (
         <Modal
             animated

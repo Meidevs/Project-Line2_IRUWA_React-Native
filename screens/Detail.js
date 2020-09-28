@@ -9,9 +9,10 @@ import {
     Dimensions,
     Image,
     StatusBar,
-    ActivityIndicator, Platform
+    ActivityIndicator, 
+    Platform
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
+
 import Constants from "expo-constants";
 import MapView from 'react-native-maps';
 

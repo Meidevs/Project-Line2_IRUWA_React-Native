@@ -35,31 +35,16 @@ class AUTHENTICATION {
             console.log(err)
         }
     }
-    REGISTER = async (data) => {
+    REGISTER = async (formData) => {
+        console.log(formData)
         try {
             let response = await fetch('http://192.168.0.40:8888/api/auth/register', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "multipart/form-data",
                 },
                 credentials: 'include',
-                body: JSON.stringify({
-                    status: data.status,
-                    user_id: data.user_id,
-                    user_pw: data.user_pw,
-                    user_name: data.user_name,
-                    user_phone: data.user_phone,
-                    user_email: data.user_email,
-                    user_location: data.user_location,
-                    category_seq: data.category_seq,
-                    cmp_name: data.cmp_name,
-                    cmp_phone: data.cmp_phone,
-                    cmp_location: data.cmp_location,
-                    cmp_detail_location : data.cmp_detail_location,
-                    lat : data.lat,
-                    lon : data.lon,
-                    cmp_certificates: data.cmp_certificates,
-                })
+                body: formData
             });
 
             let json = await response.json();

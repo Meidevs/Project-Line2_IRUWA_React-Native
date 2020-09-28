@@ -270,7 +270,13 @@ const App = () => {
           component={RegisterScreen}
           options={{
             headerShown: true,
-            headerTransparent: true
+            headerStyle : {
+              elevation : 0,
+              backgroundColor : '#ffffff',
+              shadowOffset : {
+                height : 0,
+              }
+            }
           }}
         />
         <AuthStack.Screen

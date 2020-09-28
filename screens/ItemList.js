@@ -50,7 +50,7 @@ function ItemListScreen({ route, navigation }) {
                 setIsLoad(true)
             }
             GET_MYLIST();
-        }, [user_seq])
+        }, [user_seq, isModal])
     );
 
     const setStatus = (data) => {

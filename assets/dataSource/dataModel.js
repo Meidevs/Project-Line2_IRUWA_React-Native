@@ -18,6 +18,25 @@ class DATA_SORUCE {
         }
     }
 
+    DELETE_ITEM = async (items_seq) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/removeitem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items_seq : items_seq })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     GET_PREMIUM_ITEMS = async (user_location) => {
         try {
             var response = await fetch('http://192.168.0.40:8888/api/item/premiums', {
@@ -236,7 +255,7 @@ class DATA_SORUCE {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body : JSON.stringify({phone_seq : phone_seq})
+                body: JSON.stringify({ phone_seq: phone_seq })
             });
             var json = await response.json();
             if (response.ok) {

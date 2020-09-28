@@ -3,24 +3,36 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TouchableHighlight,
     Dimensions,
     StyleSheet,
     TextInput,
+    Image,
     ScrollView,
     SafeAreaView,
-    Platform,
-    Modal,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from "expo-image-manipulator";
+import Constants from "expo-constants";
+
 import CategoryPicker from '../assets/components/Category/CategoryPicker';
 import CmpAddressSearchBox from '../assets/components/CmpAddressSearchBox';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ROADAPI from '../assets/dataSource/roadAPI';
 import PASSWORD_CHECK from '../assets/components/PasswordMatch';
-import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
+
+async function getImageRollAsync() {
+    if (Constants.platform.ios || Constants.platform.android) {
+        const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+            throw new Error('CAMERA_ROLL permission not granted');
+        }
+    }
+}
 
 function RegisterScreen({ route, navigation }) {
     const [isSelected, checkSelection] = useState(true);
@@ -40,32 +52,37 @@ function RegisterScreen({ route, navigation }) {
     const [cmp_detail_location, setCompanyDLocation] = useState('');
     const [lat, setCompanyLat] = useState('');
     const [lon, setCompanyLon] = useState('');
-    const [cmp_certificates, setCompanyCerti] = useState('');
+    const [cmp_certificates, setImage] = useState({
+        id: null,
+        uri: null
+    });
     const [category_seq, setCompanyCate] = useState('');
 
     useEffect(() => {
         (async () => {
-            let { status } = await Location.requestPermissionsAsync();
+            let { status } = await Permissions.askAsync(Permissions.LOCATION);
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
+            } else {
+                var position = await Location.getCurrentPositionAsync({
+                    accuracy: Location.Accuracy.Highest
+                });
+                var response = await ROADAPI.GET_CURRENT_LOCATION(position);
+                setUserLocation(response);
             }
 
-            let position = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.Highest
-            });
-
-            var response = await ROADAPI.GET_CURRENT_LOCATION(position);
-            setUserLocation(response)
         })();
+        getImageRollAsync();
     }, []);
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
-                <View>
-                    <Text>회원가입</Text>
+                <View style={styles.HeaderTitleBox}>
+                    <Text style={styles.HeaderTitleTxt}>회원가입</Text>
                 </View>
             ),
+            headerRight: () => <View></View>
         })
     }, []);
 
@@ -88,9 +105,36 @@ function RegisterScreen({ route, navigation }) {
         checkSelection(!isSelected)
     }
 
+    const REGISTRATION_PICKER = async () => {
+        try {
+            let IMAGE_INFOs = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                quality: 1,
+            });
+            var resizedImage = await ImageManipulator.manipulateAsync(
+                IMAGE_INFOs.uri,
+                [{ resize: { width: 630, height: 891 } }],
+                { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+            );
+
+            if (!IMAGE_INFOs.cancelled) {
+                setImage(
+                    {
+                        id: 'images',
+                        uri: resizedImage.uri
+                    }
+                )
+            }
+        } catch (err) {
+            console.log('Image Error', err);
+        }
+    }
+
     const Register = async () => {
         if (user_pw == password_again) {
             var data = new Object();
+            var formData = new FormData();
+
             data.status = status;
             data.user_id = user_id;
             data.user_pw = user_pw;
@@ -105,8 +149,16 @@ function RegisterScreen({ route, navigation }) {
             data.cmp_detail_location = cmp_detail_location;
             data.lat = lat;
             data.lon = lon;
-            data.cmp_certificates = cmp_certificates;
-            var response = await AUTHENTICATION.REGISTER(data);
+            data.cmp_certificates = 'Y';
+            formData.append('data', JSON.stringify(data));
+            formData.append('image', {
+                uri : cmp_certificates.uri,
+                type: 'image/jpeg',
+                name: 'image',
+            })
+            
+            console.log(formData)
+            var response = await AUTHENTICATION.REGISTER(formData);
             if (response.flags == 0) {
                 alert(response.message);
                 navigation.popToTop('Main');
@@ -124,7 +176,7 @@ function RegisterScreen({ route, navigation }) {
     const ReturnVisible = (ChildFrom) => {
         setModalVisible(ChildFrom)
     }
-    
+
     const ReturnLocation = (ChildFrom) => {
         setCompanyDLocation(ChildFrom[0]);
         setCompanyLocation(ChildFrom[1]);
@@ -286,14 +338,18 @@ function RegisterScreen({ route, navigation }) {
                                     <View style={styles.ContentBox}>
                                         <View style={styles.ContentText}>
                                             <Text style={styles.ContentTextStyle}>사업자</Text>
-                                            <Text style={styles.ContentTextStyle}>등록번호</Text>
+                                            <Text style={styles.ContentTextStyle}>등록증</Text>
                                         </View>
-                                        <View style={styles.ContentInput}>
-                                            <TextInput
-                                                value={cmp_certificates}
-                                                placeholder={'사업자 등록번호를 입력해주세요.'}
-                                                onChangeText={(text) => setCompanyCerti(text)}
-                                            />
+                                        <View style={styles.ContentInput_sub}>
+                                            <View style={styles.TextAndBtn}>
+                                                <Image source={{ uri: cmp_certificates.uri }}
+                                                    resizeMode={'contain'}
+                                                    style={styles.Registration}
+                                                />
+                                            </View>
+                                            <TouchableOpacity style={styles.AddressBtn} onPress={() => REGISTRATION_PICKER()}>
+                                                <Text>등록</Text>
+                                            </TouchableOpacity>
                                         </View>
                                     </View>
                                     <View style={styles.ContentBox}>
@@ -318,10 +374,18 @@ function RegisterScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+    HeaderTitleBox: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    HeaderTitleTxt: {
+        fontSize: 15,
+        color: '#000000',
+        fontWeight: 'bold'
+    },
     Container: {
         flex: 1,
-        backgroundColor: '#F7F7F7',
-        paddingTop: Platform.OS === 'ios' ? 50 : 60,
+        backgroundColor: '#ffffff',
     },
     UserSelectBox: {
         flexDirection: 'row',
@@ -339,12 +403,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
         padding: 2,
         width: width * 0.3,
-        backgroundColor: '#4f79d5'
+        backgroundColor: '#15bac1'
     },
     SelectText: {
         fontSize: 16,
         fontWeight: '800',
-        color: '#4f79d5',
+        color: '#15bac1',
     },
     NonSelectEffect: {
         marginTop: 10,
@@ -384,7 +448,7 @@ const styles = StyleSheet.create({
     ContentInput: {
         flex: 3,
         borderWidth: 1,
-        borderColor: 'rgba(220, 220, 220, 1)',
+        borderColor: '#ebebeb',
         borderRadius: 5,
         padding: 5,
         margin: 10,
@@ -393,7 +457,7 @@ const styles = StyleSheet.create({
     ContentInput_sub: {
         flex: 3,
         borderWidth: 1,
-        borderColor: 'rgba(220, 220, 220, 1)',
+        borderColor: '#ebebeb',
         borderRadius: 5,
         padding: 5,
         margin: 10,
@@ -403,14 +467,14 @@ const styles = StyleSheet.create({
     ContentTextStyle: {
         fontSize: 16,
         fontWeight: '800',
-        color: '#4f79d5',
+        color: '#15bac1',
     },
     RegisterBtn: {
         justifyContent: 'center',
         alignItems: 'center',
         width: width,
         height: width * 0.1,
-        backgroundColor: '#4f79d5'
+        backgroundColor: '#15bac1'
     },
     RegisterBtnStyle: {
         color: 'rgba(255, 255, 255, 1)',
@@ -426,10 +490,13 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: 'rgba(220, 220, 220, 1)',
+        borderColor: '#ebebeb',
         backgroundColor: 'rgba(255, 255, 255, 1)',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    Registration: {
+        aspectRatio : 0.707
     }
 })
 
