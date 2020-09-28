@@ -108,9 +108,9 @@ function RingingScreen({ route, navigation }) {
                         <Text style={styles.CmpNameTxt}>{route.params.cmp_name}의 연락처</Text>
                     </View>
                     {
-                        phoneList.map((data) => {
+                        phoneList.map((data, index) => {
                             return (
-                                <View style={styles.PhoneList}>
+                                <View style={styles.PhoneList} key={index.toString()}>
                                     <View style={styles.LeftArea}>
                                         <Text style={styles.PositionResultTxt}>{data.position}</Text>
                                         <View style={styles.ResultArea}>

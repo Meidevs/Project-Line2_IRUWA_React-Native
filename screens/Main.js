@@ -114,14 +114,16 @@ function MainScreen({ route, navigation }) {
                 try {
                     const data = await AUTHENTICATION.GET_USER_INFOs();
                     const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
-                    setData(ITEMS.content);
-                    setUserLocation(data.user_location);
-                    setUserSeq(data.user_seq);
+                    if (isCancelled) {
+                        setData(ITEMS.content);
+                        setUserLocation(data.user_location);
+                        setUserSeq(data.user_seq);
+                    }
                 } catch (err) {
                     alert(err)
                 }
             }
-            setIsLoad(true);
+            setIsLoad(true)
             GET_MAIN_INFOs();
             return () => isCancelled = false;
         }, [user_location])

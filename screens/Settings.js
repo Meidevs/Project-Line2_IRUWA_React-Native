@@ -57,9 +57,9 @@ function SettingsScreen({ route, navigation }) {
                         </View>
                     </View>
                     <View style={styles.ContentBox}>
-                        <View>
+                        <TouchableOpacity onPress={() => DELETE_USER()}>
                             <Text style={styles.Text}>탈퇴하기</Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.ContentBox}>
                         <TouchableOpacity onPress={() => Logout()}>
@@ -80,11 +80,11 @@ const styles = StyleSheet.create({
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        backgroundColor: '#ffffff'
     },
     MainContainer: {
         borderBottomWidth: 1,

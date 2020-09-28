@@ -20,9 +20,9 @@ const PhoneList = ({ data, list }) => {
                     </View>
                 </View>
                 {
-                    list.map((data) => {
+                    list.map((data, index) => {
                         return (
-                            <View style={styles.ContentBox}>
+                            <View style={styles.ContentBox} key={index.toString()}>
                                 <View style={styles.LeftArea}>
                                     <Text style={styles.PositionTxt}>{data.position}</Text>
                                     <View style={styles.NameSpace}>
@@ -31,7 +31,7 @@ const PhoneList = ({ data, list }) => {
                                         <Text style={styles.NameTxt}>{data.name}</Text>
                                     </View>
                                 </View>
-                                <TouchableOpacity style={styles.IconBox} onPress={() => Linking.canOpenURL(data.phone)}>
+                                <TouchableOpacity style={styles.IconBox} onPress={() => Linking.openURL(`tel:${data.phone}`)}>
                                     <Image source={require('../../images/phone_ico.png')} />
                                 </TouchableOpacity>
                             </View>

@@ -10,7 +10,6 @@ import {
     Image,
     VirtualizedList
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import PrevSearch from '../assets/components/Search/PrevSearch';
@@ -26,7 +25,9 @@ const getItem = (data, index) => {
             cmp_location: items.cmp_location,
             reg_date: items.reg_date,
             cmp_seq: items.cmp_seq,
-            uri: items.uri
+            uri: items.uri,
+            ads_type: items.ads_type,
+
         }
     }
 }
@@ -48,10 +49,22 @@ const Item = ({ data, user, navigation }) => {
                 <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
             </View>
             <View style={styles.RightArea}>
-                <Text>{data.item_name}</Text>
-                <Text>{data.cmp_location}</Text>
-                <Text>{time_gap}</Text>
+                <Text style={styles.ItemName}>{data.item_name}</Text>
+                <Text style={styles.CmpLocation}>{data.cmp_location}</Text>
+                <Text style={styles.Time_Gap}>{time_gap}</Text>
             </View>
+            {
+                data.ads_type == 1 ? (
+                    <View style={styles.AdsType}>
+                        <Image
+                            source={require('../assets/images/category_ico_premium_green.png')}
+                            style={{ width: 18, height: 18 }}
+                        />
+                    </View>
+                ) : (
+                        null
+                    )
+            }
         </TouchableOpacity>
     );
 }
@@ -74,7 +87,7 @@ function SearchScreen({ navigation, route }) {
                 </View>
             ),
         })
-    },[]);
+    }, []);
 
     useEffect(() => {
         const GET_USER_INFOs = async () => {
@@ -151,12 +164,12 @@ const styles = StyleSheet.create({
     },
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        backgroundColor: '#fafafa'
     },
     SearchForm: {
         width: width,
         height: height * 0.1,
-        backgroundColor: 'rgba(255, 255, 255, 1)',
+        backgroundColor: '#ffffff',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
@@ -166,8 +179,8 @@ const styles = StyleSheet.create({
         margin: 25,
         padding: 10,
         height: height * 0.06,
-        backgroundColor: 'rgba(242, 242, 242, 1)',
-        borderColor: 'rgba(230, 230, 230, 1)',
+        backgroundColor: '#f2f2f2',
+        borderColor: '#cecece',
         borderWidth: 1,
         borderRadius: 10,
         flexDirection: 'row',
@@ -180,7 +193,60 @@ const styles = StyleSheet.create({
     },
     ResultForm: {
         flex: 1,
-    }
+    },
+    ContentBox: {
+        marginTop: 5,
+        margin: 20,
+        padding: 15,
+        borderRadius: 10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        elevation: 0.5,
+        shadowRadius: 1,
+        shadowOffset: {
+            height: 0.5
+        }
+    },
+    LeftArea: {
+        flex: 1,
+        justifyContent: 'center'
+    },
+    ImageContent: {
+        resizeMode: 'contain',
+        borderRadius: 100,
+        width: 80,
+        height: 80,
+    },
+    RightArea: {
+        flex: 2,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start'
+    },
+    ItemName: {
+        flex: 1,
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#000000'
+    },
+    CmpLocation: {
+        flex: 1,
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#000000'
+    },
+    Time_Gap: {
+        flex: 1,
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#a2a2a2',
+        letterSpacing: -0.2,
+    },
+    AdsType: {
+        position: 'absolute',
+        top: 10,
+        right: 20,
+    },
 })
 
 export default SearchScreen;

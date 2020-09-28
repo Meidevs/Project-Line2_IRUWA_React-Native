@@ -295,7 +295,16 @@ const App = () => {
         <AuthStack.Screen
           name="SearchUser"
           component={SearchUserScreen}
-          options={{ headerShown: true }}
+          options={{ 
+            headerShown: true,
+            headerStyle : {
+              elevation : 0,
+              shadowRadius: 0,
+              shadowOffset : {
+                height : 0,
+              }
+            }
+          }}
         />
       </AuthStack.Navigator>
     </NavigationContainer>
