@@ -10,16 +10,20 @@ import {
     Switch,
     Dimensions,
     ScrollView,
-    SafeAreaView
+    SafeAreaView,
+    Alert
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
+import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
 
 function SettingsScreen({ route, navigation }) {
+    const {
+        user_name
+    } = route.params;
     const [isEnabled, setIsEnabled] = useState(false);
+    const [userName, setUserName] = useState(null);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     useEffect(() => {
@@ -32,12 +36,17 @@ function SettingsScreen({ route, navigation }) {
         })
     }, []);
 
-    const Logout = async () => {
+    const DELETE_USER = async () => {
+        console.log(userName)
+        console.log(user_name)
+    }
+
+    const LOGOUT = async () => {
         var LOGOUT = await AUTHENTICATION.LOGOUT();
         if (LOGOUT) {
             navigation.reset({
-                index : 0,
-                routes:[{name : 'BeforeLogin'}]
+                index: 0,
+                routes: [{ name: 'BeforeLogin' }]
             });
         } else {
             alert('로그아웃에 실패하였습니다.');
@@ -57,12 +66,12 @@ function SettingsScreen({ route, navigation }) {
                         </View>
                     </View>
                     <View style={styles.ContentBox}>
-                        <TouchableOpacity onPress={() => DELETE_USER()}>
+                        <TouchableOpacity onPress={() => AlertBox()}>
                             <Text style={styles.Text}>탈퇴하기</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.ContentBox}>
-                        <TouchableOpacity onPress={() => Logout()}>
+                        <TouchableOpacity onPress={() => LOGOUT()}>
                             <Text>로그 아웃</Text>
                         </TouchableOpacity>
                     </View>

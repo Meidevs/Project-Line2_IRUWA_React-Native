@@ -13,6 +13,7 @@ import {
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import * as Notifications from 'expo-notifications';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from "expo-image-manipulator";
 import Constants from "expo-constants";
@@ -31,6 +32,31 @@ async function getImageRollAsync() {
         if (status !== 'granted') {
             throw new Error('CAMERA_ROLL permission not granted');
         }
+    }
+}
+
+
+const registerForPushNotificationsAsync = async (navigation) => {
+    if (Constants.isDevice) {
+        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+
+        let finalStatus = existingStatus;
+
+        if (existingStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+        }
+
+        if (finalStatus !== 'granted') {
+            return navigation.goBack();
+        }
+        try {
+            let token = await Notifications.getDevicePushTokenAsync();
+            return token;
+        } catch (err) {
+            console.log(err)
+        }
+
     }
 }
 
@@ -57,10 +83,11 @@ function RegisterScreen({ route, navigation }) {
         uri: null
     });
     const [category_seq, setCompanyCate] = useState('');
+    const [deviceToken, setDeviceToken] = useState('');
 
     useEffect(() => {
         (async () => {
-            let { status } = await Permissions.askAsync(Permissions.LOCATION);
+            let { status } = await Permissions.askAsync(Permissions.LOCATION, Permissions.NOTIFICATIONS);
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
             } else {
@@ -68,6 +95,8 @@ function RegisterScreen({ route, navigation }) {
                     accuracy: Location.Accuracy.Highest
                 });
                 var response = await ROADAPI.GET_CURRENT_LOCATION(position);
+                var token = await registerForPushNotificationsAsync(navigation);
+                setDeviceToken(token);
                 setUserLocation(response);
             }
 
@@ -149,15 +178,14 @@ function RegisterScreen({ route, navigation }) {
             data.cmp_detail_location = cmp_detail_location;
             data.lat = lat;
             data.lon = lon;
+            data.deviceToken = deviceToken;
             data.cmp_certificates = 'Y';
             formData.append('data', JSON.stringify(data));
             formData.append('image', {
-                uri : cmp_certificates.uri,
+                uri: cmp_certificates.uri,
                 type: 'image/jpeg',
                 name: 'image',
             })
-            
-            console.log(formData)
             var response = await AUTHENTICATION.REGISTER(formData);
             if (response.flags == 0) {
                 alert(response.message);
@@ -496,7 +524,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     Registration: {
-        aspectRatio : 0.707
+        aspectRatio: 0.707
     }
 })
 

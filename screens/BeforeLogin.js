@@ -10,27 +10,20 @@ import {
 } from 'react-native';
 import Constants from "expo-constants";
 import * as Permissions from 'expo-permissions';
-
 const { width, height } = Dimensions.get('window');
 
 function BeforeLoginScreen({ navigation }) {
 
     useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestPermissionsAsync();
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-            }
-        }, []);
-        const getLocationAsync = async () => {
+        const getAllPermission = async () => {
             if (Constants.platform.ios || Constants.platform.android) {
-                const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+                const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION, Permissions.CAMERA_ROLL, Permissions.NOTIFICATIONS);
                 if (status !== 'granted') {
                     throw new Error('CAMERA_ROLL permission not granted');
                 }
             }
         }
-        getLocationAsync();
+        getAllPermission();
     }, []);
 
     return (

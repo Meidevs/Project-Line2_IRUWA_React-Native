@@ -9,17 +9,18 @@ import {
     VirtualizedList,
     SafeAreaView,
     StatusBar,
-    ImageBackground, Platform
+    ImageBackground,
+    Platform
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/stack';
-
 
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
 import PremiumBanner from '../assets/components/PremiumBanner';
 import GLOBAL from '../assets/dataSource/globalModel';
+import { Socket } from 'socket.io-client';
 const { width, height } = Dimensions.get('window');
 
 const getItem = (data, index) => {
@@ -76,12 +77,22 @@ const Item = ({ data, user, navigation }) => {
     );
 }
 
+
 function MainScreen({ route, navigation }) {
     const headerHeight = useHeaderHeight();
     const [data, setData] = useState([]);
     const [user_location, setUserLocation] = useState('');
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
+
+    // useEffect(() => {
+    //     const SET_NOTIFICATION = async () => {
+    //         if (user_seq) {
+    //             await registerForPushNotificationsAsync(user_seq);
+    //         }
+    //     }
+    //     SET_NOTIFICATION();
+    // }, [user_seq])
 
     useEffect(() => {
         navigation.setOptions({
@@ -130,12 +141,8 @@ function MainScreen({ route, navigation }) {
     );
 
     useEffect(() => {
-        let isCancelled = true;
-        if (isCancelled) {
-            GLOBAL.SET_SOCKET_IO();
-            GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
-        }
-        return () => isCancelled = false;
+        GLOBAL.SET_SOCKET_IO();
+        GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
     }, [user_seq]);
 
     if (isLoad) {

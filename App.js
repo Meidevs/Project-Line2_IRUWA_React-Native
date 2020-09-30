@@ -1,5 +1,8 @@
-import React from 'react';
-import io from 'socket.io-client';
+import React, { useState, useEffect } from 'react';
+import {
+  AppState,
+} from 'react-native';
+import AUTHENTICATION from './assets/dataSource/authModel';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -157,6 +160,28 @@ const config = {
 };
 
 const MainStackScreens = () => {
+  const [appState, setAppState] = useState(AppState.currentState);
+  useEffect(() => {
+    const GET_USER_INFO = async () => {
+      var userInfo = await AUTHENTICATION.GET_USER_INFOs();
+      console.log('userInfo', userInfo)
+    }
+    GET_USER_INFO();
+  }, [])
+
+  useEffect(() => {
+    AppState.addEventListener('change', handleAppStateChange);
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    };
+  }, []);
+  const handleAppStateChange = (nextAppState) => {
+    console.log('App State: ' + nextAppState);
+    if (appState != nextAppState) {
+
+      setAppState(nextAppState);
+    }
+  };
   return (
     <MainStack.Navigator>
       <MainStack.Screen
@@ -164,7 +189,7 @@ const MainStackScreens = () => {
         component={MainScreen}
         options={{
           headerLeft: null,
-          headerTransparent : true,
+          headerTransparent: true,
           gestureDirection: 'horizontal'
         }}
       />
@@ -249,6 +274,7 @@ const MainTabs = () => {
 }
 
 const App = () => {
+
   return (
     <NavigationContainer>
       <AuthStack.Navigator
@@ -270,11 +296,11 @@ const App = () => {
           component={RegisterScreen}
           options={{
             headerShown: true,
-            headerStyle : {
-              elevation : 0,
-              backgroundColor : '#ffffff',
-              shadowOffset : {
-                height : 0,
+            headerStyle: {
+              elevation: 0,
+              backgroundColor: '#ffffff',
+              shadowOffset: {
+                height: 0,
               }
             }
           }}
@@ -295,13 +321,13 @@ const App = () => {
         <AuthStack.Screen
           name="SearchUser"
           component={SearchUserScreen}
-          options={{ 
+          options={{
             headerShown: true,
-            headerStyle : {
-              elevation : 0,
+            headerStyle: {
+              elevation: 0,
               shadowRadius: 0,
-              shadowOffset : {
-                height : 0,
+              shadowOffset: {
+                height: 0,
               }
             }
           }}

@@ -136,6 +136,14 @@ class AUTHENTICATION {
             console.log(err);
         }
     }
+
+    SET_DEVICE_TOKEN = async () => {
+        try {
+
+        } catch (err) {
+            
+        }
+    }
 }
 
 

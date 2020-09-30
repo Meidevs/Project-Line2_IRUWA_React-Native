@@ -17,8 +17,6 @@ const initialValue = {
 }
 
 const reducer = (state, action) => {
-    console.log('State : ', state.params)
-    console.log('Action : ', action.params)
     switch (action.type) {
         case 'initial':
             return {
@@ -27,11 +25,10 @@ const reducer = (state, action) => {
 
         case 'update':
             var result = state.params.findIndex(data => data.roomCode == action.params.roomInfo.roomCode);
-            console.log('result', result);
             if (result == -1) {
                 return {
                     ...state.params,
-                    params : [action.params.roomInfo]
+                    params: [action.params.roomInfo]
                 }
             } else {
                 return {
@@ -54,7 +51,6 @@ function ChatListScreen({ route, navigation }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [isLoaded, setIsLoad] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialValue);
-    console.log(state)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -71,38 +67,40 @@ function ChatListScreen({ route, navigation }) {
     useFocusEffect(
         React.useCallback(() => {
             let isCancelled = true;
-            if (isCancelled) {
-                const INITIAL = async () => {
-                    try {
-                        var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
+            const INITIAL = async () => {
+                try {
+                    var USER_INFO = await AUTHENTICATION.GET_USER_INFOs();
+                    socket = GLOBAL.GET_SOCKET_IO();
+                    socket.emit('GetRoomList', USER_INFO.user_seq);
+                    if (isCancelled)
                         setCurrentUser(USER_INFO.user_seq);
-                        socket = GLOBAL.GET_SOCKET_IO();
-                        socket.emit('GetRoomList', USER_INFO.user_seq);
-                    } catch (err) {
-                        console.log(err);
-                    }
+                } catch (err) {
+                    console.log(err);
                 }
-
-                INITIAL();
             }
+            INITIAL();
             return () => isCancelled = false;
         }, [])
     );
     useEffect(() => {
+        let isCancelled = true;
         socket = GLOBAL.GET_SOCKET_IO();
         socket.on('GetRoomList', message => {
-            dispatch({ type: 'initial', params: message });
+            if (isCancelled)
+                dispatch({ type: 'initial', params: message });
         });
-        setIsLoad(true);
+        return () => isCancelled = false;
     }, []);
+
     useEffect(() => {
-        if (isLoaded) {
-            socket = GLOBAL.GET_SOCKET_IO();
-            socket.on('receiveMessage', message => {
+        let isCancelled = true;
+        socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('receiveMessage', message => {
+            if (isCancelled)
                 dispatch({ type: 'update', params: message });
-            })
-        }
-    }, [isLoaded]);
+        })
+        return () => isCancelled = false;
+    }, []);
 
     return (
         <SafeAreaView style={styles.Container}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext, useRef } from 'react';
+import React, { useEffect, useState, useReducer, useRef } from 'react';
 import {
     View,
     Text,
@@ -7,7 +7,6 @@ import {
     Image,
     StyleSheet,
     Dimensions,
-    ScrollView,
     SafeAreaView,
     Animated,
     Platform
@@ -18,6 +17,40 @@ import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
 
+const initialValue = {
+    params: []
+}
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'initial':
+            return {
+                params: action.params
+            }
+
+        case 'update':
+            var result = state.params.findIndex(data => data.roomCode == action.params.roomInfo.roomCode);
+            if (result == -1) {
+                return {
+                    ...state.params,
+                    params: [action.params.roomInfo]
+                }
+            } else {
+                return {
+                    params: state.params.filter(data => {
+                        if (data.roomCode == action.params.messages.roomCode) {
+                            return data.messages.push(action.params.messages)
+                        }
+                    })
+                }
+            }
+
+        case 'default':
+            return {
+                params: state.params
+            }
+    }
+}
 let socket;
 const ChatInitialScreen = ({ route, navigation }) => {
     const {
@@ -33,50 +66,59 @@ const ChatInitialScreen = ({ route, navigation }) => {
         roomCode
     } = route.params;
     const [message, setMessageText] = useState(null);
-    const [receiveMessage, setReceiveMessage] = useState([]);
-    const [initialLoaded, setInitialValue] = useState(false);
+    const [isLoaded, setIsLoad] = useState(false);
     const [profile, setChatUserProfile] = useState({ uri: null });
-    const scrollComponent = useRef(null)
-    useEffect(() => {
-        let isCancelled = true;
+    const [state, dispatch] = useReducer(reducer, initialValue);
+    const scrollViewRef = useRef();
 
+    useEffect(() => {
         const USER_PROFILE = async () => {
-            var USER_PROFILE = await AUTHENTICATION.GET_USER_PROFILE(receiver_seq);
-            if (USER_PROFILE.flags == 0) {
-                setChatUserProfile({ uri: USER_PROFILE.message })
+            try {
+                var USER_PROFILE = await AUTHENTICATION.GET_USER_PROFILE(receiver_seq);
+                if (USER_PROFILE.flags == 0) {
+                    setChatUserProfile({ uri: USER_PROFILE.message })
+                }
+                socket = GLOBAL.GET_SOCKET_IO();
+                socket.emit('CreateRoom', {
+                    roomCode: roomCode,
+                    item_uri: item_uri,
+                    items_seq: items_seq,
+                    item_name: item_name,
+                    cmp_seq: cmp_seq,
+                    cmp_name: cmp_name,
+                    sender_seq: sender_seq,
+                    sender_name: sender_name,
+                    receiver_seq: receiver_seq,
+                    receiver_name: receiver_name
+                });
+                socket.emit('GetRoom', roomCode);
+            } catch (err) {
+                console.log(err)
             }
         }
-        const GET_MAIN_INFOs = () => {
-            socket = GLOBAL.GET_SOCKET_IO();
-            socket.emit('CreateRoom', {
-                roomCode: roomCode,
-                item_uri: item_uri,
-                items_seq: items_seq,
-                item_name: item_name,
-                cmp_seq: cmp_seq,
-                cmp_name: cmp_name,
-                sender_seq: sender_seq,
-                sender_name: sender_name,
-                receiver_seq: receiver_seq,
-                receiver_name: receiver_name
-            });
-        }
-        setInitialValue(true);
-        USER_PROFILE()
-        GET_MAIN_INFOs();
-        return () => isCancelled = false;
+        USER_PROFILE();
     }, [route]);
 
     useEffect(() => {
         let isCancelled = true;
-        socket.on('receiveMessage', (message) => {
-            var newData = [...receiveMessage, message.messages];
-            if (isCancelled) {
-                setReceiveMessage(newData);
-            }
+        socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('GetRoom', message => {
+            if (isCancelled)
+                dispatch({ type: 'initial', params: message })
         });
         return () => isCancelled = false;
-    }, [receiveMessage, socket]);
+    }, []);
+
+    useEffect(() => {
+        let isCancelled = true;
+        socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('receiveMessage', message => {
+            if (isCancelled)
+                dispatch({ type: 'update', params: message });
+        });
+        return () => isCancelled = false;
+
+    }, []);
 
     const sendMessage = async () => {
         if (message) {
@@ -91,15 +133,15 @@ const ChatInitialScreen = ({ route, navigation }) => {
                 message: sendMessage,
                 reg_date: dateTime,
             }
-            socket.emit('sendMessage', form)
+            socket.emit('sendMessage', form);
             setMessageText(null);
         }
     }
 
     const componentJSX_Chat = () => {
-        if (receiveMessage.length > 0)
+        if (state.params.length > 0)
             return (
-                receiveMessage.map((data, index) => {
+                state.params[0].messages.map((data, index) => {
                     var currentTime;
                     if (Platform.OS == 'ios') {
                         var newTime = new Date(data.reg_date).toLocaleTimeString().substring(0, 7);
@@ -212,7 +254,12 @@ const ChatInitialScreen = ({ route, navigation }) => {
                     </View>
                 </View>
             </Animated.View>
-            <Animated.ScrollView style={styles.MessageArea}>
+            <Animated.ScrollView style={styles.MessageArea}
+                ref={scrollViewRef}
+                onContentSizeChange={(contentHeight) => {
+                    scrollViewRef.current.scrollToEnd({ animated: true, y: contentHeight })
+                }}
+            >
                 {
                     componentJSX_Chat()
                 }

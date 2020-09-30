@@ -30,7 +30,9 @@ function MyinfoScreen({ route, navigation }) {
                 </View>
             ),
             headerRight: () => (
-                <TouchableOpacity style={styles.SettingHeader} onPress={() => navigation.navigate('Settings')}>
+                <TouchableOpacity style={styles.SettingHeader} onPress={() => navigation.navigate('Settings', {
+                    user_name : infos.user_name
+                })}>
                     <Image source={require('../assets/images/more_button.png')}
                         resizeMode={'contain'}
                         style={{ width: 20, height: 20 }}
@@ -38,7 +40,7 @@ function MyinfoScreen({ route, navigation }) {
                 </TouchableOpacity>
             )
         })
-    }, []);
+    }, [infos]);
 
     useFocusEffect(
         React.useCallback(() => {
