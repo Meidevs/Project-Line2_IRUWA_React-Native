@@ -44,6 +44,14 @@ const reducer = (state, action) => {
                     })
                 }
             }
+        case 'official':
+            return {
+                params: state.params.filter(data => {
+                    if (data.roomCode == action.params.messages.roomCode) {
+                        return data.messages.push(action.params.messages)
+                    }
+                })
+            }
 
         case 'default':
             return {
@@ -118,6 +126,16 @@ const ChatInitialScreen = ({ route, navigation }) => {
         });
         return () => isCancelled = false;
 
+    }, []);
+
+    useEffect(() => {
+        let isCancelled = true;
+        socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('officialMessage', message => {
+            if (isCancelled)
+                dispatch({ type: 'official', params: message });
+        });
+        return () => isCancelled = false;
     }, []);
 
     const sendMessage = async () => {
@@ -197,7 +215,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
 
                             </View>
                         )
-                    } else {
+                    } else if (data.sender_seq == sender_seq) {
                         return (
                             <View
                                 style={styles.ChattingBox}
@@ -213,6 +231,17 @@ const ChatInitialScreen = ({ route, navigation }) => {
                                             <Text style={styles.DateTime_R}>{currentTime}</Text>
                                         </View>
                                     </View>
+                                </View>
+                            </View>
+                        )
+                    } else if (data.sender_seq == 'admin') {
+                        return (
+                            <View
+                                style={styles.ChattingBox}
+                                key={index.toString()}
+                            >
+                                <View style={styles.AdminBox}>
+                                    <Text style={styles.SenderTxt}>{data.message}</Text>
                                 </View>
                             </View>
                         )
@@ -456,6 +485,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 14,
         color: 'rgba(255, 255, 255, 1)'
+    },
+    AdminTxt: {
+        fontWeight: '600',
+        fontSize: 14,
+        color: 'rgba(0, 0, 0, 1)'
     },
 })
 

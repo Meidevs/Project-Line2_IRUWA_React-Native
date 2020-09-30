@@ -15,6 +15,7 @@ import {
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import DateFunction from '../assets/components/DateFunction';
 import GLOBAL from '../assets/dataSource/globalModel';
+import ChatSettings from '../assets/components/Chat/ChatSettings';
 
 const { width, height } = Dimensions.get('window');
 const initialValue = {
@@ -44,6 +45,15 @@ const reducer = (state, action) => {
                 }
             }
 
+        case 'official':
+            return {
+                params: state.params.filter(data => {
+                    if (data.roomCode == action.params.messages.roomCode) {
+                        return data.messages.push(action.params.messages)
+                    }
+                })
+            }
+
         case 'default':
             return {
                 params: state.params
@@ -64,15 +74,14 @@ const ChatScreen = ({ route, navigation }) => {
         cmp_name,
         roomCode
     } = route.params;
-
     const [message, setMessageText] = useState(null);
-    const [receiveMessage, setReceiveMessage] = useState([]);
-    const [isLoaded, setIsLoad] = useState(false);
     const [profile, setChatUserProfile] = useState({ uri: null });
     const [state, dispatch] = useReducer(reducer, initialValue);
-
+    const [isModal, setIsModal] = useState(false);
     const scrollViewRef = useRef();
-
+    const callback = (ChildFrom) => {
+        setIsModal(ChildFrom)
+    }
     useEffect(() => {
         const USER_PROFILE = async () => {
             try {
@@ -106,7 +115,17 @@ const ChatScreen = ({ route, navigation }) => {
             if (isCancelled)
                 dispatch({ type: 'update', params: message });
         });
-        return () =>  isCancelled  = false;
+        return () => isCancelled = false;
+    }, []);
+
+    useEffect(() => {
+        let isCancelled = true;
+        socket = GLOBAL.GET_SOCKET_IO();
+        socket.on('officialMessage', message => {
+            if (isCancelled)
+                dispatch({ type: 'official', params: message });
+        });
+        return () => isCancelled = false;
     }, []);
 
     const sendMessage = async () => {
@@ -186,7 +205,7 @@ const ChatScreen = ({ route, navigation }) => {
 
                             </View>
                         )
-                    } else {
+                    } else if (data.sender_seq == sender_seq) {
                         return (
                             <View
                                 style={styles.ChattingBox}
@@ -202,6 +221,17 @@ const ChatScreen = ({ route, navigation }) => {
                                             <Text style={styles.DateTime_R}>{currentTime}</Text>
                                         </View>
                                     </View>
+                                </View>
+                            </View>
+                        )
+                    } else if (data.sender_seq == 'admin') {
+                        return (
+                            <View
+                                style={styles.ChattingBox}
+                                key={index.toString()}
+                            >
+                                <View style={styles.AdminBox}>
+                                    <Text style={styles.AdminTxt}>{data.message}</Text>
                                 </View>
                             </View>
                         )
@@ -221,7 +251,7 @@ const ChatScreen = ({ route, navigation }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.RightHeader}
-                        onPress={() => navigation.navigate('Search')}>
+                        onPress={() => setIsModal(true)}>
                         <Image
                             source={require('../assets/images/more_button.png')}
                             resizeMode={'contain'}
@@ -266,6 +296,7 @@ const ChatScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </View>
             </Animated.View>
+            <ChatSettings user_seq={sender_seq} roomCode={roomCode} visible={isModal} callback={callback} navigation={navigation} />
         </SafeAreaView>
     )
 }
@@ -408,6 +439,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
+    AdminBox: {
+        flex: 1,
+        margin: 15,
+        height: 70,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     SenderMessages: {
         flex: 8,
         margin: 10,
@@ -444,6 +483,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 14,
         color: 'rgba(255, 255, 255, 1)'
+    },
+    AdminTxt: {
+        fontWeight: '600',
+        fontSize: 14,
+        color: 'rgba(0, 0, 0, 1)'
     },
 })
 
