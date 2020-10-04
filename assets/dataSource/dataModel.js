@@ -26,7 +26,7 @@ class DATA_SORUCE {
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify({ items_seq : items_seq })
+                body: JSON.stringify({ items_seq: items_seq })
             });
             var json = await response.json();
             if (response.ok) {
@@ -269,6 +269,23 @@ class DATA_SORUCE {
     GET_RINGING_LIST = async () => {
         try {
             var response = await fetch('http://192.168.0.40:8888/api/item/phonelist', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    GET_PREMIUM_SEARCH_PREMIUMS = async () => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/item/search/premiums', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",

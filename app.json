@@ -10,10 +10,20 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#000000",
+      "androidMode": "default"
+    },
     "android": {
       "package": "com.Line2.iruwa",
       "versionCode": 1,
       "useNextNotificationsApi": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.Line2.iruwa",
+      "buildNumber": "1.0.0",
+      "supportsTablet": true
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,11 +31,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "bundleIdentifier": "com.Line2.iruwa",
-      "buildNumber": "1.0.0",
-      "supportsTablet": true
-    },
     "web": {
       "favicon": "./assets/favicon.png"
     }

@@ -47,7 +47,7 @@ function CategoryScreen({ route, navigation }) {
                     <Text style={styles.TitleTxtStyle}>프리미엄 서비스</Text>
                 </View>
                 <View style={styles.CategoryBtnBox}>
-                    <TouchableOpacity style={styles.CategoryBtn}>
+                    <TouchableOpacity style={styles.CategoryBtn} onPress={() => navigation.navigate('Premiums')}>
                         <View style={styles.CategoryIconBox}>
                             <Image
                             source={require('../assets/images/category_ico_premium.png')}

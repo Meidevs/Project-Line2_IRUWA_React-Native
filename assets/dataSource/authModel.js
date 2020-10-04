@@ -7,7 +7,7 @@ class AUTHENTICATION {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ user_id: user_id, user_pw: user_pw, user_device : user_device})
+                body: JSON.stringify({ user_id: user_id, user_pw: user_pw, user_device: user_device })
             });
 
             let json = await response.json();
@@ -84,7 +84,7 @@ class AUTHENTICATION {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body : JSON.stringify({user_location : user_location})
+                body: JSON.stringify({ user_location: user_location })
             });
 
             let json = await response.json();
@@ -107,7 +107,7 @@ class AUTHENTICATION {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body : JSON.stringify ({user_seq : user_seq})
+                body: JSON.stringify({ user_seq: user_seq })
             });
             var json = await response.json();
             if (response.ok) {
@@ -136,12 +136,22 @@ class AUTHENTICATION {
             console.log(err);
         }
     }
-
-    SET_DEVICE_TOKEN = async () => {
+    USER_APPSTATE = async (appstate, data) => {
         try {
-
+            var response = await fetch('http://192.168.0.40:8888/api/auth/appstate', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({appState : appstate, pushToken : data}),
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
         } catch (err) {
-            
+            console.log(err);
         }
     }
 }

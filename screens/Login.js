@@ -30,7 +30,7 @@ function LoginScreen({ navigation }) {
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
-            setToken(token)
+            setToken(token);
         }
         SET_DEVICE_TOKEN();
         const keyboardDidShowListener = Keyboard.addListener(

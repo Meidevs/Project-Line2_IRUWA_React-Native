@@ -8,9 +8,7 @@ import {
     Dimensions,
     ScrollView,
     SafeAreaView,
-    ImageBackground
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -42,15 +40,14 @@ function ProfileScreen({ route, navigation }) {
                 </View>
             ),
             headerRight: () => (
-                <TouchableOpacity style={styles.RightHeader}>
-                    <Text style={styles.TitleHeaderTxtStyle}>저장</Text>
-                </TouchableOpacity>
+                <View></View>
             ),
         })
     }, []);
 
     useEffect(() => {
         const GET_PROFILE_IMAGE = async () => {
+            getImageRollAsync();
             var PROFILE_IMAGE = await AUTHENTICATION.GET_USER_PROFILE(user_seq);
             if (PROFILE_IMAGE.flags == 0) {
                 setProfileImage({ uri: PROFILE_IMAGE.message });
@@ -69,6 +66,8 @@ function ProfileScreen({ route, navigation }) {
                 allowsEditing: true,
                 quality: 1,
             });
+            console.log(IMAGE_INFOs)
+
             //Resize Image to Send Server.
             var resizedImage = await ImageManipulator.manipulateAsync(
                 IMAGE_INFOs.uri,
@@ -83,13 +82,15 @@ function ProfileScreen({ route, navigation }) {
                 type: 'image/jpeg',
                 name: 'image',
             });
-
             // Send User Profile Image to Server
             var SAVE_RESULT = await AUTHENTICATION.SAVE_PROFILE_IMAGE(formData);
-            if (!IMAGE_INFOs.cancelled && SAVE_RESULT) {
-                setProfileImage({
-                    uri: resizedImage.uri
-                })
+            console.log('SAVE_RESULT', SAVE_RESULT)
+            if (!IMAGE_INFOs.cancelled) {
+                if (SAVE_RESULT.flags == 1) {
+                    setProfileImage({
+                        uri: resizedImage.uri
+                    })
+                }
             }
         } catch (err) {
             console.log('Image Error', err);
@@ -99,43 +100,66 @@ function ProfileScreen({ route, navigation }) {
         return (
             <SafeAreaView style={styles.Container}>
                 <ScrollView>
-                    <View style={styles.ImageSelectorBox} >
-                        <ImageBackground style={styles.ImageSelector}
+                    <View style={styles.ProfileImageBox}>
+                        <Image style={styles.ProfileImage}
                             source={profileImage.uri == null ? require('../assets/images/defaultProfile.png') : { uri: profileImage.uri }}
                             resizeMode={'cover'}
                             borderRadius={80}
-                        >
-                            <TouchableOpacity onPress={() => IMAGE_PICKER()}>
-                                <View style={styles.IconBox}>
-                                    <Image source={require('../assets/images/photo_ico.png')}
-                                    />
-                                </View>
+                        />
+                        <View style={styles.ProfileImageBtn}>
+                            <TouchableOpacity onPress={() => IMAGE_PICKER()} style={styles.ProfileBtn}>
+                                <Image source={require('../assets/images/photo_ico.png')}
+                                    style={{ width: 23, height: 20, marginRight: 10 }} />
+                                <Text style={styles.ProfileTxt}>
+                                    프로필 이미지 변경
+                            </Text>
                             </TouchableOpacity>
-                        </ImageBackground>
+                        </View>
                     </View>
                     <View style={styles.SettingBox}>
                         <View style={styles.MyinfoSettingTitle}>
+                            <Image source={require('../assets/images/profile_info_ico.png')}
+                                style={{ width: 20, height: 20, marginRight: 10 }}
+                            />
                             <Text style={styles.TitleStyle}>사용자 정보</Text>
                         </View>
-                        <View style={styles.SettingContent}>
-                            <Text>비밀번호 변경</Text>
+                        <View style={styles.ProfileSettings}>
+                            <Text style={styles.ProfileSettingTxt}>이름 변경</Text>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 15, height: 15, }}
+                            />
                         </View>
-                        <View style={styles.SettingContent}>
-                            <Text>이메일 수정</Text>
-                        </View>
-                        <View style={styles.SettingContent}>
-                            <Text>전화번호 수정</Text>
+                        <View style={styles.ProfileSettings}>
+                            <Text style={styles.ProfileSettingTxt}>전화번호 수정</Text>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 15, height: 15, }}
+                            />
                         </View>
                     </View>
                     <View style={styles.SettingBox}>
                         <View style={styles.MyinfoSettingTitle}>
+                            <Image source={require('../assets/images/company.png')}
+                                style={{ width: 20, height: 20, marginRight: 10 }}
+                            />
                             <Text style={styles.TitleStyle}>업체 정보</Text>
                         </View>
-                        <View style={styles.SettingContent}>
-                            <Text>영업 지점 변경</Text>
+                        <View style={styles.ProfileSettings}>
+                            <Text style={styles.ProfileSettingTxt}>업체명 변경</Text>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 15, height: 15, }}
+                            />
                         </View>
-                        <View style={styles.SettingContent}>
-                            <Text>전화번호 수정</Text>
+                        <View style={styles.ProfileSettings}>
+                            <Text style={styles.ProfileSettingTxt}>영업 지역 변경</Text>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 15, height: 15, }}
+                            />
+                        </View>
+                        <View style={styles.ProfileSettings}>
+                            <Text style={styles.ProfileSettingTxt}>업체 전화번호 변경</Text>
+                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                style={{ width: 15, height: 15, }}
+                            />
                         </View>
                     </View>
                 </ScrollView>
@@ -149,12 +173,12 @@ function ProfileScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     RightHeader: {
         padding: 10,
@@ -167,50 +191,77 @@ const styles = StyleSheet.create({
     },
     Container: {
         flex: 1,
-    },
-    ImageSelectorBox: {
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 10,
     },
-    ImageSelector: {
-        width: width * 0.3,
-        height: width * 0.3,
-        borderRadius: 100,
-        marginTop: 20,
-        marginBottom: 20,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end'
-    },
-    IconBox: {
-        width: 40,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        elevation: 2,
-        borderRadius: 30,
-        padding: 5,
-    },
-    SettingBox: {
-        backgroundColor: 'rgba(255, 255, 255, 1)',
+    ProfileImageBox: {
+        width: width,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'flex-start'
+        alignItems: 'center'
+    },
+    ProfileImage: {
+        width: 150,
+        height: 150,
+        borderRadius: 150,
+        marginTop: 20,
+        marginBottom: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    ProfileImageBtn: {
+        width: width,
+        padding: 25,
+    },
+    ProfileBtn: {
+        padding: 20,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: '#cecece',
+        borderWidth: 1,
+        borderRadius: 10,
+    },
+    ProfileTxt: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#070707'
+    },
+    SettingBox: {
+        width: width,
+        marginTop: 12,
+        paddingRight: 25,
+        paddingLeft: 25,
+        flexDirection: 'column',
     },
     MyinfoSettingTitle: {
-        padding: 15,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginBottom: 25
     },
     TitleStyle: {
-        fontWeight: '800',
-        fontSize: 13,
-        color: 'rgba(70, 70, 70, 1)',
+        fontWeight: 'bold',
+        fontSize: 15,
+        color: '#000000',
+        letterSpacing: -0.3,
     },
-    SettingContent: {
-        paddingLeft: 15,
-        paddingTop: 10,
-        paddingBottom: 10
+    ProfileSettings: {
+        borderRadius: 10,
+        borderColor: '#ebebeb',
+        borderWidth: 1,
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingTop: 30,
+        paddingBottom: 30,
+        marginBottom: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    ProfileSettingTxt: {
+        fontSize: 13,
+        fontWeight: '800',
+        color: '#000000'
     }
 })
 

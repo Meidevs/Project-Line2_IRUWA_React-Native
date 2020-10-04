@@ -1,4 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  AppState
+} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,6 +25,7 @@ import LocationScreen from './screens/Location';
 import InviteScreen from './screens/Invite';
 import NotificationScreen from './screens/Notification';
 import CateListScreen from './screens/CateList';
+import PremiumListScreen from './screens/PremiumList';
 import CustomerServiceScreen from './screens/CustomerService';
 import ProfileScreen from './screens/Profile';
 import SettingsScreen from './screens/Settings';
@@ -31,6 +35,7 @@ import PickListScreen from './screens/PickList';
 import SearchUserScreen from './screens/SearchUser';
 
 import TabBar from './assets/components/TabBar';
+import AUTHENTICATION from './assets/dataSource/authModel';
 
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
@@ -145,6 +150,10 @@ const CateStackScreens = () => {
         name='CateList'
         component={CateListScreen}
       />
+      <CateStack.Screen
+        name='Premiums'
+        component={PremiumListScreen}
+      />
     </CateStack.Navigator>
   )
 }
@@ -164,20 +173,38 @@ Notifications.setNotificationHandler({
 });
 const MainStackScreens = () => {
   const notificationListener = useRef();
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [token, setPushToken] = useState('');
 
   useEffect(() => {
     const SET_DEVICE_TOKEN = async () => {
-      await registerForPushNotificationsAsync();
+      var pushToken = await registerForPushNotificationsAsync();
+      setPushToken(pushToken);
     }
     SET_DEVICE_TOKEN();
-    notificationListener.current = Notifications.addNotificationResponseReceivedListener();
+  }, []);
+
+  useEffect(() => {
     if (Platform.OS === 'android') {
       Notifications.getNotificationChannelAsync();
     }
     return () => {
       Notifications.removeNotificationSubscription(notificationListener);
     };
-  });
+  }, []);
+
+  useEffect(() => {
+    AppState.addEventListener('change', handleAppStateChange);
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    };
+  }, [token]);
+
+  const handleAppStateChange = async (nextAppState) => {
+    await AUTHENTICATION.USER_APPSTATE(nextAppState, token.data);
+    setAppState(nextAppState);
+  };
+
   return (
     <MainStack.Navigator>
       <MainStack.Screen
@@ -270,7 +297,6 @@ const MainTabs = () => {
 }
 
 const App = () => {
-
   return (
     <NavigationContainer>
       <AuthStack.Navigator
