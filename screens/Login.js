@@ -11,15 +11,15 @@ import {
     Animated,
     Keyboard, Platform
 } from 'react-native';
+import registerForPushNotificationsAsync from '../assets/components/Login/getDeviceToken';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-
 const { width, height } = Dimensions.get('window');
 
 function LoginScreen({ navigation }) {
     const keyboardHeight = useRef(new Animated.Value(0)).current;
     const [user_id, setUserid] = useState('');
     const [user_pw, setUserpw] = useState('');
-
+    const [expoToken, setToken] = useState('');
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
@@ -28,6 +28,11 @@ function LoginScreen({ navigation }) {
     }, []);
 
     useEffect(() => {
+        const SET_DEVICE_TOKEN = async () => {
+            var token = await registerForPushNotificationsAsync();
+            setToken(token)
+        }
+        SET_DEVICE_TOKEN();
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow', (event) => {
                 keyboardDidShow(event)
@@ -63,7 +68,7 @@ function LoginScreen({ navigation }) {
     }
 
     const Login = async () => {
-        const response = await AUTHENTICATION.LOGIN(user_id, user_pw);
+        const response = await AUTHENTICATION.LOGIN(user_id, user_pw, expoToken);
         switch (response.flags) {
             case 0:
                 navigation.replace('Main');
@@ -96,7 +101,7 @@ function LoginScreen({ navigation }) {
                     </TouchableOpacity>
                     <View style={{ marginTop: height * 0.05, }}>
                         <Text style={{ fontSize: 35, fontWeight: 'bold' }}>로그인</Text>
-                    </View> 
+                    </View>
                 </View>
                 <View style={styles.MainContainer}>
                     <View style={styles.MainForm}>

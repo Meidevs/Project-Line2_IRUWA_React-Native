@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {
-  AppState,
-} from 'react-native';
-import AUTHENTICATION from './assets/dataSource/authModel';
-
+import React, { useEffect, useRef } from 'react';
+import * as Notifications from 'expo-notifications';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -158,30 +154,30 @@ const config = {
     duration: 1,
   },
 };
-
+import registerForPushNotificationsAsync from './assets/components/Login/getDeviceToken';
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 const MainStackScreens = () => {
-  const [appState, setAppState] = useState(AppState.currentState);
-  useEffect(() => {
-    const GET_USER_INFO = async () => {
-      var userInfo = await AUTHENTICATION.GET_USER_INFOs();
-      console.log('userInfo', userInfo)
-    }
-    GET_USER_INFO();
-  }, [])
+  const notificationListener = useRef();
 
   useEffect(() => {
-    AppState.addEventListener('change', handleAppStateChange);
+    const SET_DEVICE_TOKEN = async () => {
+      await registerForPushNotificationsAsync();
+    }
+    SET_DEVICE_TOKEN();
+    notificationListener.current = Notifications.addNotificationResponseReceivedListener();
+    if (Platform.OS === 'android') {
+      Notifications.getNotificationChannelAsync();
+    }
     return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
+      Notifications.removeNotificationSubscription(notificationListener);
     };
-  }, []);
-  const handleAppStateChange = (nextAppState) => {
-    console.log('App State: ' + nextAppState);
-    if (appState != nextAppState) {
-
-      setAppState(nextAppState);
-    }
-  };
+  });
   return (
     <MainStack.Navigator>
       <MainStack.Screen

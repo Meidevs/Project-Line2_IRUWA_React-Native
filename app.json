@@ -11,6 +11,8 @@
       "backgroundColor": "#ffffff"
     },
     "android": {
+      "package": "com.Line2.iruwa",
+      "versionCode": 1,
       "useNextNotificationsApi": true
     },
     "updates": {
@@ -20,6 +22,8 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.Line2.iruwa",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "web": {

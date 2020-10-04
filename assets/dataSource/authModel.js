@@ -1,5 +1,5 @@
 class AUTHENTICATION {
-    LOGIN = async (user_id, user_pw) => {
+    LOGIN = async (user_id, user_pw, user_device) => {
         try {
             let response = await fetch('http://192.168.0.40:8888/api/auth/login', {
                 method: 'POST',
@@ -7,7 +7,7 @@ class AUTHENTICATION {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ user_id: user_id, user_pw: user_pw })
+                body: JSON.stringify({ user_id: user_id, user_pw: user_pw, user_device : user_device})
             });
 
             let json = await response.json();
@@ -72,7 +72,7 @@ class AUTHENTICATION {
                 return json;
             }
         } catch (err) {
-
+            console.log(err)
         }
     }
 

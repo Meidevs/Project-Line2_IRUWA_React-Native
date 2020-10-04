@@ -36,29 +36,7 @@ async function getImageRollAsync() {
 }
 
 
-const registerForPushNotificationsAsync = async (navigation) => {
-    if (Constants.isDevice) {
-        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
 
-        let finalStatus = existingStatus;
-
-        if (existingStatus !== 'granted') {
-            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-            finalStatus = status;
-        }
-
-        if (finalStatus !== 'granted') {
-            return navigation.goBack();
-        }
-        try {
-            let token = await Notifications.getDevicePushTokenAsync();
-            return token;
-        } catch (err) {
-            console.log(err)
-        }
-
-    }
-}
 
 function RegisterScreen({ route, navigation }) {
     const [isSelected, checkSelection] = useState(true);
@@ -83,7 +61,6 @@ function RegisterScreen({ route, navigation }) {
         uri: null
     });
     const [category_seq, setCompanyCate] = useState('');
-    const [deviceToken, setDeviceToken] = useState('');
 
     useEffect(() => {
         (async () => {
@@ -95,8 +72,6 @@ function RegisterScreen({ route, navigation }) {
                     accuracy: Location.Accuracy.Highest
                 });
                 var response = await ROADAPI.GET_CURRENT_LOCATION(position);
-                var token = await registerForPushNotificationsAsync(navigation);
-                setDeviceToken(token);
                 setUserLocation(response);
             }
 
@@ -178,7 +153,6 @@ function RegisterScreen({ route, navigation }) {
             data.cmp_detail_location = cmp_detail_location;
             data.lat = lat;
             data.lon = lon;
-            data.deviceToken = deviceToken;
             data.cmp_certificates = 'Y';
             formData.append('data', JSON.stringify(data));
             formData.append('image', {
