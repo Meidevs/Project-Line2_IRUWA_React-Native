@@ -31,7 +31,7 @@ function MyinfoScreen({ route, navigation }) {
             ),
             headerRight: () => (
                 <TouchableOpacity style={styles.SettingHeader} onPress={() => navigation.navigate('Settings', {
-                    user_name : infos.user_name
+                    user_name : infos.user_name,
                 })}>
                     <Image source={require('../assets/images/more_button.png')}
                         resizeMode={'contain'}

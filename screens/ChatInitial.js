@@ -14,6 +14,7 @@ import {
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import DateFunction from '../assets/components/DateFunction';
 import GLOBAL from '../assets/dataSource/globalModel';
+import ChatSettings from '../assets/components/Chat/ChatSettings';
 
 const { width, height } = Dimensions.get('window');
 
@@ -77,8 +78,11 @@ const ChatInitialScreen = ({ route, navigation }) => {
     const [isLoaded, setIsLoad] = useState(false);
     const [profile, setChatUserProfile] = useState({ uri: null });
     const [state, dispatch] = useReducer(reducer, initialValue);
+    const [isModal, setIsModal] = useState(false);
     const scrollViewRef = useRef();
-
+    const callback = (ChildFrom) => {
+        setIsModal(ChildFrom)
+    }
     useEffect(() => {
         const USER_PROFILE = async () => {
             try {
@@ -212,7 +216,6 @@ const ChatInitialScreen = ({ route, navigation }) => {
                                         </View>
                                     </View>
                                 </View>
-
                             </View>
                         )
                     } else if (data.sender_seq == sender_seq) {
@@ -241,7 +244,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
                                 key={index.toString()}
                             >
                                 <View style={styles.AdminBox}>
-                                    <Text style={styles.SenderTxt}>{data.message}</Text>
+                                    <Text style={styles.AdminTxt}>{data.message}</Text>
                                 </View>
                             </View>
                         )
@@ -261,7 +264,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.RightHeader}
-                        onPress={() => navigation.navigate('Search')}>
+                        onPress={() => setIsModal(true)}>
                         <Image
                             source={require('../assets/images/more_button.png')}
                             resizeMode={'contain'}
@@ -307,6 +310,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </View>
             </Animated.View>
+            <ChatSettings user_seq={sender_seq} receiver_seq={receiver_seq} roomCode={roomCode} visible={isModal} callback={callback} navigation={navigation} />
         </SafeAreaView>
     )
 }
@@ -480,6 +484,14 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: 'rgba(191, 191, 191, 1)',
         alignSelf: 'flex-start',
+    },
+    AdminBox: {
+        flex: 1,
+        margin: 15,
+        height: 70,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     SenderTxt: {
         fontWeight: '600',

@@ -35,10 +35,9 @@ const ChatSettings = ({ user_seq, receiver_seq, roomCode, visible, callback, nav
 
     const SET_BANNED_USER = async () => {
         var RESULT = await AUTHENTICATION.SET_BANNED_USER(receiver_seq);
-        console.log(RESULT)
-        // if (RESULT) {
-        //     LeaveRoom()
-        // }
+        if (RESULT) {
+            LeaveRoom()
+        }
     }
     return (
         <Modal

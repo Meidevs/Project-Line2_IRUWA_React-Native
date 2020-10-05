@@ -202,7 +202,6 @@ const ChatScreen = ({ route, navigation }) => {
                                         </View>
                                     </View>
                                 </View>
-
                             </View>
                         )
                     } else if (data.sender_seq == sender_seq) {
@@ -321,10 +320,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     HeaderBackBtn: {
+        flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     HeaderTitleBox: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -334,9 +335,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     RightHeader: {
+        flex: 1,
         flexDirection: 'row',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        justifyContent: 'center',
+
     },
     RoomHeader: {
         marginTop: 20,

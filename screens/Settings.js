@@ -20,7 +20,7 @@ const { width, height } = Dimensions.get('window');
 
 function SettingsScreen({ route, navigation }) {
     const {
-        user_name
+        user_name,
     } = route.params;
     const [isEnabled, setIsEnabled] = useState(false);
     const [userName, setUserName] = useState(null);
@@ -35,11 +35,6 @@ function SettingsScreen({ route, navigation }) {
             ),
         })
     }, []);
-
-    const DELETE_USER = async () => {
-        console.log(userName)
-        console.log(user_name)
-    }
 
     const LOGOUT = async () => {
         var LOGOUT = await AUTHENTICATION.LOGOUT();
@@ -57,19 +52,18 @@ function SettingsScreen({ route, navigation }) {
         <SafeAreaView style={styles.Container}>
             <ScrollView>
                 <View style={styles.MainContainer}>
-                    <View style={styles.TitleBox}>
-                        <Text style={styles.TitleTxt}>사용자 설정</Text>
-                    </View>
                     <View style={styles.ContentBox}>
-                        <View>
+                        <TouchableOpacity onPress={() => navigation.navigate('BannedList', {
+                            user_seq : user_seq
+                        })}>
                             <Text>차단 사용자 관리</Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
-                    <View style={styles.ContentBox}>
+                    {/* <View style={styles.ContentBox}>
                         <TouchableOpacity onPress={() => AlertBox()}>
                             <Text style={styles.Text}>탈퇴하기</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                     <View style={styles.ContentBox}>
                         <TouchableOpacity onPress={() => LOGOUT()}>
                             <Text>로그 아웃</Text>

@@ -2,13 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
     View,
     Text,
+    Image,
     TouchableOpacity,
     StyleSheet,
     Dimensions,
     ScrollView,
     SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import NOTIFICATIONS from '../assets/dataSource/notiModel';
 
 const { width, height } = Dimensions.get('window');
@@ -23,6 +23,8 @@ function NotificationScreen({ route, navigation }) {
                     <Text style={styles.TitleHeaderTxtStyle}>공지사항</Text>
                 </View>
             ),
+            headerRight: () =>
+                <View></View>
         })
     }, []);
 
@@ -49,44 +51,72 @@ function NotificationScreen({ route, navigation }) {
             <ScrollView>
                 {
                     notifications.map((data, index) => {
-                        return (
-                            <View style={styles.NotificationBox}>
-                                <TouchableOpacity
-                                    style={styles.TitleBtn}
-                                    onPress={() => OpenContent(index)}
-                                >
-                                    <View style={styles.TitleIconBox}>
-                                        <View style={styles.IconAround}>
-                                            <Icon />
+                        if (index % 2 == 0) {
+                            return (
+                                <View style={styles.NotificationBox_a}>
+                                    <TouchableOpacity
+                                        style={styles.TitleBtn}
+                                        onPress={() => OpenContent(index)}
+                                    >
+                                        <View style={styles.TitleIconBox}>
+                                            <View style={styles.IconAround}>
+                                                <Image source={require('../assets/images/notice_box_ico.png')} />
+                                            </View>
                                         </View>
-                                    </View>
-                                    <View style={styles.TitleContent}>
-                                        <View style={styles.DateArea}>
-                                            <Text style={styles.DateTxt}>{data.reg_date}</Text>
+                                        <View style={styles.TitleContent}>
+                                            <View style={styles.DateArea}>
+                                                <Text style={styles.DateTxt}>{data.reg_date}</Text>
+                                            </View>
+                                            <View>
+                                                <Text style={styles.TitleTxt}>{data.title}</Text>
+                                            </View>
                                         </View>
-                                        <View>
-                                            <Text style={styles.TitleTxt}>{data.title}</Text>
+                                    </TouchableOpacity>
+                                    {
+                                        data.visible == true ?
+                                            <View style={styles.ContentBox}>
+                                                <Text>{data.content}</Text>
+                                            </View>
+                                            :
+                                            null
+                                    }
+                                </View>
+                            )
+                        } else {
+                            return (
+                                <View style={styles.NotificationBox_b}>
+                                    <TouchableOpacity
+                                        style={styles.TitleBtn}
+                                        onPress={() => OpenContent(index)}
+                                    >
+                                        <View style={styles.TitleIconBox}>
+                                            <View style={styles.IconAround}>
+                                                <Image source={require('../assets/images/notice_box_ico.png')} />
+                                            </View>
                                         </View>
-                                    </View>
-                                </TouchableOpacity>
-                                {
-                                    data.visible == true ?
-                                        <View style={styles.ContentBox}>
-                                            <Text>{data.content}</Text>
+                                        <View style={styles.TitleContent}>
+                                            <View style={styles.DateArea}>
+                                                <Text style={styles.DateTxt}>{data.reg_date}</Text>
+                                            </View>
+                                            <View>
+                                                <Text style={styles.TitleTxt}>{data.title}</Text>
+                                            </View>
                                         </View>
-                                        :
-                                        null
-                                }
-                            </View>
-                        )
+                                    </TouchableOpacity>
+                                    {
+                                        data.visible == true ?
+                                            <View style={styles.ContentBox}>
+                                                <Text>{data.content}</Text>
+                                            </View>
+                                            :
+                                            null
+                                    }
+                                </View>
+                            )
+                        }
                     })
                 }
             </ScrollView>
-            <View>
-                <View>
-                    <Text>광고광고</Text>
-                </View>
-            </View>
         </SafeAreaView>
     )
 }
@@ -94,63 +124,78 @@ function NotificationScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15,
+        color: '#000000'
     },
     Container: {
         flex: 1,
+        backgroundColor: '#ffffff'
     },
-    NotificationBox: {
-        width: width,
-        borderColor: 'rgba(245, 245, 245, 1)',
-        borderBottomWidth: 0.8,
+    NotificationBox_a: {
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingRight: 25,
+        paddingLeft: 25,
+        borderColor: '#f2f2f2',
+        borderBottomWidth: 1,
+    },
+    NotificationBox_b: {
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingRight: 25,
+        paddingLeft: 25,
+        borderColor: '#f2f2f2',
+        borderBottomWidth: 1,
+        backgroundColor : '#fafafa'
     },
     TitleBtn: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        padding: 25,
-        backgroundColor : 'rgba(255, 255, 255, 1)'
+        marginRight: 15,
     },
     TitleIconBox: {
-        flex: 1,
-        marginRight: 30,
+        flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        marginRight: 15,
     },
-    IconAround : {
-        width : width * 0.12,
-        height : width * 0.12,
-        borderRadius : 50,
+    IconAround: {
+        width: 45,
+        height: 45,
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor : 'rgba(235, 235, 235, 1)'
     },
     TitleContent: {
-        flex: 9,
-        justifyContent : 'center',
-        alignItems : 'flex-start'
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
     },
-    DateArea : {
-        paddingBottom : 10,
+    DateArea: {
+        marginBottom: 10,
     },
-    DateTxt : {
-        fontSize : 14,
-        fontWeight : '600',
-        color : 'rgba(165, 165, 165, 1)'
+    DateTxt: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#a2a2a2',
+        letterSpacing: -0.26
     },
-    TitleTxt : {
-        fontSize : 15,
-        fontWeight : '700',
-        color : 'rgba(0, 0, 0, 1)'
+    TitleTxt: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#000000',
+        letterSpacing: -0.26
     },
-    ContentBox : {
-        padding : 25,
+    ContentBox: {
+        padding: 25,
     }
 })
 

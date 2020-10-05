@@ -29,6 +29,7 @@ import PremiumListScreen from './screens/PremiumList';
 import CustomerServiceScreen from './screens/CustomerService';
 import ProfileScreen from './screens/Profile';
 import SettingsScreen from './screens/Settings';
+import BannedListScreen from './screens/BannedList';
 import ItemListScreen from './screens/ItemList';
 import EditScreen from './screens/Edit';
 import PickListScreen from './screens/PickList';
@@ -117,6 +118,10 @@ const MyinfoStackScreens = () => {
       <MyinfoStack.Screen
         name='PickList'
         component={PickListScreen}
+      />
+      <MyinfoStack.Screen
+        name='BannedList'
+        component={BannedListScreen}
       />
     </MyinfoStack.Navigator>
   )
