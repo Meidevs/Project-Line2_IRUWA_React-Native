@@ -53,7 +53,7 @@ function NotificationScreen({ route, navigation }) {
                     notifications.map((data, index) => {
                         if (index % 2 == 0) {
                             return (
-                                <View style={styles.NotificationBox_a}>
+                                <View style={styles.NotificationBox_a} key={index.toString()}>
                                     <TouchableOpacity
                                         style={styles.TitleBtn}
                                         onPress={() => OpenContent(index)}
@@ -84,7 +84,7 @@ function NotificationScreen({ route, navigation }) {
                             )
                         } else {
                             return (
-                                <View style={styles.NotificationBox_b}>
+                                <View style={styles.NotificationBox_b} key={index.toString()}>
                                     <TouchableOpacity
                                         style={styles.TitleBtn}
                                         onPress={() => OpenContent(index)}

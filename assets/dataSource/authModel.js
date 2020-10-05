@@ -253,6 +253,24 @@ class AUTHENTICATION {
             console.log(err);
         }
     }
+    REMOVE_BAN_USER = async (data) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/auth/removeban', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body : JSON.stringify({ target_user_seq : data})
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 

@@ -53,9 +53,7 @@ function SettingsScreen({ route, navigation }) {
             <ScrollView>
                 <View style={styles.MainContainer}>
                     <View style={styles.ContentBox}>
-                        <TouchableOpacity onPress={() => navigation.navigate('BannedList', {
-                            user_seq : user_seq
-                        })}>
+                        <TouchableOpacity onPress={() => navigation.navigate('BannedList')}>
                             <Text>차단 사용자 관리</Text>
                         </TouchableOpacity>
                     </View>
