@@ -144,7 +144,89 @@ class AUTHENTICATION {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body: JSON.stringify({appState : appstate, pushToken : data}),
+                body: JSON.stringify({ appState: appstate, pushToken: data }),
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    PROFILE_CHANGE = async (data) => {
+        var sendData = new Object();
+        switch (data.code) {
+            case '0':
+                sendData = {
+                    user_name: data.data
+                }
+                break;
+            case '1':
+                sendData = {
+                    user_phone: data.data
+                }
+                break;
+        }
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/auth/profile', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify(sendData),
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    PROFILE_CMP_CHANGE = async (data) => {
+        var sendData = new Object();
+        switch (data.code) {
+            case '0':
+                sendData = {
+                    cmp_name: data.data
+                }
+                break;
+
+            case '1':
+                sendData = {
+                    cmp_phone: data.data
+                }
+                break;
+        }
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/auth/cmpprofile', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify(sendData),
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    SET_BANNED_USER = async (data) => {
+        try {
+            var response = await fetch('http://192.168.0.40:8888/api/auth/ban', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ receiver_seq: data }),
             });
             var json = await response.json();
             if (response.ok) {

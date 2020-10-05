@@ -14,7 +14,7 @@ class CHATTING {
                 return json;
             }
         } catch (err) {
-
+            console.log(err)
         }
     }
 

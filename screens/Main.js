@@ -81,7 +81,7 @@ const Item = ({ data, user, navigation }) => {
 function MainScreen({ route, navigation }) {
     const headerHeight = useHeaderHeight();
     const [data, setData] = useState([]);
-    const [user_location, setUserLocation] = useState('');
+    const [user_location, setUserLocation] = useState(null);
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
 
@@ -115,9 +115,7 @@ function MainScreen({ route, navigation }) {
             const GET_MAIN_INFOs = async () => {
                 try {
                     const data = await AUTHENTICATION.GET_USER_INFOs();
-                    const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
                     if (isCancelled) {
-                        setData(ITEMS.content);
                         setUserLocation(data.user_location);
                         setUserSeq(data.user_seq);
                     }
@@ -128,8 +126,22 @@ function MainScreen({ route, navigation }) {
             setIsLoad(true)
             GET_MAIN_INFOs();
             return () => isCancelled = false;
-        }, [user_location])
+        }, [])
     );
+
+    useEffect(() => {
+        let isCancelled = true;
+        const SET_DATAS = async () => {
+            if (isCancelled) { 
+                if (user_location != null) {
+                    const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+                    setData(ITEMS.content);
+                }
+            }
+        }
+        SET_DATAS();
+        return () => isCancelled = false;
+    }, [user_location])
 
     useEffect(() => {
         GLOBAL.SET_SOCKET_IO();

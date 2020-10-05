@@ -296,7 +296,7 @@ const ChatScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </View>
             </Animated.View>
-            <ChatSettings user_seq={sender_seq} roomCode={roomCode} visible={isModal} callback={callback} navigation={navigation} />
+            <ChatSettings user_seq={sender_seq} receiver_seq={receiver_seq} roomCode={roomCode} visible={isModal} callback={callback} navigation={navigation} />
         </SafeAreaView>
     )
 }

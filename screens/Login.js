@@ -68,6 +68,7 @@ function LoginScreen({ navigation }) {
     }
 
     const Login = async () => {
+        await AUTHENTICATION.USER_APPSTATE('active', expoToken.data);
         const response = await AUTHENTICATION.LOGIN(user_id, user_pw, expoToken);
         switch (response.flags) {
             case 0:

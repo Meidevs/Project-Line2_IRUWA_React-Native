@@ -50,7 +50,8 @@ const ProfileSetter = ({ hasComp, user, navigation }) => {
                 </View >
                 <View style={styles.ProfileSettings}>
                     <TouchableOpacity style={styles.ProfilleSetBtn} onPress={() => navigation.navigate('Profile', {
-                        user_seq: infos.user_seq
+                        user_seq: infos.user_seq,
+                        hasComp : hasComp,
                     })}>
                         <Text style={styles.EditBtnTxt}>  개인정보수정  </Text>
                     </TouchableOpacity>

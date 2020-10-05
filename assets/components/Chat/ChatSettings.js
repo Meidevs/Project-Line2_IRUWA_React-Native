@@ -9,10 +9,10 @@ import {
     TouchableOpacity,
     Platform
 } from 'react-native';
-
+import AUTHENTICATION from '../../dataSource/authModel';
 import GLOBAL from '../../dataSource/globalModel';
 let socket;
-const ChatSettings = ({ user_seq, roomCode, visible, callback, navigation }) => {
+const ChatSettings = ({ user_seq, receiver_seq, roomCode, visible, callback, navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
         setModalVisible(visible)
@@ -24,8 +24,8 @@ const ChatSettings = ({ user_seq, roomCode, visible, callback, navigation }) => 
 
     const LeaveRoom = () => {
         var data = {
-            sender_seq : user_seq,
-            roomCode : roomCode,
+            sender_seq: user_seq,
+            roomCode: roomCode,
         }
         socket = GLOBAL.GET_SOCKET_IO();
         socket.emit('leave', data);
@@ -33,6 +33,13 @@ const ChatSettings = ({ user_seq, roomCode, visible, callback, navigation }) => 
         navigation.goBack();
     }
 
+    const SET_BANNED_USER = async () => {
+        var RESULT = await AUTHENTICATION.SET_BANNED_USER(receiver_seq);
+        console.log(RESULT)
+        // if (RESULT) {
+        //     LeaveRoom()
+        // }
+    }
     return (
         <Modal
             animated
@@ -40,9 +47,8 @@ const ChatSettings = ({ user_seq, roomCode, visible, callback, navigation }) => 
             visible={modalVisible}
             transparent
         >
-
             <View style={styles.ContentArea}>
-                <TouchableOpacity style={styles.BtnStyle}>
+                <TouchableOpacity style={styles.BtnStyle} onPress={() => SET_BANNED_USER()}>
                     <Text style={styles.BtnTxt}>사용자 차단</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.BtnStyle} onPress={() => LeaveRoom()}>

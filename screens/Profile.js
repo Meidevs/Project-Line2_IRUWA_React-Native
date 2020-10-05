@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
     View,
     Text,
+    TextInput,
     TouchableOpacity,
     Image,
     StyleSheet,
@@ -28,10 +29,19 @@ async function getImageRollAsync() {
 
 function ProfileScreen({ route, navigation }) {
     const {
-        user_seq
+        user_seq,
+        hasComp
     } = route.params;
     const [profileImage, setProfileImage] = useState({ uri: null });
+    const [name, setName] = useState(null);
+    const [phone, setPhone] = useState(null);
+    const [cmpName, setCmpName] = useState(null);
+    const [cmpPhone, setCmpPhone] = useState(null);
     const [isLoaded, setIsLoad] = useState(false);
+    const [isChangeName, changeName] = useState(false);
+    const [isChangePhone, changePhone] = useState(false);
+    const [isChangeCmpName, changeCmpName] = useState(false);
+    const [isChangeCmpPhone, changeCmpPhone] = useState(false);
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -96,6 +106,30 @@ function ProfileScreen({ route, navigation }) {
             console.log('Image Error', err);
         }
     }
+    const UPDATE_NAME = async () => {
+        var RESULT = await AUTHENTICATION.PROFILE_CHANGE({ code: '0', data: name });
+        setName(null);
+        changeName(false);
+        alert(RESULT.messages);
+    }
+    const UPDATE_PHONE = async () => {
+        var RESULT = await AUTHENTICATION.PROFILE_CHANGE({ code: '1', data: phone });
+        setPhone(null);
+        changePhone(false);
+        alert(RESULT.messages);
+    }
+    const UPDATE_CMP_NAME = async () => {
+        var RESULT = await AUTHENTICATION.PROFILE_CMP_CHANGE({ code: '0', data: cmpName });
+        setCmpName(null);
+        changeCmpName(false);
+        alert(RESULT.messages);
+    }
+    const UPDATE_CMP_PHONE = async () => {
+        var RESULT = await AUTHENTICATION.PROFILE_CMP_CHANGE({ code: '1', data: cmpPhone });
+        setCmpPhone(null);
+        changeCmpPhone(false);
+        alert(RESULT.messages);
+    }
     if (isLoaded) {
         return (
             <SafeAreaView style={styles.Container}>
@@ -123,45 +157,133 @@ function ProfileScreen({ route, navigation }) {
                             />
                             <Text style={styles.TitleStyle}>사용자 정보</Text>
                         </View>
-                        <View style={styles.ProfileSettings}>
-                            <Text style={styles.ProfileSettingTxt}>이름 변경</Text>
-                            <Image source={require('../assets/images/right_arrow_ico.png')}
-                                style={{ width: 15, height: 15, }}
-                            />
+                        <View>
+                            {
+                                isChangeName == true ? (
+                                    <View style={styles.ProfileSettings}>
+                                        <TextInput style={styles.ProfileSettingTxt}
+                                            value={name}
+                                            placeholder={'이름 변경'}
+                                            onChangeText={text => setName(text)}
+                                        />
+                                        <View style={styles.ProfileChanges}>
+                                            <TouchableOpacity onPress={() => changeName(false)}>
+                                                <Text>취소</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => UPDATE_NAME()}>
+                                                <Text>변경</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                ) : (
+                                        <TouchableOpacity style={styles.ProfileSettings} onPress={() => changeName(true)}>
+                                            <Text style={styles.ProfileSettingTxt}>이름 변경</Text>
+                                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                                style={{ width: 15, height: 15, }}
+                                            />
+                                        </TouchableOpacity>
+                                    )
+                            }
                         </View>
-                        <View style={styles.ProfileSettings}>
-                            <Text style={styles.ProfileSettingTxt}>전화번호 수정</Text>
-                            <Image source={require('../assets/images/right_arrow_ico.png')}
-                                style={{ width: 15, height: 15, }}
-                            />
+                        <View>
+                            {
+                                isChangePhone == true ? (
+                                    <View style={styles.ProfileSettings}>
+                                        <TextInput style={styles.ProfileSettingTxt}
+                                            value={phone}
+                                            placeholder={'전화번호 변경'}
+                                            onChangeText={text => setPhone(text)}
+                                        />
+                                        <View style={styles.ProfileChanges}>
+                                            <TouchableOpacity onPress={() => changePhone(false)}>
+                                                <Text>취소</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => UPDATE_PHONE()}>
+                                                <Text>변경</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                ) : (
+                                        <TouchableOpacity style={styles.ProfileSettings} onPress={() => changePhone(true)}>
+                                            <Text style={styles.ProfileSettingTxt}>전화번호 변경</Text>
+                                            <Image source={require('../assets/images/right_arrow_ico.png')}
+                                                style={{ width: 15, height: 15, }}
+                                            />
+                                        </TouchableOpacity>
+                                    )
+                            }
                         </View>
                     </View>
-                    <View style={styles.SettingBox}>
-                        <View style={styles.MyinfoSettingTitle}>
-                            <Image source={require('../assets/images/company.png')}
-                                style={{ width: 20, height: 20, marginRight: 10 }}
-                            />
-                            <Text style={styles.TitleStyle}>업체 정보</Text>
-                        </View>
-                        <View style={styles.ProfileSettings}>
-                            <Text style={styles.ProfileSettingTxt}>업체명 변경</Text>
-                            <Image source={require('../assets/images/right_arrow_ico.png')}
-                                style={{ width: 15, height: 15, }}
-                            />
-                        </View>
-                        <View style={styles.ProfileSettings}>
-                            <Text style={styles.ProfileSettingTxt}>영업 지역 변경</Text>
-                            <Image source={require('../assets/images/right_arrow_ico.png')}
-                                style={{ width: 15, height: 15, }}
-                            />
-                        </View>
-                        <View style={styles.ProfileSettings}>
-                            <Text style={styles.ProfileSettingTxt}>업체 전화번호 변경</Text>
-                            <Image source={require('../assets/images/right_arrow_ico.png')}
-                                style={{ width: 15, height: 15, }}
-                            />
-                        </View>
-                    </View>
+                    {
+                        hasComp == true ? (
+                            <View style={styles.SettingBox}>
+                                <View style={styles.MyinfoSettingTitle}>
+                                    <Image source={require('../assets/images/company.png')}
+                                        style={{ width: 20, height: 20, marginRight: 10 }}
+                                    />
+                                    <Text style={styles.TitleStyle}>업체 정보</Text>
+                                </View>
+                                <View>
+                                    {
+                                        isChangeCmpName == true ? (
+                                            <View style={styles.ProfileSettings}>
+                                                <TextInput style={styles.ProfileSettingTxt}
+                                                    value={cmpName}
+                                                    placeholder={'업체명 변경'}
+                                                    onChangeText={text => setCmpName(text)}
+                                                />
+                                                <View style={styles.ProfileChanges}>
+                                                    <TouchableOpacity onPress={() => changeCmpName(false)}>
+                                                        <Text>취소</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => UPDATE_CMP_NAME()}>
+                                                        <Text>변경</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        ) : (
+                                                <TouchableOpacity style={styles.ProfileSettings} onPress={() => changeCmpName(true)}>
+                                                    <Text style={styles.ProfileSettingTxt}>업체명 변경</Text>
+                                                    <Image source={require('../assets/images/right_arrow_ico.png')}
+                                                        style={{ width: 15, height: 15, }}
+                                                    />
+                                                </TouchableOpacity>
+                                            )
+                                    }
+                                </View>
+                                <View>
+                                    {
+                                        isChangeCmpPhone == true ? (
+                                            <View style={styles.ProfileSettings}>
+                                                <TextInput style={styles.ProfileSettingTxt}
+                                                    value={cmpPhone}
+                                                    placeholder={'업체전화 변경'}
+                                                    onChangeText={text => setCmpPhone(text)}
+                                                />
+                                                <View style={styles.ProfileChanges}>
+                                                    <TouchableOpacity onPress={() => changeCmpPhone(false)}>
+                                                        <Text>취소</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => UPDATE_CMP_PHONE()}>
+                                                        <Text>변경</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        ) : (
+                                                <TouchableOpacity style={styles.ProfileSettings} onPress={() => changeCmpPhone(true)}>
+                                                    <Text style={styles.ProfileSettingTxt}>업체전화 변경</Text>
+                                                    <Image source={require('../assets/images/right_arrow_ico.png')}
+                                                        style={{ width: 15, height: 15, }}
+                                                    />
+                                                </TouchableOpacity>
+                                            )
+                                    }
+                                </View>
+                            </View>
+                        ) : (
+                                <View></View>
+                            )
+                    }
                 </ScrollView>
             </SafeAreaView>
         )
@@ -256,9 +378,15 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    ProfileChanges: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center'
     },
     ProfileSettingTxt: {
+        flex: 1,
         fontSize: 13,
         fontWeight: '800',
         color: '#000000'

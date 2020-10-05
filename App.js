@@ -38,6 +38,7 @@ import TabBar from './assets/components/TabBar';
 import AUTHENTICATION from './assets/dataSource/authModel';
 
 const AuthStack = createStackNavigator();
+const RegisterStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 const CateStack = createStackNavigator();
@@ -295,6 +296,31 @@ const MainTabs = () => {
     </Tabs.Navigator>
   )
 }
+
+// const RegisterStackScreens = () => {
+//   return (
+//     <NavigationContainer>
+//       <RegisterStack.Navigator
+//         initialRouteName="Register">
+//         <RegisterStack.Screen
+//           name="Register"
+//           component={RegisterScreen}
+//           options={{
+//             headerShown: true,
+//             headerStyle: {
+//               elevation: 0,
+//               backgroundColor: '#ffffff',
+//               shadowOffset: {
+//                 height: 0,
+//               }
+//             }
+//           }}
+//         />
+
+//       </RegisterStack.Navigator>
+//     </NavigationContainer>
+//   )
+// }
 
 const App = () => {
   return (

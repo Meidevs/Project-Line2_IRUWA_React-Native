@@ -40,6 +40,7 @@ const getItemCount = (data) => {
 }
 
 const Item = ({ data, user, navigation }) => {
+    console.log(data)
     const setNavigationParams = (data) => {
         var Tmp_seq;
         var Tmp_name;
@@ -79,6 +80,7 @@ const Item = ({ data, user, navigation }) => {
                     <View style={styles.RightArea}>
                         <View style={styles.UserInfo}>
                             <Text style={styles.NameSpace}>{data.cmp_name}</Text>
+                            <Text style={styles.ItemNameSpace}>{data.item_name}</Text>
                         </View>
                         <View style={styles.LatestMessage}>
                             <Text style={styles.MessageArea}>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
@@ -100,6 +102,7 @@ const Item = ({ data, user, navigation }) => {
                     <View style={styles.RightArea}>
                         <View style={styles.UserInfo}>
                             <Text style={styles.NameSpace}>{data.sender_name}</Text>
+                            <Text style={styles.ItemNameSpace}>{data.item_name}</Text>
                         </View>
                         <View style={styles.LatestMessage}>
                             <Text style={styles.MessageArea}>{data.messages[MESSAGE_LENGTH - 1].message}</Text>
@@ -176,8 +179,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     ImageAround: {
-        width: width * 0.1,
-        height: width * 0.1,
+        width: 45,
+        height: 45,
         borderRadius: 100,
     },
     RightArea: {
@@ -192,12 +195,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     NameSpace: {
-        fontSize: 18,
+        fontSize: 13,
         fontWeight: '700',
+        color : '#000000',
+        letterSpacing : -0.26,
+        marginRight : 5,
+    },
+    ItemNameSpace : {
+        fontSize : 13,
+        fontWeight : '600',
+        color : '#a2a2a2',
+        letterSpacing : -0.26
     },
     MessageArea: {
-        fontSize: 16,
-        fontWeight: '600'
+        fontSize: 13,
+        fontWeight : '600',
+        color : '#000000',
+        letterSpacing : -0.26
     },
     LatestMessage: {
         justifyContent: 'center',
