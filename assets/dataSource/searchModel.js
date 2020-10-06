@@ -1,7 +1,7 @@
 class SEARCH_API {
     SAVE_PREV_SEARCH_LIST = async (data) => {
         try {
-            var response = await fetch('http://148.72.210.153:8888/api/search/history/update', {
+            var response = await fetch('http://192.168.25.41:8888/api/search/history/update', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -20,7 +20,7 @@ class SEARCH_API {
 
     GET_PREV_SEARCH_LIST = async () => {
         try {
-            var response = await fetch('http://148.72.210.153:8888/api/search/history/read', {
+            var response = await fetch('http://192.168.25.41:8888/api/search/history/read', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
@@ -38,7 +38,7 @@ class SEARCH_API {
 
     DELETE_PREV_SEARCH_LIST = async (keyword) => {
         try {
-            var response = await fetch('http://148.72.210.153:8888/api/search/history/delete', {
+            var response = await fetch('http://192.168.25.41:8888/api/search/history/delete', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -56,7 +56,7 @@ class SEARCH_API {
     }
     DELETE_PREV_ALL = async () => {
         try {
-            var response = await fetch('http://148.72.210.153:8888/api/search/history/deleteall', {
+            var response = await fetch('http://192.168.25.41:8888/api/search/history/deleteall', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",

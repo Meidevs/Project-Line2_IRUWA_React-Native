@@ -34,9 +34,6 @@ async function getImageRollAsync() {
     }
 }
 
-
-
-
 function RegisterScreen({ route, navigation }) {
     const [isSelected, checkSelection] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);

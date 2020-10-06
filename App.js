@@ -10,6 +10,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BeforeLoginScreen from './screens/BeforeLogin';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
+import UserTypeScreen from './screens/UserType';
+import TermsScreen from './screens/Terms';
 import FindUserScreen from './screens/FindUser';
 import MainScreen from './screens/Main';
 import DetailScreen from './screens/Detail';
@@ -302,30 +304,41 @@ const MainTabs = () => {
   )
 }
 
-// const RegisterStackScreens = () => {
-//   return (
-//     <NavigationContainer>
-//       <RegisterStack.Navigator
-//         initialRouteName="Register">
-//         <RegisterStack.Screen
-//           name="Register"
-//           component={RegisterScreen}
-//           options={{
-//             headerShown: true,
-//             headerStyle: {
-//               elevation: 0,
-//               backgroundColor: '#ffffff',
-//               shadowOffset: {
-//                 height: 0,
-//               }
-//             }
-//           }}
-//         />
-
-//       </RegisterStack.Navigator>
-//     </NavigationContainer>
-//   )
-// }
+const RegisterStackScreens = () => {
+  return (
+    <RegisterStack.Navigator
+      initialRouteName="Terms">
+      <RegisterStack.Screen
+        name="Terms"
+        component={TermsScreen}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            elevation: 0,
+            backgroundColor: '#ffffff',
+            shadowOffset: {
+              height: 0,
+            }
+          }
+        }}
+      />
+      <RegisterStack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            elevation: 0,
+            backgroundColor: '#ffffff',
+            shadowOffset: {
+              height: 0,
+            }
+          }
+        }}
+      />
+    </RegisterStack.Navigator>
+  )
+}
 
 const App = () => {
   return (
@@ -346,16 +359,9 @@ const App = () => {
         />
         <AuthStack.Screen
           name="Register"
-          component={RegisterScreen}
+          component={RegisterStackScreens}
           options={{
-            headerShown: true,
-            headerStyle: {
-              elevation: 0,
-              backgroundColor: '#ffffff',
-              shadowOffset: {
-                height: 0,
-              }
-            }
+            headerShown: false,
           }}
         />
         <AuthStack.Screen
