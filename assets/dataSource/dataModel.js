@@ -1,7 +1,7 @@
 class DATA_SORUCE {
     GET_ITEMS = async (user_location) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/list', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/list', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ class DATA_SORUCE {
 
     DELETE_ITEM = async (items_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/removeitem', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/removeitem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ class DATA_SORUCE {
 
     GET_PREMIUM_ITEMS = async (user_location) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/premiums', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/premiums', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ class DATA_SORUCE {
 
     GET_ITEM_DETAIL = async (items_seq, cmp_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/list/detail', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/list/detail', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -78,7 +78,7 @@ class DATA_SORUCE {
 
     GET_CATEGORIES = async () => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/category/all', {
+            var response = await fetch('http://148.72.210.153:8888/api/category/all', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ class DATA_SORUCE {
     SAVE_IMAGES = async (formData) => {
         console.log(formData)
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/create', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/create', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -118,7 +118,7 @@ class DATA_SORUCE {
     UPDATE_IMAGE = async (formData) => {
         console.log(formData)
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/update', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/update', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -137,7 +137,7 @@ class DATA_SORUCE {
 
     GET_ITEMS_ON_KEYWORD = async (keyword) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/search/keyword', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/search/keyword', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -155,7 +155,7 @@ class DATA_SORUCE {
     }
     GET_ITEMS_ON_CATEGORY = async (category_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/search/category', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/search/category', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -174,7 +174,7 @@ class DATA_SORUCE {
 
     GET_MY_ITEMS = async (cmp_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/mylist', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/mylist', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -193,7 +193,7 @@ class DATA_SORUCE {
 
     UPDATE_ITEM_PICK = async (items_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/list/pick', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/list/pick', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -212,7 +212,7 @@ class DATA_SORUCE {
 
     GET_MY_PICKS = async (user_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/mypick', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/mypick', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -230,7 +230,7 @@ class DATA_SORUCE {
     }
     INSERT_RINGING_LIST = async (data) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/phone', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/phone', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -249,7 +249,7 @@ class DATA_SORUCE {
 
     DELETE_RINGING_LIST = async (phone_seq) => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/removephone', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/removephone', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -268,7 +268,7 @@ class DATA_SORUCE {
 
     GET_RINGING_LIST = async () => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/phonelist', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/phonelist', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
@@ -285,7 +285,7 @@ class DATA_SORUCE {
     }
     GET_PREMIUM_SEARCH_PREMIUMS = async () => {
         try {
-            var response = await fetch('http://192.168.25.41:8888/api/item/search/premiums', {
+            var response = await fetch('http://148.72.210.153:8888/api/item/search/premiums', {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
