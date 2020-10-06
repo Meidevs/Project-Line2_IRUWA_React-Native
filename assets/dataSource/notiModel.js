@@ -1,7 +1,7 @@
 class DATA_SORUCE {
     GET_NOTIFICATIONS = async (user_location) => {
         try {
-            var response = await fetch('http://192.168.0.40:8888/api/noti/list', {
+            var response = await fetch('http://148.72.210.153:8888/api/noti/list', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
