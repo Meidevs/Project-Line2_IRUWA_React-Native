@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
-import Icon from 'react-native-vector-icons/AntDesign';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import ProfileSetter from '../assets/components/ProfileSetter';
 

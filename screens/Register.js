@@ -13,7 +13,6 @@ import {
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import * as Notifications from 'expo-notifications';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from "expo-image-manipulator";
 import Constants from "expo-constants";

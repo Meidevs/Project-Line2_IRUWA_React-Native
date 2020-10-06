@@ -10,7 +10,6 @@ import {
     Image,
     Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
@@ -182,7 +181,7 @@ function EditScreen({ route, navigation }) {
                 </View>
                 <View style={styles.ImageUploadBox}>
                     <TouchableOpacity style={styles.ImageUploadBtn} onPress={() => IMAGE_PICKER()}>
-                        <Icon name={'ios-camera'} size={30} />
+                        <Image source={require('../assets/images/photo_ico.png')} />
                         <Text>{itemUri.length}/10</Text>
                     </TouchableOpacity>
                     <View style={styles.ImageList}>
@@ -194,7 +193,7 @@ function EditScreen({ route, navigation }) {
                                         style={styles.ImageListForm}
                                         onPress={() => DELETE_IMAGE(index)}>
                                         <View style={styles.DeleteIcon}>
-                                            <Icon name={'ios-close'} size={20} />
+                                            <Image source={require('../assets/images/close_button.png')} />
                                         </View>
                                         <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
                                     </TouchableOpacity>

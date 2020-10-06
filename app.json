@@ -18,12 +18,24 @@
     "android": {
       "package": "com.Line2.iruwa",
       "versionCode": 1,
-      "useNextNotificationsApi": true
+      "useNextNotificationsApi": true,
+      "permissions" : [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "ios": {
       "bundleIdentifier": "com.Line2.iruwa",
       "buildNumber": "1.0.0",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      }
     },
     "updates": {
       "fallbackToCacheTimeout": 0

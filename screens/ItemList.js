@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -8,8 +8,6 @@ import {
     Dimensions,
     SafeAreaView,
     ScrollView,
-    VirtualizedList,
-    Modal
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 

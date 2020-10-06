@@ -9,7 +9,6 @@ import {
     Dimensions
 } from 'react-native';
 import AUTHENTICATION from '../../dataSource/authModel';
-import DATA_SOURCE from '../../dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
 const getItem = (data, index) => {

@@ -11,14 +11,12 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
 
 async function GetFetchUrl() {
     const DATA_SET = await DATA_SOURCE.GetItemList();
-    console.log(DATA_SET)
     return DATA_SET;
 }
 

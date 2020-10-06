@@ -17,13 +17,15 @@ function BeforeLoginScreen({ navigation }) {
     useEffect(() => {
         const getAllPermission = async () => {
             if (Constants.platform.ios || Constants.platform.android) {
-                const { status } = await Permissions.askAsync(
+                const { statusNotification } = await Permissions.askAsync(
                     Permissions.NOTIFICATIONS,
+                );
+                const { statusCameraRoll } = await Permissions.askAsync(
                     Permissions.CAMERA_ROLL,
                 );
-                if (status !== 'granted') {
-                    throw new Error('CAMERA_ROLL permission not granted');
-                }
+                const { statusLocation } = await Permissions.askAsync(
+                    Permissions.LOCATION
+                );
             }
         }
         getAllPermission();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,9 +9,7 @@ import {
     SafeAreaView,
     VirtualizedList,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
-import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
 const { width, height } = Dimensions.get('window');
 

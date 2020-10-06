@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     Dimensions
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import DATA_SOURCE from '../../dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 

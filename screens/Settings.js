@@ -3,18 +3,12 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    StatusBar,
     StyleSheet,
-    Image,
-    Switch,
     Dimensions,
     ScrollView,
     SafeAreaView,
-    Alert
 } from 'react-native';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
 

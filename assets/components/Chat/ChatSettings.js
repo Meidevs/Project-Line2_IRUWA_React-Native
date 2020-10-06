@@ -3,11 +3,8 @@ import {
     View,
     Modal,
     Text,
-    Image,
     StyleSheet,
-    Dimensions,
     TouchableOpacity,
-    Platform
 } from 'react-native';
 import AUTHENTICATION from '../../dataSource/authModel';
 import GLOBAL from '../../dataSource/globalModel';

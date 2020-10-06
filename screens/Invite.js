@@ -9,8 +9,6 @@ import {
     ScrollView,
     SafeAreaView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
 

@@ -75,7 +75,6 @@ const ChatInitialScreen = ({ route, navigation }) => {
         roomCode
     } = route.params;
     const [message, setMessageText] = useState(null);
-    const [isLoaded, setIsLoad] = useState(false);
     const [profile, setChatUserProfile] = useState({ uri: null });
     const [state, dispatch] = useReducer(reducer, initialValue);
     const [isModal, setIsModal] = useState(false);
