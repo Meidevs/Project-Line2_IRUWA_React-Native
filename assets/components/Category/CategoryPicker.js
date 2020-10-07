@@ -12,6 +12,7 @@ const CategoryPicker = ({ callback }) => {
     useEffect(() => {
         const fetchData = async () => {
             const CATEGORIES = await DATA_SOURCE.GET_CATEGORIES();
+            console.log('CATEGORIES', CATEGORIES)
             setCategories(CATEGORIES);
         }
         fetchData();
@@ -22,18 +23,17 @@ const CategoryPicker = ({ callback }) => {
         setCategory(data)
     }
     return (
-        <View>
-            <Picker
-                selectedValue={category}
-                mode='dropdown'
-                onValueChange={(itemValue) => onChangeRefresh(itemValue)
-                }
-            >
-                {categories.map(data => (
-                    <Picker.Item key={data.category_seq} label={data.category_name} value={data.category_seq} />
-                ))}
-            </Picker>
-        </View >
+        <Picker
+            style={{ flex: 1}}
+            selectedValue={category}
+            mode='dropdown'
+            onValueChange={(itemValue) => onChangeRefresh(itemValue)
+            }
+        >
+            {categories.map(data => (
+                <Picker.Item key={data.category_seq} label={data.category_name} value={data.category_seq} />
+            ))}
+        </Picker>
     )
 }
 

@@ -86,7 +86,6 @@ class DATA_SORUCE {
                 credentials: 'include',
             })
             var json = await response.json();
-
             if (response.ok) {
                 return json;
             }

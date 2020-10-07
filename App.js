@@ -9,8 +9,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import BeforeLoginScreen from './screens/BeforeLogin';
 import LoginScreen from './screens/Login';
-import RegisterScreen from './screens/Register';
-import UserTypeScreen from './screens/UserType';
 import TermsScreen from './screens/Terms';
 import FindUserScreen from './screens/FindUser';
 import MainScreen from './screens/Main';
@@ -311,20 +309,6 @@ const RegisterStackScreens = () => {
       <RegisterStack.Screen
         name="Terms"
         component={TermsScreen}
-        options={{
-          headerShown: true,
-          headerStyle: {
-            elevation: 0,
-            backgroundColor: '#ffffff',
-            shadowOffset: {
-              height: 0,
-            }
-          }
-        }}
-      />
-      <RegisterStack.Screen
-        name="Register"
-        component={RegisterScreen}
         options={{
           headerShown: true,
           headerStyle: {
