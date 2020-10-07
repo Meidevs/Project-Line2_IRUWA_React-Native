@@ -151,7 +151,7 @@ class AUTHENTICATION {
                 return json;
             }
         } catch (err) {
-            console.log(err);
+            alert(err);
         }
     }
     PROFILE_CHANGE = async (data) => {
