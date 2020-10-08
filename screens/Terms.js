@@ -1,14 +1,11 @@
 import { HeaderBackButton } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
     View,
     Text,
     TextInput,
     Dimensions,
     Image,
-    StatusBar,
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
@@ -40,6 +37,7 @@ function UserTypeScreen({ route, navigation }) {
     const [confirmC, setConfirmC] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [status, SelectionStatus] = useState(0);
+    const [recommendation, setRecommendation] = useState(null);
     const [user_id, setUserID] = useState(null);
     const [user_pw, setPassword] = useState(null);
     const [password_again, setPassword_Again] = useState(null);
@@ -47,6 +45,7 @@ function UserTypeScreen({ route, navigation }) {
     const [user_name, setUserName] = useState(null);
     const [user_phone, setUserPhone] = useState(null);
     const [user_email, setUserEmail] = useState(null);
+    const [email_duplication, setEmailDuplicate] = useState(true);
     const [user_location, setUserLocation] = useState(null);
     const [cmp_name, setCompanyName] = useState('');
     const [cmp_phone, setCompanyPhone] = useState('');
@@ -79,8 +78,6 @@ function UserTypeScreen({ route, navigation }) {
             }
         })
     }, []);
-
-
     useEffect(() => {
         (async () => {
             if (Constants.platform.ios || Constants.platform.android) {
@@ -150,7 +147,11 @@ function UserTypeScreen({ route, navigation }) {
 
             case 3:
                 if (user_name != null & user_phone != null & user_email != null) {
-                    setPageCount(pageCount => pageCount + 1);
+                    if (email_duplication == false) {
+                        setPageCount(pageCount => pageCount + 1);
+                    } else {
+                        alert('이메일을 확인해 주세요.')
+                    }
                 } else {
                     alert('정보를 입력해 주세요.')
                 }
@@ -170,9 +171,6 @@ function UserTypeScreen({ route, navigation }) {
                     alert('정보를 입력해 주세요.')
                 }
                 break;
-
-
-
         }
     }
     const PrevPage = () => {
@@ -181,6 +179,16 @@ function UserTypeScreen({ route, navigation }) {
             navigation.goBack();
         }
     }
+    const DuplicationCheck = async () => {
+        var DUPLICATION = await AUTHENTICATION.EMAIL_DUPLICATION(user_email);
+        if (DUPLICATION.flags == 0) {
+            setEmailDuplicate(false);
+            alert(DUPLICATION.message);
+        } else {
+            alert(DUPLICATION.message);
+        }
+    }
+
     const componentJSX_A = () => {
         switch (pageCount) {
             case 0:
@@ -191,7 +199,7 @@ function UserTypeScreen({ route, navigation }) {
                                 <Text>개인정보 처리방침</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={confirmA == true ? styles.ConfirmBtn : styles.NonConfirmBtn} onPress={() => setConfirmA(!confirmA)}>
-                                <Text style={confirmA == true ? styles.ConfirmTxt : styles.NonConfirmTxt}>확인</Text>
+                                <Text style={confirmA == true ? styles.ConfirmTxt : styles.NonConfirmTxt}>동의</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.AgreementTerms}>
@@ -199,7 +207,7 @@ function UserTypeScreen({ route, navigation }) {
                                 <Text>이루와 회원 이용 약관</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={confirmB == true ? styles.ConfirmBtn : styles.NonConfirmBtn} onPress={() => setConfirmB(!confirmB)}>
-                                <Text style={confirmB == true ? styles.ConfirmTxt : styles.NonConfirmTxt}>확인</Text>
+                                <Text style={confirmB == true ? styles.ConfirmTxt : styles.NonConfirmTxt}>동의</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.AgreementTerms}>
@@ -207,7 +215,7 @@ function UserTypeScreen({ route, navigation }) {
                                 <Text>표준 위치기반서비스 이용약관</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={confirmC == true ? styles.ConfirmBtn : styles.NonConfirmBtn} onPress={() => setConfirmC(!confirmC)}>
-                                <Text style={confirmC == true ? styles.ConfirmTxt : styles.NonConfirmTxt}>확인</Text>
+                                <Text style={confirmC == true ? styles.ConfirmTxt : styles.NonConfirmTxt}>동의</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -226,6 +234,16 @@ function UserTypeScreen({ route, navigation }) {
                             <TouchableOpacity style={status == 1 ? styles.UserTypeBtn : styles.NonUserTypeBtn} onPress={() => SelectionStatus(1)}>
                                 <Text style={status == 1 ? styles.BtnTxt : styles.NonBtnTxt}>업체 사용자</Text>
                             </TouchableOpacity>
+                        </View>
+                        <View style={styles.UserSelectTitle}>
+                            <Text style={styles.TitleTxt}>추천인 코드를 입력해 주세요.</Text>
+                        </View>
+                        <View style={styles.UserSelection}>
+                            <TextInput
+                                value={recommendation}
+                                placeholder={'추천인 코드를 입력해 주세요.'}
+                                onChangeText={text => setRecommendation(text)}
+                            />
                         </View>
                     </View>
                 )
@@ -275,13 +293,16 @@ function UserTypeScreen({ route, navigation }) {
                             />
 
                         </View>
-                        <View style={styles.TextInputForm}>
+                        <View style={styles.TextInputForm_B}>
                             <TextInput
                                 value={user_email}
                                 placeholder={'메일을 입력해 주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => setUserEmail(text)}
                             />
+                            <TouchableOpacity style={styles.AddressBtn} onPress={() => DuplicationCheck()}>
+                                <Text style={styles.AddrBtnTxt}>확인</Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.TextInputForm}>
                             <TextInput
@@ -369,6 +390,7 @@ function UserTypeScreen({ route, navigation }) {
         var data = new Object();
         var formData = new FormData();
         data.status = status;
+        data.recommendation = recommendation;
         data.user_id = user_id;
         data.user_pw = user_pw;
         data.user_name = user_name;
@@ -515,7 +537,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 15,
+        margin: 15,
     },
     TitleTxt: {
         fontSize: 15,
@@ -591,7 +613,7 @@ const styles = StyleSheet.create({
         borderColor: '#ebebeb'
     },
     TextInputForm_B: {
-        width : width * 0.6,
+        width: width * 0.6,
         marginTop: 10,
         marginBottom: 30,
         flexDirection: 'row',
@@ -601,14 +623,14 @@ const styles = StyleSheet.create({
         borderColor: '#ebebeb'
     },
     TextInputForm_C: {
-        width : width * 0.6,
+        width: width * 0.6,
         marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#ebebeb',
-        borderRadius : 10,
+        borderRadius: 10,
     },
     AddressBtn: {
         padding: 10,
@@ -623,17 +645,17 @@ const styles = StyleSheet.create({
         color: '#15bac1'
     },
     Registration: {
-        width : 80,
-        height : 120,
+        width: 80,
+        height: 120,
     },
     ExplanationText: {
         fontSize: 10,
         color: '#15bac1'
     },
-    CategorySelect : {
-        flex : 1,
-        width : 300,
-        height : 150,
+    CategorySelect: {
+        flex: 1,
+        width: 300,
+        height: 150,
     }
 })
 export default UserTypeScreen;

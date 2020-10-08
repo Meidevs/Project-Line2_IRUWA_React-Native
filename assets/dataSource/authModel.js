@@ -56,7 +56,25 @@ class AUTHENTICATION {
             console.log(err)
         }
     }
+    EMAIL_DUPLICATION = async (user_email) => {
+        try {
+            let response = await fetch('http://148.72.210.153:8888/api/auth/duplication', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body : JSON.stringify({user_email : user_email})
+            });
 
+            let json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
     GET_USER_INFOs = async () => {
         try {
             let response = await fetch('http://148.72.210.153:8888/api/auth/info', {
@@ -261,7 +279,7 @@ class AUTHENTICATION {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body : JSON.stringify({ target_user_seq : data})
+                body: JSON.stringify({ target_user_seq: data })
             });
             var json = await response.json();
             if (response.ok) {

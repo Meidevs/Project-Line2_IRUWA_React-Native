@@ -16,8 +16,8 @@
       "androidMode": "default"
     },
     "android": {
-      "package": "com.Line2.iruwa",
-      "versionCode": 3,
+      "package": "com.Line2.test",
+      "versionCode": 1,
       "useNextNotificationsApi": true,
       "permissions" : [
         "ACCESS_COARSE_LOCATION",
@@ -27,7 +27,7 @@
       ]
     },
     "ios": {
-      "bundleIdentifier": "com.Line2.iruwa",
+      "bundleIdentifier": "com.Line2.test",
       "buildNumber": "1.0.0",
       "supportsTablet": true,
       "infoPlist": {
