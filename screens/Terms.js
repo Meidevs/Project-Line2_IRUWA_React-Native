@@ -61,12 +61,22 @@ function UserTypeScreen({ route, navigation }) {
 
     useEffect(() => {
         navigation.setOptions({
-            headerLeft: () => (
-                <HeaderBackButton
-                    tintColor={'#ffffff'}
-                    onPress={() => PrevPage()}
-                />
-            ),
+            headerLeft: () => {
+                console.log(pageCount)
+                return (
+                    pageCount > 0 ? (
+                        <HeaderBackButton
+                            tintColor={'#ffffff'}
+                            onPress={() => PrevPage()}
+                        />
+                    ) : (
+                            <HeaderBackButton
+                                tintColor={'#ffffff'}
+                                onPress={() => navigation.goBack()}
+                            />
+                        )
+                )
+            },
             headerTitle: () => (
                 <View>
                     <Text></Text>
@@ -77,7 +87,7 @@ function UserTypeScreen({ route, navigation }) {
                 elevation: 0,
             }
         })
-    }, []);
+    }, [pageCount]);
     useEffect(() => {
         (async () => {
             if (Constants.platform.ios || Constants.platform.android) {
@@ -175,17 +185,16 @@ function UserTypeScreen({ route, navigation }) {
     }
     const PrevPage = () => {
         setPageCount(pageCount => pageCount - 1);
-        if (pageCount < 0) {
-            navigation.goBack();
-        }
     }
     const DuplicationCheck = async () => {
-        var DUPLICATION = await AUTHENTICATION.EMAIL_DUPLICATION(user_email);
-        if (DUPLICATION.flags == 0) {
-            setEmailDuplicate(false);
-            alert(DUPLICATION.message);
-        } else {
-            alert(DUPLICATION.message);
+        if (user_email != null) {
+            var DUPLICATION = await AUTHENTICATION.EMAIL_DUPLICATION(user_email);
+            if (DUPLICATION.flags == 0) {
+                setEmailDuplicate(false);
+                alert(DUPLICATION.message);
+            } else {
+                alert(DUPLICATION.message);
+            }
         }
     }
 
@@ -405,12 +414,14 @@ function UserTypeScreen({ route, navigation }) {
         data.lat = lat;
         data.lon = lon;
         data.cmp_certificates = 'Y';
+        if (status == 1) {
+            formData.append('image', {
+                uri: cmp_certificates.uri,
+                type: 'image/jpeg',
+                name: 'image',
+            })
+        }
         formData.append('data', JSON.stringify(data));
-        formData.append('image', {
-            uri: cmp_certificates.uri,
-            type: 'image/jpeg',
-            name: 'image',
-        })
         var response = await AUTHENTICATION.REGISTER(formData);
         if (response.flags == 0) {
             alert(response.message);

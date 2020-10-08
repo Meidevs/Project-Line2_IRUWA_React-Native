@@ -36,12 +36,11 @@ class AUTHENTICATION {
         }
     }
     REGISTER = async (formData) => {
-        console.log(formData)
         try {
             let response = await fetch('http://148.72.210.153:8888/api/auth/register', {
                 method: 'POST',
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    'Content-Type':'multipart/form-data'
                 },
                 credentials: 'include',
                 body: formData
@@ -64,7 +63,7 @@ class AUTHENTICATION {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body : JSON.stringify({user_email : user_email})
+                body: JSON.stringify({ user_email: user_email })
             });
 
             let json = await response.json();
