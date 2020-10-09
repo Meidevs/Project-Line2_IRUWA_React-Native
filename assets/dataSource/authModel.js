@@ -15,7 +15,7 @@ class AUTHENTICATION {
                 return json;
             }
         } catch (err) {
-            console.log(err)
+            alert('Err :', err)
         }
 
     }

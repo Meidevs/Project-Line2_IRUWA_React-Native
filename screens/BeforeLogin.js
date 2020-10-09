@@ -17,13 +17,16 @@ function BeforeLoginScreen({ navigation }) {
     useEffect(() => {
         const getAllPermission = async () => {
             if (Constants.platform.ios || Constants.platform.android) {
-                const { statusNotification } = await Permissions.askAsync(
+                await Permissions.askAsync(
+                    Permissions.USER_FACING_NOTIFICATIONS,
+                );
+                await Permissions.askAsync(
                     Permissions.NOTIFICATIONS,
                 );
-                const { statusCameraRoll } = await Permissions.askAsync(
+                await Permissions.askAsync(
                     Permissions.CAMERA_ROLL,
                 );
-                const { statusLocation } = await Permissions.askAsync(
+                await Permissions.askAsync(
                     Permissions.LOCATION
                 );
             }

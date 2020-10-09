@@ -30,9 +30,11 @@ function LoginScreen({ navigation }) {
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
+            alert(token.data)
             setToken(token);
         }
         SET_DEVICE_TOKEN();
+
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow', (event) => {
                 keyboardDidShow(event)
@@ -68,15 +70,13 @@ function LoginScreen({ navigation }) {
     }
 
     const Login = async () => {
-        await AUTHENTICATION.USER_APPSTATE('active', expoToken.data);
         const response = await AUTHENTICATION.LOGIN(user_id, user_pw, expoToken);
-        switch (response.flags) {
-            case 0:
-                navigation.replace('Main');
-                break;
-            case 1:
-                alert(response.message);
-                break
+        if (response.flags == 0) {
+            await AUTHENTICATION.USER_APPSTATE('active', expoToken.data);
+            navigation.replace('Main');
+        } else {
+            alert(response.message);
+
         }
     }
 

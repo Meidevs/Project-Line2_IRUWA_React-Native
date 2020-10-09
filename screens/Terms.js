@@ -91,7 +91,7 @@ function UserTypeScreen({ route, navigation }) {
     useEffect(() => {
         (async () => {
             if (Constants.platform.ios || Constants.platform.android) {
-                let { status } = await Permissions.getAsync(Permissions.LOCATION);
+                let { status } = await Location.requestPermissionsAsync();
                 if (status !== 'granted') {
                     alert('Permission to access location was denied');
                 } else {
