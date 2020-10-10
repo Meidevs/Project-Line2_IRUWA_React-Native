@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "258758854908",
+    "firebase_url": "https://iruwa-456d2.firebaseio.com",
+    "project_id": "iruwa-456d2",
+    "storage_bucket": "iruwa-456d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258758854908:android:e4bfa44c4920a83882ef79",
+        "android_client_info": {
+          "package_name": "com.Line2.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258758854908-imfotam6mi3ed07gbeotmeq3h9biol8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_m_alkzpGxxSsnqay-4WRt2FpLnRHDTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "258758854908-imfotam6mi3ed07gbeotmeq3h9biol8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
