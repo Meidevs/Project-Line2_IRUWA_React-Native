@@ -9,12 +9,12 @@ import {
     Dimensions,
     Image,
     StatusBar,
-    ActivityIndicator, 
+    ActivityIndicator,
     Platform
 } from 'react-native';
 
 import Constants from "expo-constants";
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import CHATTING from '../assets/dataSource/chatModel';
@@ -155,6 +155,8 @@ function DetailScreen({ route, navigation }) {
         cmp_name: null,
         cmp_location: null,
         cmp_category_name: null,
+        cmp_lon: null,
+        cmp_lat: null,
         item_content: null,
         reg_date: null,
         pick_status: false,
@@ -194,6 +196,8 @@ function DetailScreen({ route, navigation }) {
                     cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
                     cmp_location: ITEM_INFOs.CMP_INFOs.cmp_location,
                     cmp_category_name: ITEM_INFOs.CMP_INFOs.category_name,
+                    cmp_lon: ITEM_INFOs.CMP_INFOs.cmp_lon,
+                    cmp_lat: ITEM_INFOs.CMP_INFOs.cmp_lat,
                     pick_status: ITEM_INFOs.PICK_STATUS,
                     time_avg: ITEM_INFOs.TIME_AVG,
                     view_count: ITEM_INFOs.VIEW_COUNT,
@@ -301,7 +305,7 @@ function DetailScreen({ route, navigation }) {
                             <View style={styles.ProfileImageArea}>
                                 {
                                     itemInfos.user_profile == null ? (
-                                        <Imgage source={require('../assets/images/defaultProfile.png')}
+                                        <Image source={require('../assets/images/defaultProfile.png')}
                                             borderRadius={70}
                                             resizeMode={'contain'}
                                             style={{ width: 45, height: 45, marginRight: 15, }}
@@ -341,8 +345,19 @@ function DetailScreen({ route, navigation }) {
                         <ContentCard data={itemInfos} />
                         <CouponCard data={coupon} />
                         <MapView
-
-                        />
+                            region={{
+                                latitude: itemInfos.cmp_lat,
+                                longitude: itemInfos.cmp_lon,
+                                latitudeDelta: 0.005,
+                                longitudeDelta: 0.005,
+                            }}
+                            style={{ width: width * 0.8, height: width * 0.8, marginBottom : 25, marginTop : 25,}}
+                        >
+                            <Marker
+                                key={itemInfos.cmp_seq.toString()}
+                                coordinate={{latitude : itemInfos.cmp_lat, longitude : itemInfos.cmp_lon}}
+                            />
+                        </MapView>
                         <View style={styles.ItemBox}>
                             <AdvertisementList data={itemInfos} list={itemsArray} navigation={navigation} />
                         </View>
@@ -359,7 +374,7 @@ function DetailScreen({ route, navigation }) {
                         <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </SafeAreaView >
         )
     } else {
         return (
@@ -464,7 +479,7 @@ const styles = StyleSheet.create({
         width: width * 0.9,
         justifyContent: 'flex-start',
     },
-    
+
     ItemSimpleInfo: {
         marginTop: 5,
         flexDirection: 'row',

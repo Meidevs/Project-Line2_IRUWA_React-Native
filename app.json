@@ -26,7 +26,12 @@
         "WRITE_EXTERNAL_STORAGE",
         "FOREGROUND_SERVICE"
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "config" : {
+        "googleMaps" : {
+          "apiKey" : "AIzaSyBZ3D0BWNA_ikCXp4eLXMHq_xJsKiCHtiM"
+        }
+      }
     },
     "ios": {
       "bundleIdentifier": "com.Line2.test",

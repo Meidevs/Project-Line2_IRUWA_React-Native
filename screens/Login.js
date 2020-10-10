@@ -30,7 +30,7 @@ function LoginScreen({ navigation }) {
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
-            alert(token.data)
+            console.log(token.data);
             setToken(token);
         }
         SET_DEVICE_TOKEN();
