@@ -121,8 +121,9 @@ const CmpAddrSearchBox = ({ visible, location, callback }) => {
                         <View style={styles.SearchInput}>
                             <TextInput
                                 value={keyword}
-                                placeholder={'예) 배민동'}
+                                placeholder={'예) 도로명 또는 지번주소'}
                                 placeholderTextColor='#B4B4B4'
+                                clearTextOnFocus={true}
                                 onChangeText={(text) => setKeywords(text)}
                                 style={styles.SearchInputText}
                             />
@@ -205,7 +206,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f2f2f2',
     },
     SearchInputText: {
-        flex: 9,
+        flex: 8,
+        fontSize : 15,
     },
     SearchInputBtn: {
         flex: 1,

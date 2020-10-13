@@ -1,5 +1,4 @@
-import { HeaderBackButton } from '@react-navigation/stack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     View,
     Text,
@@ -7,18 +6,21 @@ import {
     Dimensions,
     Image,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform,
+    Keyboard, 
+    Animated
 } from 'react-native';
-
-import TermA from '../assets/components/Terms/TermA';
-import TermB from '../assets/components/Terms/TermB';
-import TermC from '../assets/components/Terms/TermC';
+import { HeaderBackButton } from '@react-navigation/stack';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from "expo-image-manipulator";
 import Constants from "expo-constants";
 
+import TermA from '../assets/components/Terms/TermA';
+import TermB from '../assets/components/Terms/TermB';
+import TermC from '../assets/components/Terms/TermC';
 import CategoryPicker from '../assets/components/Category/CategoryPicker';
 import CmpAddressSearchBox from '../assets/components/CmpAddressSearchBox';
 import AUTHENTICATION from '../assets/dataSource/authModel';
@@ -58,11 +60,11 @@ function UserTypeScreen({ route, navigation }) {
         uri: null
     });
     const [category_seq, setCompanyCate] = useState('');
+    const keyboardHeight = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => {
-                console.log(pageCount)
                 return (
                     pageCount > 0 ? (
                         <HeaderBackButton
@@ -85,9 +87,15 @@ function UserTypeScreen({ route, navigation }) {
             headerStyle: {
                 backgroundColor: '#15bac1',
                 elevation: 0,
+                shadowOffset: {
+                    height: 0,
+                },
+                shadowOpacity: 0,
+                shadowRadius: 0,
             }
         })
     }, [pageCount]);
+
     useEffect(() => {
         (async () => {
             if (Constants.platform.ios || Constants.platform.android) {
@@ -112,7 +120,40 @@ function UserTypeScreen({ route, navigation }) {
             }
         })();
     }, []);
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow', (event) => {
+                keyboardDidShow(event)
+            } // or some other action
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide', (event) => keyboardDidHide(event) // or some other action
+        );
 
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
+    const keyboardDidShow = (e) => {
+        Animated.parallel([
+            Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
+                duration: e.duration,
+                toValue: e.endCoordinates.height / 2,
+            }),
+        ]).start();
+    }
+    const keyboardDidHide = (e) => {
+        Animated.parallel([
+            Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
+                duration: e.duration,
+                toValue: 0,
+            }),
+        ]).start();
+    }
     const callbackA = (ChildFrom) => {
         setIsTermA(ChildFrom)
     }
@@ -149,6 +190,8 @@ function UserTypeScreen({ route, navigation }) {
                 if (user_id != null & user_pw != null & password_again != null) {
                     if (user_pw == password_again) {
                         setPageCount(pageCount => pageCount + 1);
+                    } else {
+                        alert('비밀번호가 맞지 않습니다.')
                     }
                 } else {
                     alert('아이디와 비밀번호를 확인해 주세요.')
@@ -265,28 +308,29 @@ function UserTypeScreen({ route, navigation }) {
                                 placeholder={'아이디를 입력해주세요.'}
                                 onChangeText={text => setUserID(text)}
                             />
-
                         </View>
-                        <View style={styles.TextInputForm}>
+                        <View style={styles.TextInputForm_D}>
                             <TextInput
                                 value={user_pw}
                                 placeholder={'비밀번호를 입력해주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => SetUserPassword(text)}
+                                style={{flex : 1}}
                             />
                         </View>
-                        <View>
+                        <View style={styles.TextMatch}>
                             <Text style={styles.ExplanationText}>{password_boolean == false ? '영문(대,소문자), 특수문자, 숫자를 조합하여 8자 이상 입력해주세요.' : ''}</Text>
                         </View>
-                        <View style={styles.TextInputForm}>
+                        <View style={styles.TextInputForm_D}>
                             <TextInput
                                 value={password_again}
                                 placeholder={'비밀번호를 다시 입력해주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => setPassword_Again(text)}
+                                style={{flex : 1}}
                             />
                         </View>
-                        <View>
+                        <View style={styles.TextMatch}>
                             <Text style={styles.ExplanationText}>{user_pw == password_again ? '' : '비밀번호가 일치하지 않습니다.'}</Text>
                         </View>
                     </View>
@@ -298,16 +342,21 @@ function UserTypeScreen({ route, navigation }) {
                             <TextInput
                                 value={user_name}
                                 placeholder={'이름을 입력해주세요.'}
+                                clearTextOnFocus={true}
+                                secureTextEntry={false}
                                 onChangeText={text => setUserName(text)}
+                                style={{flex : 1}}
                             />
-
                         </View>
                         <View style={styles.TextInputForm_B}>
                             <TextInput
                                 value={user_email}
                                 placeholder={'메일을 입력해 주세요.'}
-                                secureTextEntry={true}
+                                secureTextEntry={false}
+                                autoCapitalize={'none'}
                                 onChangeText={text => setUserEmail(text)}
+                                style={{flex : 1}}
+
                             />
                             <TouchableOpacity style={styles.AddressBtn} onPress={() => DuplicationCheck()}>
                                 <Text style={styles.AddrBtnTxt}>확인</Text>
@@ -317,8 +366,10 @@ function UserTypeScreen({ route, navigation }) {
                             <TextInput
                                 value={user_phone}
                                 placeholder={'전화번호를 입력해 주세요.'}
-                                secureTextEntry={true}
+                                clearTextOnFocus={true}
+                                secureTextEntry={false}
                                 onChangeText={text => setUserPhone(text)}
+                                style={{flex : 1}}
                             />
                         </View>
                         <View style={styles.TextInputForm}>
@@ -445,11 +496,12 @@ function UserTypeScreen({ route, navigation }) {
         setCompanyLon(ChildFrom[3]);
     }
     return (
-        <View style={styles.Container}>
+        <Animated.View style={[styles.Container, { bottom: Platform.OS == 'ios' ? keyboardHeight : null }]}>
             <View style={styles.RegisterCard}>
                 <View style={styles.RegisterCardIcon}>
-                    <Image source={require('../assets/images/agreement_terms_ico.png')}
-                        style={{ width: 30, height: 30, }}
+                    <Image source={require('../assets/logo.png')}
+                        borderRadius={40}
+                        style={{ width: 50, height: 50 }}
                     />
                 </View>
                 {
@@ -477,7 +529,7 @@ function UserTypeScreen({ route, navigation }) {
             <TermB visible={isTermB} callback={callbackB} />
             <TermC visible={isTermC} callback={callbackC} />
             <CmpAddressSearchBox visible={modalVisible} location={ReturnLocation} callback={ReturnVisible} />
-        </View >
+        </Animated.View >
     )
 }
 const styles = StyleSheet.create({
@@ -500,11 +552,12 @@ const styles = StyleSheet.create({
         elevation: 2,
         shadowOffset: {
             height: 1,
-        }
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
     },
     AgreementTerms: {
         flex: 1,
-        padding: 10,
         marginTop: 10,
         marginBottom: 10,
         flexDirection: 'row',
@@ -596,7 +649,9 @@ const styles = StyleSheet.create({
             height: 2,
         },
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
     },
     NextBtn: {
         position: 'absolute',
@@ -611,27 +666,34 @@ const styles = StyleSheet.create({
             height: 2,
         },
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
     },
     TextInputForm: {
-        flex: 1,
-        marginTop: 10,
-        marginBottom: 30,
+        width: width * 0.6,
+        paddingBottom : 10,
+        marginBottom : 25,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderColor: '#ebebeb'
+        borderColor: '#ebebeb',
+    },
+    TextMatch : {
+        width: width * 0.6,
+        height : 30,
+        marginBottom : 5,
     },
     TextInputForm_B: {
         width: width * 0.6,
-        marginTop: 10,
+        paddingBottom : 10,
         marginBottom: 30,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems : 'center',
         borderBottomWidth: 1,
-        borderColor: '#ebebeb'
+        borderColor: '#ebebeb',
     },
     TextInputForm_C: {
         width: width * 0.6,
@@ -642,6 +704,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ebebeb',
         borderRadius: 10,
+    },
+    TextInputForm_D: {
+        width: width * 0.6,
+        paddingBottom : 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: '#ebebeb',
     },
     AddressBtn: {
         padding: 10,

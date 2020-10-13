@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
         }
     },
     BackBtn: {
-        margin: 25,
+        padding : 25,
     },
     HeaderTitle: {
         justifyContent: 'center',
@@ -284,6 +284,9 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '700',
         color: '#000000',
+    },
+    TermsForm : {
+        padding : 10,
     },
     TermsTitleTxt: {
         fontSize: 13,

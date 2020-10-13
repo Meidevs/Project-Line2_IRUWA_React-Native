@@ -7,13 +7,20 @@ import {
     Image,
     Dimensions,
     ScrollView,
-    SafeAreaView
+    SafeAreaView,
+    Share,
+    Platform,
 } from 'react-native';
+
+import { Buffer } from "buffer";
+import AUTHENTICATION from '../assets/dataSource/authModel';
 
 const { width, height } = Dimensions.get('window');
 
 function InviteScreen({ route, navigation }) {
     const [coupons, setCoupons] = useState([1, 2, 3]);
+    const [emailString, setEmailBase64] = useState(null);
+    const [userName, setUserName] = useState(null);
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -28,6 +35,36 @@ function InviteScreen({ route, navigation }) {
         })
     }, []);
 
+    useEffect(() => {
+        const GET_USER_INFO = async () => {
+            var user_info = await AUTHENTICATION.GET_USER_INFOs();
+            var user_coupon = await AUTHENTICATION.GET_COUPONS();
+            var stringToBase64 = await Buffer(user_info.user_email);
+            var s = stringToBase64.toString('base64');
+            setEmailBase64(s);
+            setUserName(user_info.user_name)
+        }
+        GET_USER_INFO();
+    }, [])
+
+    const onShare = async () => {
+        try {
+            if (Platform.OS == 'android') {
+                await Share.share({
+                    title: userName + '님께서 초대 메세지를 보냈습니다',
+                    message: `https://play.google.com/store/apps/details?id=com.Line2.test \n초대 코드 : ` + emailString,
+                });
+            } else {
+                await Share.share({
+                    title: userName + '님께서 초대 메세지를 보냈습니다',
+                    url: 'https://play.google.com/store/apps/details?id=com.Line2.test \n',
+                    message : '초대 코드 : ' + emailString,
+                });
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView>
@@ -49,7 +86,7 @@ function InviteScreen({ route, navigation }) {
                         />
                         <Text style={styles.BtnTxtStyle}>카카오톡으로 초대하기</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.UrlBtnContent}>
+                    <TouchableOpacity style={styles.UrlBtnContent} onPress={() => onShare()}>
                         <Image source={require('../assets/images/share_ico.png')}
                             style={{ width: 18, height: 20, marginRight: 15 }}
                         />
@@ -76,8 +113,8 @@ function InviteScreen({ route, navigation }) {
                         return (
                             <View style={styles.CouponArea} key={index.toString()}>
                                 <View style={styles.LeftArea}>
-                                    <Image source={require('../assets/images/thumbnail.png')} 
-                                    style={{marginRight : 15}}
+                                    <Image source={require('../assets/images/thumbnail.png')}
+                                        style={{ marginRight: 15 }}
                                     />
                                     <Text style={styles.CouponTxt_a}>스타벅스 쿠폰</Text>
                                 </View>
@@ -217,38 +254,38 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    LeftArea : {
-        flexDirection : 'row',
-        justifyContent :  'flex-start',
-        alignItems : 'center'
+    LeftArea: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
     },
-    CouponTxt_a : {
-        fontSize : 13,
-        fontWeight : '800',
-        color : '#000000',
-        letterSpacing : -0.26
+    CouponTxt_a: {
+        fontSize: 13,
+        fontWeight: '800',
+        color: '#000000',
+        letterSpacing: -0.26
     },
-    RightArea : {
-        flexDirection : 'row',
-        justifyContent :  'flex-end',
-        alignItems : 'center'
+    RightArea: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center'
     },
-    DateTxt : {
-        fontSize : 10,
-        fontWeight : '600',
-        color : '#a2a2a2',
-        letterSpacing : -0.2
+    DateTxt: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#a2a2a2',
+        letterSpacing: -0.2
     },
-    goToCoupon : {
-        padding : 20,
-        justifyContent : 'center',
-        alignItems : 'center',
-        backgroundColor : '#000000'
+    goToCoupon: {
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000000'
     },
-    goToCouponTxt : {
-        fontSize : 15,
-        fontWeight : '800',
-        color : '#ffffff'
+    goToCouponTxt: {
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#ffffff'
     }
 })
 

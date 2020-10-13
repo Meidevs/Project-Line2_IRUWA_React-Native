@@ -9,7 +9,8 @@ import {
     StyleSheet,
     Dimensions,
     Animated,
-    Keyboard, Platform
+    Keyboard, 
+    Platform
 } from 'react-native';
 import registerForPushNotificationsAsync from '../assets/components/Login/getDeviceToken';
 import AUTHENTICATION from '../assets/dataSource/authModel';
@@ -30,7 +31,6 @@ function LoginScreen({ navigation }) {
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
-            console.log(token.data);
             setToken(token);
         }
         SET_DEVICE_TOKEN();
