@@ -40,7 +40,7 @@ class AUTHENTICATION {
             let response = await fetch('http://148.72.210.153:8888/api/auth/register', {
                 method: 'POST',
                 headers: {
-                    'Content-Type':'multipart/form-data'
+                    'Content-Type': 'multipart/form-data'
                 },
                 credentials: 'include',
                 body: formData
@@ -286,6 +286,22 @@ class AUTHENTICATION {
             }
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    GET_COUPONS = async () => {
+        try {
+            var response = await fetch('http://148.72.210.153:8888/api/auth/removeban', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ target_user_seq: data })
+            });
+            var json = await response.json();
+        } catch (err) {
+
         }
     }
 }

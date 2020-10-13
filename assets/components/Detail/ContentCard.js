@@ -35,6 +35,7 @@ const ContentCard = ({ data }) => {
 const styles = StyleSheet.create({
     CardBox: {
         margin : 10,
+        marginBottom : 25,
         width : width * 0.9,
         borderWidth : 2,
         borderRadius : 10,

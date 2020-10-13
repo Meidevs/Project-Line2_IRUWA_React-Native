@@ -293,7 +293,7 @@ function UserTypeScreen({ route, navigation }) {
                         <View style={styles.UserSelection}>
                             <TextInput
                                 value={recommendation}
-                                placeholder={'추천인 코드를 입력해 주세요.'}
+                                placeholder={'추천인 코드를 입력해 주세요. (없으면 생략)'}
                                 onChangeText={text => setRecommendation(text)}
                             />
                         </View>
@@ -345,7 +345,7 @@ function UserTypeScreen({ route, navigation }) {
                                 clearTextOnFocus={true}
                                 secureTextEntry={false}
                                 onChangeText={text => setUserName(text)}
-                                style={{flex : 1}}
+                                style={{flex : 1, }}
                             />
                         </View>
                         <View style={styles.TextInputForm_B}>
@@ -475,7 +475,7 @@ function UserTypeScreen({ route, navigation }) {
         formData.append('data', JSON.stringify(data));
         var response = await AUTHENTICATION.REGISTER(formData);
         if (response.flags == 0) {
-            alert(response.message);
+            alert(response.message + '\n메일 인증을 진행해주세요.');
             navigation.popToTop('Main');
         } else {
             alert(response.message);
@@ -524,7 +524,7 @@ function UserTypeScreen({ route, navigation }) {
                                 </TouchableOpacity>
                             )
                 }
-            </View >
+            </View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
             <TermC visible={isTermC} callback={callbackC} />
@@ -656,6 +656,7 @@ const styles = StyleSheet.create({
     NextBtn: {
         position: 'absolute',
         bottom: -30,
+        zIndex : 10,
         padding: 10,
         width: 120,
         height: 60,

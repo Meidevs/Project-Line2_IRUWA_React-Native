@@ -28,31 +28,33 @@ const AdvertisementList = ({ data, list, navigation }) => {
             <View style={styles.ADSBox}>
                 <View style={styles.TitleBox}>
                     <View style={styles.TitleBorder}>
-                        <Text style={styles.ItemTitleTxtStyle}>{itemInfos.cmp_name}의 다른 광고</Text>
+                        <Text style={styles.ItemTitleTxtStyle}>{data.cmp_name}의 다른 광고</Text>
                     </View>
                 </View>
-                {
-                    items.map((data) => {
-                        return (
-                            <TouchableOpacity
-                                style={styles.ADSContent}
-                                key={data.items_seq}
-                                onPress={() => navigation.replace('Detail', {
-                                    cmp_seq: data.cmp_seq,
-                                    items_seq: data.items_seq,
-                                    user_seq: data.user_seq
-                                })}
-                            >
-                                <View style={styles.ImageArea}>
-                                    <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
-                                </View>
-                                <View style={styles.NameArea}>
-                                    <Text>{data.item_name}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })
-                }
+                <View style={styles.ADSs}>
+                    {
+                        items.map((data) => {
+                            return (
+                                <TouchableOpacity
+                                    style={styles.ADSContent}
+                                    key={data.items_seq}
+                                    onPress={() => navigation.replace('Detail', {
+                                        cmp_seq: data.cmp_seq,
+                                        items_seq: data.items_seq,
+                                        user_seq: data.user_seq
+                                    })}
+                                >
+                                    <View style={styles.ImageArea}>
+                                        <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
+                                    </View>
+                                    <View style={styles.NameArea}>
+                                        <Text>{data.item_name}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                </View>
             </View>
         )
     } else {
@@ -62,9 +64,11 @@ const AdvertisementList = ({ data, list, navigation }) => {
 
 const styles = StyleSheet.create({
     ADSBox: {
+        flexDirection: 'column',
+    },
+    ADs: {
         height: width,
         flexWrap: 'wrap',
-        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },

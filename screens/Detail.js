@@ -182,6 +182,7 @@ function DetailScreen({ route, navigation }) {
         const GET_ITEM_INFOs = async () => {
             try {
                 var ITEM_INFOs = await DATA_SOURCE.GET_ITEM_DETAIL(items_seq, cmp_seq);
+                console.log('ITEM_INFOs', ITEM_INFOs)
                 var data = ITEM_INFOs.SELECTED[0];
                 var time_avg = TimeGap(data.reg_date);
                 setItemInfos({
@@ -343,6 +344,13 @@ function DetailScreen({ route, navigation }) {
                             </View>
                         </View>
                         <ContentCard data={itemInfos} />
+                        <View style={styles.ItemBox}>
+                            <Text style={{
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                color: '#000000'
+                            }}>{itemInfos.cmp_name}의 위치</Text>
+                        </View>
                         <CouponCard data={coupon} />
                         <MapView
                             region={{
@@ -351,11 +359,11 @@ function DetailScreen({ route, navigation }) {
                                 latitudeDelta: 0.005,
                                 longitudeDelta: 0.005,
                             }}
-                            style={{ width: width * 0.8, height: width * 0.8, marginBottom : 25, marginTop : 25,}}
+                            style={{ width: width * 0.8, height: width * 0.8, marginBottom: 25, marginTop: 25, }}
                         >
                             <Marker
                                 key={itemInfos.cmp_seq.toString()}
-                                coordinate={{latitude : itemInfos.cmp_lat, longitude : itemInfos.cmp_lon}}
+                                coordinate={{ latitude: itemInfos.cmp_lat, longitude: itemInfos.cmp_lon }}
                             />
                         </MapView>
                         <View style={styles.ItemBox}>

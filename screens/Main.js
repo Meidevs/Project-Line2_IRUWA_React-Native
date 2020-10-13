@@ -10,6 +10,7 @@ import {
     SafeAreaView,
     StatusBar,
     ImageBackground,
+    RefreshControl,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/stack';
@@ -76,7 +77,11 @@ const Item = ({ data, user, navigation }) => {
     );
 }
 
-
+const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+  }
 
 function MainScreen({ route, navigation }) {
     const headerHeight = useHeaderHeight();
@@ -84,7 +89,7 @@ function MainScreen({ route, navigation }) {
     const [user_location, setUserLocation] = useState(null);
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
-
+    const [refreshing, setRefreshing] = React.useState(false);
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -129,12 +134,21 @@ function MainScreen({ route, navigation }) {
         }, [])
     );
 
+    const onRefresh = async () => {
+        setRefreshing(true);
+        const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+        console.log('REFRESHING ITEMS : ', ITEMS)
+        setData(ITEMS.content);
+        wait(2000).then(() => setRefreshing(false));
+    };
+
     useEffect(() => {
         let isCancelled = true;
         const SET_DATAS = async () => {
-            if (isCancelled) { 
+            if (isCancelled) {
                 if (user_location != null) {
                     const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+                    console.log('NORMAL REQUEST ITEMS : ', ITEMS)
                     setData(ITEMS.content);
                 }
             }
@@ -150,7 +164,7 @@ function MainScreen({ route, navigation }) {
 
     if (isLoad) {
         return (
-            <SafeAreaView style={[styles.Container,]}>
+            <SafeAreaView style={[styles.Container]}>
                 <StatusBar
                     barStyle="dark-content"
                     // dark-content, light-content and default
@@ -197,6 +211,9 @@ function MainScreen({ route, navigation }) {
                     <VirtualizedList
                         data={data}
                         initialNumToRender={10}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                         ListHeaderComponent={() => {
                             return <PremiumBanner data={user_location} navigation={navigation} />
                         }}
