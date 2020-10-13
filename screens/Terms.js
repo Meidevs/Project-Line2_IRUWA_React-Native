@@ -8,7 +8,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Platform,
-    Keyboard, 
+    Keyboard,
     Animated
 } from 'react-native';
 import { HeaderBackButton } from '@react-navigation/stack';
@@ -141,7 +141,7 @@ function UserTypeScreen({ route, navigation }) {
             Animated.timing(keyboardHeight, {
                 useNativeDriver: false,
                 duration: e.duration,
-                toValue: e.endCoordinates.height / 2,
+                toValue: e.endCoordinates.height / 1.5,
             }),
         ]).start();
     }
@@ -315,7 +315,7 @@ function UserTypeScreen({ route, navigation }) {
                                 placeholder={'비밀번호를 입력해주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => SetUserPassword(text)}
-                                style={{flex : 1}}
+                                style={{ flex: 1 }}
                             />
                         </View>
                         <View style={styles.TextMatch}>
@@ -327,7 +327,7 @@ function UserTypeScreen({ route, navigation }) {
                                 placeholder={'비밀번호를 다시 입력해주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => setPassword_Again(text)}
-                                style={{flex : 1}}
+                                style={{ flex: 1 }}
                             />
                         </View>
                         <View style={styles.TextMatch}>
@@ -345,7 +345,7 @@ function UserTypeScreen({ route, navigation }) {
                                 clearTextOnFocus={true}
                                 secureTextEntry={false}
                                 onChangeText={text => setUserName(text)}
-                                style={{flex : 1, }}
+                                style={{ flex: 1, }}
                             />
                         </View>
                         <View style={styles.TextInputForm_B}>
@@ -355,7 +355,7 @@ function UserTypeScreen({ route, navigation }) {
                                 secureTextEntry={false}
                                 autoCapitalize={'none'}
                                 onChangeText={text => setUserEmail(text)}
-                                style={{flex : 1}}
+                                style={{ flex: 1 }}
 
                             />
                             <TouchableOpacity style={styles.AddressBtn} onPress={() => DuplicationCheck()}>
@@ -369,7 +369,7 @@ function UserTypeScreen({ route, navigation }) {
                                 clearTextOnFocus={true}
                                 secureTextEntry={false}
                                 onChangeText={text => setUserPhone(text)}
-                                style={{flex : 1}}
+                                style={{ flex: 1 }}
                             />
                         </View>
                         <View style={styles.TextInputForm}>
@@ -507,23 +507,31 @@ function UserTypeScreen({ route, navigation }) {
                 {
                     componentJSX_A()
                 }
-                {
-                    status == 0 & pageCount == 3 ? (
-                        <TouchableOpacity style={styles.NextBtn} onPress={() => Register()}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                        </TouchableOpacity>
-                    ) : status == 1 & pageCount == 5 ? (
-                        <TouchableOpacity style={styles.NextBtn} onPress={() => Register()}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                        </TouchableOpacity>
-                    ) : (
-                                <TouchableOpacity style={styles.NextBtn} onPress={() => NextPage()}>
-                                    <Image source={require('../assets/images/long_right_arrow_ico.png')}
-                                        style={{ width: 55, height: 27.5 }}
-                                    />
-                                </TouchableOpacity>
-                            )
-                }
+                <View style={styles.NextBtn}>
+                    {
+                        status == 0 & pageCount == 3 ? (
+                            <TouchableOpacity
+                                style={{ flex: 1, justifyContent : 'center', alignItems : 'center', width : 120, height : 80}}
+                                onPress={() => Register()}>
+                                <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                            </TouchableOpacity>
+                        ) : status == 1 & pageCount == 5 ? (
+                            <TouchableOpacity
+                                style={{ flex: 1, justifyContent : 'center', alignItems : 'center', width : 120, height : 80}}
+                                onPress={() => Register()}>
+                                <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                            </TouchableOpacity>
+                        ) : (
+                                    <TouchableOpacity
+                                        style={{ flex: 1, justifyContent : 'center', alignItems : 'center', width : 120, height : 80}}
+                                        onPress={() => NextPage()}>
+                                        <Image source={require('../assets/images/long_right_arrow_ico.png')}
+                                            style={{ width: 55, height: 27.5 }}
+                                        />
+                                    </TouchableOpacity>
+                                )
+                    }
+                </View>
             </View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
@@ -656,7 +664,7 @@ const styles = StyleSheet.create({
     NextBtn: {
         position: 'absolute',
         bottom: -30,
-        zIndex : 10,
+        zIndex: 10,
         padding: 10,
         width: 120,
         height: 60,
@@ -673,26 +681,26 @@ const styles = StyleSheet.create({
     },
     TextInputForm: {
         width: width * 0.6,
-        paddingBottom : 10,
-        marginBottom : 25,
+        paddingBottom: 10,
+        marginBottom: 25,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
         borderBottomWidth: 1,
         borderColor: '#ebebeb',
     },
-    TextMatch : {
+    TextMatch: {
         width: width * 0.6,
-        height : 30,
-        marginBottom : 5,
+        height: 30,
+        marginBottom: 5,
     },
     TextInputForm_B: {
         width: width * 0.6,
-        paddingBottom : 10,
+        paddingBottom: 10,
         marginBottom: 30,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems : 'center',
+        alignItems: 'center',
         borderBottomWidth: 1,
         borderColor: '#ebebeb',
     },
@@ -708,7 +716,7 @@ const styles = StyleSheet.create({
     },
     TextInputForm_D: {
         width: width * 0.6,
-        paddingBottom : 10,
+        paddingBottom: 10,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
