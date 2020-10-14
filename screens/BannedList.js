@@ -18,8 +18,8 @@ function BannedListScreen({ navigation }) {
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
-                <View style={styles.HeaderTitleBox}>
-                    <Text style={[styles.HeaderTitleTxt]}>차단 사용자 관리</Text>
+                <View style={styles.TitleHeader}>
+                    <Text style={styles.TitleHeaderTxtStyle}>차단 사용자 관리</Text>
                 </View>
             ),
             headerRight: () => (
@@ -88,6 +88,15 @@ function BannedListScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    TitleHeader: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    TitleHeaderTxtStyle: {
+        fontWeight: 'bold',
+        fontSize: 15
+    },
     Container: {
         flex: 1,
         backgroundColor: '#ffffff'

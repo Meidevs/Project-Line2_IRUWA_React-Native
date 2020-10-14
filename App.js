@@ -33,7 +33,7 @@ import BannedListScreen from './screens/BannedList';
 import ItemListScreen from './screens/ItemList';
 import EditScreen from './screens/Edit';
 import PickListScreen from './screens/PickList';
-import SearchUserScreen from './screens/SearchUser';
+import SetPasswordScreen from './screens/SetPassword';
 
 import TabBar from './assets/components/TabBar';
 import AUTHENTICATION from './assets/dataSource/authModel';
@@ -122,6 +122,10 @@ const MyinfoStackScreens = () => {
       <MyinfoStack.Screen
         name='BannedList'
         component={BannedListScreen}
+      />
+      <MyinfoStack.Screen
+        name='SetPassword'
+        component={SetPasswordScreen}
       />
     </MyinfoStack.Navigator>
   )
@@ -353,27 +357,12 @@ const App = () => {
           component={FindUserScreen}
           options={{
             headerShown: true,
-            headerTransparent: true
           }}
         />
         <AuthStack.Screen
           name="Main"
           component={MainTabs}
           options={{ headerShown: false }}
-        />
-        <AuthStack.Screen
-          name="SearchUser"
-          component={SearchUserScreen}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              elevation: 0,
-              shadowRadius: 0,
-              shadowOffset: {
-                height: 0,
-              }
-            }
-          }}
         />
       </AuthStack.Navigator>
     </NavigationContainer>

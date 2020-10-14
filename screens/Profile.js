@@ -167,10 +167,10 @@ function ProfileScreen({ route, navigation }) {
                                             onChangeText={text => setName(text)}
                                         />
                                         <View style={styles.ProfileChanges}>
-                                            <TouchableOpacity onPress={() => changeName(false)}>
+                                            <TouchableOpacity style={styles.ChangeBtn} onPress={() => changeName(false)}>
                                                 <Text>취소</Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => UPDATE_NAME()}>
+                                            <TouchableOpacity style={styles.ChangeBtn} onPress={() => UPDATE_NAME()}>
                                                 <Text>변경</Text>
                                             </TouchableOpacity>
                                         </View>
@@ -195,10 +195,10 @@ function ProfileScreen({ route, navigation }) {
                                             onChangeText={text => setPhone(text)}
                                         />
                                         <View style={styles.ProfileChanges}>
-                                            <TouchableOpacity onPress={() => changePhone(false)}>
+                                            <TouchableOpacity style={styles.ChangeBtn} onPress={() => changePhone(false)}>
                                                 <Text>취소</Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => UPDATE_PHONE()}>
+                                            <TouchableOpacity style={styles.ChangeBtn} onPress={() => UPDATE_PHONE()}>
                                                 <Text>변경</Text>
                                             </TouchableOpacity>
                                         </View>
@@ -233,10 +233,10 @@ function ProfileScreen({ route, navigation }) {
                                                     onChangeText={text => setCmpName(text)}
                                                 />
                                                 <View style={styles.ProfileChanges}>
-                                                    <TouchableOpacity onPress={() => changeCmpName(false)}>
+                                                    <TouchableOpacity style={styles.ChangeBtn} onPress={() => changeCmpName(false)}>
                                                         <Text>취소</Text>
                                                     </TouchableOpacity>
-                                                    <TouchableOpacity onPress={() => UPDATE_CMP_NAME()}>
+                                                    <TouchableOpacity style={styles.ChangeBtn} onPress={() => UPDATE_CMP_NAME()}>
                                                         <Text>변경</Text>
                                                     </TouchableOpacity>
                                                 </View>
@@ -261,10 +261,10 @@ function ProfileScreen({ route, navigation }) {
                                                     onChangeText={text => setCmpPhone(text)}
                                                 />
                                                 <View style={styles.ProfileChanges}>
-                                                    <TouchableOpacity onPress={() => changeCmpPhone(false)}>
+                                                    <TouchableOpacity style={styles.ChangeBtn} onPress={() => changeCmpPhone(false)}>
                                                         <Text>취소</Text>
                                                     </TouchableOpacity>
-                                                    <TouchableOpacity onPress={() => UPDATE_CMP_PHONE()}>
+                                                    <TouchableOpacity style={styles.ChangeBtn} onPress={() => UPDATE_CMP_PHONE()}>
                                                         <Text>변경</Text>
                                                     </TouchableOpacity>
                                                 </View>
@@ -384,6 +384,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    ChangeBtn : {
+        padding : 10,
     },
     ProfileSettingTxt: {
         flex: 1,

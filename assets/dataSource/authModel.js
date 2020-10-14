@@ -301,7 +301,60 @@ class AUTHENTICATION {
             });
             var json = await response.json();
         } catch (err) {
+            console.log(err);
+        }
+    }
 
+    SEND_USER_EMAIL = async (data) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/auth/userid', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ user_email: data })
+            });
+            var json = await response.json();
+            if(response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    FIND_USER_PASSWORD = async (data) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/auth/userpw', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ user_email: data })
+            });
+            var json = await response.json();
+            if(response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    PASSWORD_UPDATE = async (data) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/auth/userpw', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ user_email: data })
+            });
+            var json = await response.json();
+            if(response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 }

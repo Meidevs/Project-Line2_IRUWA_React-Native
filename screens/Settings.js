@@ -27,6 +27,7 @@ function SettingsScreen({ route, navigation }) {
                     <Text style={styles.TitleHeaderTxtStyle}>설정</Text>
                 </View>
             ),
+            headerRight: () => <View></View>
         })
     }, []);
 
@@ -47,18 +48,19 @@ function SettingsScreen({ route, navigation }) {
             <ScrollView>
                 <View style={styles.MainContainer}>
                     <View style={styles.ContentBox}>
-                        <TouchableOpacity onPress={() => navigation.navigate('BannedList')}>
-                            <Text>차단 사용자 관리</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('SetPassword')}>
+                            <Text style={styles.Txt}>비밀번호 변경</Text>
                         </TouchableOpacity>
                     </View>
-                    {/* <View style={styles.ContentBox}>
-                        <TouchableOpacity onPress={() => AlertBox()}>
-                            <Text style={styles.Text}>탈퇴하기</Text>
+                    <View style={styles.ContentBox}>
+                        <TouchableOpacity onPress={() => navigation.navigate('BannedList')}>
+                            <Text style={styles.Txt}>차단 사용자 관리</Text>
                         </TouchableOpacity>
-                    </View> */}
+                    </View>
+
                     <View style={styles.ContentBox}>
                         <TouchableOpacity onPress={() => LOGOUT()}>
-                            <Text>로그 아웃</Text>
+                            <Text style={styles.Txt}>로그 아웃</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -70,7 +72,7 @@ function SettingsScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
@@ -104,6 +106,11 @@ const styles = StyleSheet.create({
     TitleTxt: {
         fontSize: 14,
         color: 'rgba(70, 70, 70, 1)'
+    },
+    Txt: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#000000'
     }
 })
 

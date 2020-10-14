@@ -6,86 +6,30 @@ import {
     Dimensions,
     Image,
     StyleSheet,
+    Alert,
     TouchableOpacity,
     Platform,
     Keyboard,
     Animated
 } from 'react-native';
-import { HeaderBackButton } from '@react-navigation/stack';
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
-import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from "expo-image-manipulator";
-import Constants from "expo-constants";
 
-import TermA from '../assets/components/Terms/TermA';
-import TermB from '../assets/components/Terms/TermB';
-import TermC from '../assets/components/Terms/TermC';
-import CategoryPicker from '../assets/components/Category/CategoryPicker';
-import CmpAddressSearchBox from '../assets/components/CmpAddressSearchBox';
 import AUTHENTICATION from '../assets/dataSource/authModel';
-import ROADAPI from '../assets/dataSource/roadAPI';
-import PASSWORD_CHECK from '../assets/components/PasswordMatch';
 
 const { width, height } = Dimensions.get('window');
 
-function UserTypeScreen({ route, navigation }) {
-    const [pageCount, setPageCount] = useState(0);
-    const [isTermA, setIsTermA] = useState(false);
-    const [isTermB, setIsTermB] = useState(false);
-    const [isTermC, setIsTermC] = useState(false);
-    const [confirmA, setConfirmA] = useState(false);
-    const [confirmB, setConfirmB] = useState(false);
-    const [confirmC, setConfirmC] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [status, SelectionStatus] = useState(0);
-    const [recommendation, setRecommendation] = useState(null);
-    const [user_id, setUserID] = useState(null);
-    const [user_pw, setPassword] = useState(null);
-    const [password_again, setPassword_Again] = useState(null);
-    const [password_boolean, setPassword_Boolean] = useState(false);
-    const [user_name, setUserName] = useState(null);
-    const [user_phone, setUserPhone] = useState(null);
-    const [user_email, setUserEmail] = useState(null);
-    const [email_duplication, setEmailDuplicate] = useState(true);
-    const [user_location, setUserLocation] = useState(null);
-    const [cmp_name, setCompanyName] = useState('');
-    const [cmp_phone, setCompanyPhone] = useState('');
-    const [cmp_location, setCompanyLocation] = useState('');
-    const [cmp_detail_location, setCompanyDLocation] = useState('');
-    const [lat, setCompanyLat] = useState('');
-    const [lon, setCompanyLon] = useState('');
-    const [cmp_certificates, setImage] = useState({
-        id: null,
-        uri: null
-    });
-    const [category_seq, setCompanyCate] = useState('');
+function FindUserScreen({ route, navigation }) {
     const keyboardHeight = useRef(new Animated.Value(0)).current;
+    const [searchEmail_a, setSearchEmail_A] = useState(null);
+    const [searchEmail_b, setSearchEmail_B] = useState(null);
 
     useEffect(() => {
         navigation.setOptions({
-            headerLeft: () => {
-                return (
-                    pageCount > 0 ? (
-                        <HeaderBackButton
-                            tintColor={'#ffffff'}
-                            onPress={() => PrevPage()}
-                        />
-                    ) : (
-                            <HeaderBackButton
-                                tintColor={'#ffffff'}
-                                onPress={() => navigation.goBack()}
-                            />
-                        )
-                )
-            },
             headerTitle: () => (
                 <View>
                     <Text></Text>
                 </View>
             ),
             headerStyle: {
-                backgroundColor: '#15bac1',
                 elevation: 0,
                 shadowOffset: {
                     height: 0,
@@ -94,7 +38,7 @@ function UserTypeScreen({ route, navigation }) {
                 shadowRadius: 0,
             }
         })
-    }, [pageCount]);
+    }, []);
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -131,95 +75,180 @@ function UserTypeScreen({ route, navigation }) {
         ]).start();
     }
 
-    const NextPage = () => {
-        switch (pageCount) {
-
+    const SearchUserID = async () => {
+        var resReturn = await AUTHENTICATION.SEND_USER_EMAIL(searchEmail_a);
+        if (resReturn.flags == 0) {
+            Alert.alert(
+                "아이디 검색 결과",
+                "회원님의 아이디는 : " + resReturn.message,
+                [
+                    { text: "OK" }
+                ],
+                { cancelable: true }
+            );
+        } else {
+            Alert.alert(
+                "아이디 검색 결과",
+                resReturn.message,
+                [
+                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: true }
+            );
         }
     }
-    const PrevPage = () => {
-        setPageCount(pageCount => pageCount - 1);
-    }
 
+    const SearchUserPW = async () => {
+        var resReturn = await AUTHENTICATION.FIND_USER_PASSWORD(searchEmail_b);
+        if (resReturn.flags == 0) {
+            Alert.alert(
+                "아이디 검색 결과",
+                "임시 비밀번호를 메일로 전달했습니다.",
+                [
+                    { text: "OK" }
+                ],
+                { cancelable: true }
+            );
+        } else {
+            Alert.alert(
+                "아이디 검색 결과",
+                resReturn.message,
+                [
+                    { text: "OK" }
+                ],
+                { cancelable: true }
+            );
+        }
+    }
     return (
         <Animated.View style={[styles.Container, { bottom: Platform.OS == 'ios' ? keyboardHeight : null }]}>
             <View style={styles.SearchCard}>
+                <View style={styles.Logo}>
+                    <Image source={require('../assets/logo.png')}
+                        style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}
+                    />
+                </View>
                 <View style={styles.SearchContent}>
-                    <View style={styles.Search}>
-                        <View style={styles.Title}>
-                            <Text>아이디 찾기</Text>
-                        </View>
-                        <View style={styles.Content}>
-                            <TextInput
-                                placeholder={'이메일을 입력해주세요.'}
-                            />
-                        </View>
-                        <View style={styles.Button}>
-                            <TouchableOpacity>
-                                <Text>찾기</Text>
-                            </TouchableOpacity>
+                    <View style={styles.Section}>
+                        <View style={styles.InnerSection}>
+                            <Text style={styles.TitleTxt}>아이디 찾기</Text>
+                            <Text style={styles.SubTitleTxt}>이메일을 입력해 주세요</Text>
                         </View>
                     </View>
-                    <View style={styles.Search}>
-                        <View style={styles.Title}>
-                            <Text>비밀번호 찾기</Text>
-                        </View>
-                        <View style={styles.Content}>
+                    <View style={styles.Section}>
+                        <View style={styles.TextInput}>
                             <TextInput
-                                placeholder={'이메일을 입력해주세요.'}
+                                value={searchEmail_a}
+                                placeholder={'가입시 등록한 이메일을 입력해 주세요.'}
+                                onChangeText={text => setSearchEmail_A(text)}
                             />
                         </View>
-                        <View style={styles.Button}>
-                            <TouchableOpacity>
-                                <Text>찾기</Text>
-                            </TouchableOpacity>
+                    </View>
+                    <View style={styles.SearchBtn}>
+                        <TouchableOpacity style={styles.BtnStyle} onPress={() => SearchUserID()}>
+                            <Text style={styles.BtnTxt}>확인</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.SearchContent}>
+                    <View style={styles.Section}>
+                        <View style={styles.InnerSection}>
+                            <Text style={styles.TitleTxt}>비밀번호 찾기</Text>
+                            <Text style={styles.SubTitleTxt}>이메일을 입력해 주세요</Text>
                         </View>
+                    </View>
+                    <View style={styles.Section}>
+                        <View style={styles.TextInput}>
+                            <TextInput
+                                value={searchEmail_b}
+                                placeholder={'가입시 등록한 이메일을 입력해 주세요.'}
+                                onChangeText={text => setSearchEmail_B(text)}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.SearchBtn}>
+                        <TouchableOpacity style={styles.BtnStyle} onPress={() => SearchUserPW()}>
+                            <Text style={styles.BtnTxt}>확인</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
-        </Animated.View >
+        </Animated.View>
     )
 }
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: '#15bac1',
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center'
     },
     SearchCard: {
         width: width * 0.8,
-        height: height * 0.6,
-        backgroundColor: '#ffffff',
+        height: height * 0.8,
+        paddingRight: 25,
+        paddingLeft: 25,
         borderRadius: 10,
-        elevation: 1,
-        shadowOffset: {
-            height: 1,
-        },
-        shadowRadius: 1,
-        shadowOpacity: 0.3,
+        borderWidth: 1,
+        borderColor: '#ebebeb'
+    },
+    Logo: {
+        padding: 15,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     SearchContent: {
         flex: 1,
+        justifyContent: 'flex-start',
+        marginTop: 15,
+    },
+    Section: {
+        flex: 1,
+        justifyContent: 'flex-start',
+    },
+    SearchBtn: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end'
+    },
+    InnerSection: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    TextInput: {
         padding: 15,
-        justifyContent : 'center',
-        alignItems : 'flex-start'
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ebebeb',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    Search : {
-        flex : 1,
-        flexDirection : 'column',
-        marginBottom : 10,
+    BtnStyle: {
+        borderRadius: 10,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 25,
+        paddingLeft: 25,
+        backgroundColor: '#15bac1'
     },
-    Title : {
-        flex : 1,
-        margin : 10,
+    TitleTxt: {
+        fontSize: 17,
+        fontWeight: '800',
+        color: '#000000',
+        letterSpacing: -0.3,
+        marginBottom: 5,
     },
-    Content : {
-        flex : 1,
-        margin : 10,
+    SubTitleTxt: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#000000',
+        letterSpacing: -0.16,
     },
-    Button : {
-        flex : 1,
-        margin : 10,
+    BtnTxt: {
+        color: '#ffffff',
+        fontSize: 15,
+        fontWeight: '700'
     }
 })
-export default UserTypeScreen;
+export default FindUserScreen;
