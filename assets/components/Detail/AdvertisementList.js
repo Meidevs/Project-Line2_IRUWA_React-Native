@@ -48,7 +48,7 @@ const AdvertisementList = ({ data, list, navigation }) => {
                                         <Image source={{ uri: data.uri[0] }} style={styles.ItemsImages} />
                                     </View>
                                     <View style={styles.NameArea}>
-                                        <Text>{data.item_name}</Text>
+                                        <Text style={styles.NameTxt}>{data.item_name}</Text>
                                     </View>
                                 </TouchableOpacity>
                             )
@@ -66,8 +66,9 @@ const styles = StyleSheet.create({
     ADSBox: {
         flexDirection: 'column',
     },
-    ADs: {
+    ADSs: {
         height: width,
+        flexDirection : 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
         alignItems: 'center',
@@ -97,6 +98,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    NameTxt : {
+        fontSize : 13,
+        fontWeight : '800',
+        color : '#000000'
     },
     ItemsImages: {
         margin: 5,

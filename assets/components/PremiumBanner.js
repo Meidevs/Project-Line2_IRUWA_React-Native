@@ -23,6 +23,7 @@ const PremiumBanner = ({ data, navigation }) => {
         let isCancelled = true;
         const PREMIUM_ITEMS = async () => {
             var PREMIUM_LIST = await DATA_SOURCE.GET_PREMIUM_ITEMS(data);
+            console.log(PREMIUM_LIST)
             if (isCancelled)
                 setPremiumItems(PREMIUM_LIST.data);
         }

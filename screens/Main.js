@@ -19,6 +19,7 @@ import DATA_SOURCE from '../assets/dataSource/dataModel';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 import TimeGap from '../assets/components/TimeGap';
 import PremiumBanner from '../assets/components/PremiumBanner';
+import PreminumFrontAds from '../assets/components/PreminumFrontAds';
 import GLOBAL from '../assets/dataSource/globalModel';
 
 const { width, height } = Dimensions.get('window');
@@ -79,9 +80,9 @@ const Item = ({ data, user, navigation }) => {
 
 const wait = (timeout) => {
     return new Promise(resolve => {
-      setTimeout(resolve, timeout);
+        setTimeout(resolve, timeout);
     });
-  }
+}
 
 function MainScreen({ route, navigation }) {
     const headerHeight = useHeaderHeight();
@@ -137,7 +138,6 @@ function MainScreen({ route, navigation }) {
     const onRefresh = async () => {
         setRefreshing(true);
         const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
-        console.log('REFRESHING ITEMS : ', ITEMS)
         setData(ITEMS.content);
         wait(2000).then(() => setRefreshing(false));
     };
@@ -148,7 +148,6 @@ function MainScreen({ route, navigation }) {
             if (isCancelled) {
                 if (user_location != null) {
                     const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
-                    console.log('NORMAL REQUEST ITEMS : ', ITEMS)
                     setData(ITEMS.content);
                 }
             }
@@ -164,7 +163,7 @@ function MainScreen({ route, navigation }) {
 
     if (isLoad) {
         return (
-            <SafeAreaView style={[styles.Container]}>
+            <SafeAreaView style={styles.Container}>
                 <StatusBar
                     barStyle="dark-content"
                     // dark-content, light-content and default
@@ -223,10 +222,11 @@ function MainScreen({ route, navigation }) {
                         getItem={getItem}
                     />
                 </View>
+                <PreminumFrontAds data={user_location} />
             </SafeAreaView>
         )
     } else {
-        return null
+        return null;
     }
 }
 
