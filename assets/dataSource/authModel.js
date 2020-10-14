@@ -315,7 +315,7 @@ class AUTHENTICATION {
                 body: JSON.stringify({ user_email: data })
             });
             var json = await response.json();
-            if(response.ok) {
+            if (response.ok) {
                 return json;
             }
         } catch (err) {
@@ -332,7 +332,7 @@ class AUTHENTICATION {
                 body: JSON.stringify({ user_email: data })
             });
             var json = await response.json();
-            if(response.ok) {
+            if (response.ok) {
                 return json;
             }
         } catch (err) {
@@ -350,7 +350,24 @@ class AUTHENTICATION {
                 body: JSON.stringify({ user_email: data })
             });
             var json = await response.json();
-            if(response.ok) {
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    UPDATE_PASSWORD = async (prevPassword, newPassword) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/auth/newpassword', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ prevPassword : prevPassword, newPassword : newPassword})
+            });
+            var json = await response.json();
+            if (response.ok) {
                 return json;
             }
         } catch (err) {
