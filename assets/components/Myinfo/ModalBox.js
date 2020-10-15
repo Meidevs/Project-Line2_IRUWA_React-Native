@@ -30,9 +30,20 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
             ads_type: data.ads_type
         })
     }
-    const DELETE_ITEM = async () => {
+    const deleteItem = async () => {
         callback(!modalVisible);
         await DATA_SOURCE.DELETE_ITEM(data.items_seq)
+    }
+
+    const registerCoupon = () => {
+        callback(!modalVisible);
+        navigation.navigate('Coupon', {
+            items_seq: data.items_seq,
+            item_name: data.item_name,
+            item_content: data.item_content,
+            coupon_content : data.coupon_content,
+            coupon_due_date : data.coupon_due_date,
+        })
     }
 
     return (
@@ -49,6 +60,19 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
             </View>
 
             <View style={styles.ContentArea}>
+                <TouchableOpacity style={styles.ContentForm} onPress={() => registerCoupon()}>
+                    <View style={styles.IconArea}>
+                        <Image source={require('../../images/coupon_ico.png')} />
+                    </View>
+                    <View style={styles.ExplaArea}>
+                        <Text style={styles.ExplaTitleTxt}>
+                            쿠폰
+                            </Text>
+                        <Text style={styles.ExplaSubTxt}>
+                            쿠폰 등록 및 삭제하시겠습니까?
+                            </Text>
+                    </View>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.ContentForm} onPress={() => goToEdit()}>
                     <View style={styles.IconArea}>
                         <Image source={require('../../images/my_profile_ico1.png')} />
@@ -62,7 +86,7 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
                             </Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.ContentForm} onPress={() => DELETE_ITEM()}>
+                <TouchableOpacity style={styles.ContentForm} onPress={() => deleteItem()}>
                     <View style={styles.IconArea}>
                         <Image source={require('../../images/delete_ico.png')} />
                     </View>
@@ -90,7 +114,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     ContentForm: {
-        padding : 15,
+        padding: 15,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -98,10 +122,10 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(235, 235, 235, 1)'
     },
     IconArea: {
-        marginRight : 15,
+        marginRight: 15,
     },
     ExplaArea: {
-        
+
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start'

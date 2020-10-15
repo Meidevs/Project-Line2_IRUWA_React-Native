@@ -32,6 +32,7 @@ import SettingsScreen from './screens/Settings';
 import BannedListScreen from './screens/BannedList';
 import ItemListScreen from './screens/ItemList';
 import EditScreen from './screens/Edit';
+import CouponScreen from './screens/Coupon';
 import PickListScreen from './screens/PickList';
 import SetPasswordScreen from './screens/SetPassword';
 
@@ -126,6 +127,10 @@ const MyinfoStackScreens = () => {
       <MyinfoStack.Screen
         name='SetPassword'
         component={SetPasswordScreen}
+      />
+      <MyinfoStack.Screen
+        name='Coupon'
+        component={CouponScreen}
       />
     </MyinfoStack.Navigator>
   )

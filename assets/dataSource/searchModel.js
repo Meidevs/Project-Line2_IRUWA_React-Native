@@ -54,6 +54,7 @@ class SEARCH_API {
             console.log(err);
         }
     }
+    
     DELETE_PREV_ALL = async () => {
         try {
             var response = await fetch('https://mostfeel.site/api/search/history/deleteall', {

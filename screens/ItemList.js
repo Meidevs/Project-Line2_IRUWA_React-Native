@@ -37,6 +37,7 @@ function ItemListScreen({ route, navigation }) {
                     <Text style={styles.TitleHeaderTxtStyle}>등록 목록</Text>
                 </View>
             ),
+            headerRight: () => <View></View>
         })
     }, []);
 
@@ -44,6 +45,7 @@ function ItemListScreen({ route, navigation }) {
         React.useCallback(() => {
             const GET_MYLIST = async () => {
                 var MYLIST = await DATA_SOURCE.GET_MY_ITEMS(cmp_seq);
+                console.log(MYLIST)
                 setItems(MYLIST.content);
                 setIsLoad(true)
             }
@@ -97,7 +99,7 @@ function ItemListScreen({ route, navigation }) {
                                         </View>
                                         <TouchableOpacity style={styles.UploadTime} onPress={() => setStatus(data)}>
                                             <Image source={require('../assets/images/more_button.png')}
-                                            
+
                                             />
                                         </TouchableOpacity>
                                     </View>
@@ -136,7 +138,7 @@ function ItemListScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
@@ -167,6 +169,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 60,
         height: 20,
+    },
+    UploadTime : {
+        paddingRight : 10,
+        paddingLeft : 10,
     },
     AdsTypeTxt: {
         fontSize: 12,

@@ -249,15 +249,14 @@ const styles = StyleSheet.create({
         marginRight: 25,
         marginLeft: 25,
         marginBottom: 15,
-        padding: 25,
+        padding: 15,
         flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
         borderWidth: 1,
         borderRadius: 10,
         borderColor: '#ebebeb',
     },
     ItemTitleTxt: {
+        flex : 1,
         fontSize: 15,
     },
     ItemTextArea: {
@@ -266,19 +265,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#ebebeb',
-        padding: 25,
+        padding: 15,
         height: 400,
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     ItemTextTxt: {
         flex: 1,
         textAlignVertical: 'top',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        fontSize: 15
+        fontSize: 15,
     },
     ImageListForm: {
         width: 60,
@@ -327,13 +321,13 @@ const styles = StyleSheet.create({
     InnerSwitch: {
         width: 9,
         height: 9,
-        borderRadius: 9,
+        borderRadius: 10,
         backgroundColor: '#15bac1'
     },
     NonInnerSwitch: {
         width: 9,
         height: 9,
-        borderRadius: 9,
+        borderRadius: 10,
     },
     SwitchBtnTxt: {
         fontSize: 15,
