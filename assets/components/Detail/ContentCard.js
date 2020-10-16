@@ -8,7 +8,6 @@ import {
 const { width, height } = Dimensions.get('window');
 
 const ContentCard = ({ data }) => {
-    console.log(data)
     return (
         <View style={styles.CardBox}>
             <View style={styles.CardHeader}>

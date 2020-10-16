@@ -7,7 +7,6 @@ import {
     Image,
     StyleSheet,
     TouchableOpacity,
-    Platform,
     Keyboard,
     Animated
 } from 'react-native';
@@ -60,7 +59,7 @@ function UserTypeScreen({ route, navigation }) {
         uri: null
     });
     const [category_seq, setCompanyCate] = useState('');
-    const keyboardHeight = useRef(new Animated.Value(0)).current;
+    const keyboardHeight = useRef(new Animated.Value(-30)).current;
 
     useEffect(() => {
         navigation.setOptions({
@@ -141,7 +140,7 @@ function UserTypeScreen({ route, navigation }) {
             Animated.timing(keyboardHeight, {
                 useNativeDriver: false,
                 duration: e.duration,
-                toValue: e.endCoordinates.height / 1.5,
+                toValue: e.endCoordinates.height,
             }),
         ]).start();
     }
@@ -150,7 +149,7 @@ function UserTypeScreen({ route, navigation }) {
             Animated.timing(keyboardHeight, {
                 useNativeDriver: false,
                 duration: e.duration,
-                toValue: 0,
+                toValue: -30,
             }),
         ]).start();
     }
@@ -271,7 +270,6 @@ function UserTypeScreen({ route, navigation }) {
                             </TouchableOpacity>
                         </View>
                     </View>
-
                 )
             case 1:
                 return (
@@ -496,34 +494,34 @@ function UserTypeScreen({ route, navigation }) {
         setCompanyLon(ChildFrom[3]);
     }
     return (
-        <Animated.View style={[styles.Container, { bottom: Platform.OS == 'ios' ? keyboardHeight : null }]}>
+        <View style={styles.Container}>
             <View style={styles.RegisterCard}>
-                <View style={styles.RegisterCardIcon}>
+                <Animated.View style={[styles.RegisterCardIcon, { bottom: keyboardHeight }]}>
                     <Image source={require('../assets/logo.png')}
                         borderRadius={40}
                         style={{ width: 50, height: 50 }}
                     />
-                </View>
+                </Animated.View>
                 {
                     componentJSX_A()
                 }
-                <View style={styles.NextBtn}>
+                <Animated.View style={[styles.NextBtn, {bottom : keyboardHeight}]}>
                     {
                         status == 0 & pageCount == 3 ? (
                             <TouchableOpacity
-                                style={{ flex: 1, justifyContent : 'center', alignItems : 'center', width : 120, height : 80}}
+                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 80 }}
                                 onPress={() => Register()}>
                                 <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
                             </TouchableOpacity>
                         ) : status == 1 & pageCount == 5 ? (
                             <TouchableOpacity
-                                style={{ flex: 1, justifyContent : 'center', alignItems : 'center', width : 120, height : 80}}
+                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 80 }}
                                 onPress={() => Register()}>
                                 <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
                             </TouchableOpacity>
                         ) : (
                                     <TouchableOpacity
-                                        style={{ flex: 1, justifyContent : 'center', alignItems : 'center', width : 120, height : 80}}
+                                        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 80 }}
                                         onPress={() => NextPage()}>
                                         <Image source={require('../assets/images/long_right_arrow_ico.png')}
                                             style={{ width: 55, height: 27.5 }}
@@ -531,13 +529,13 @@ function UserTypeScreen({ route, navigation }) {
                                     </TouchableOpacity>
                                 )
                     }
-                </View>
+                </Animated.View>
             </View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
             <TermC visible={isTermC} callback={callbackC} />
             <CmpAddressSearchBox visible={modalVisible} location={ReturnLocation} callback={ReturnVisible} />
-        </Animated.View >
+        </View >
     )
 }
 const styles = StyleSheet.create({
@@ -664,7 +662,6 @@ const styles = StyleSheet.create({
     NextBtn: {
         position: 'absolute',
         bottom: -30,
-        zIndex: 10,
         padding: 10,
         width: 120,
         height: 60,

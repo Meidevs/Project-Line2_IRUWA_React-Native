@@ -6,6 +6,7 @@ import {
     Image,
     StyleSheet,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 
 import DATA_SOURCE from '../../dataSource/dataModel';
@@ -41,9 +42,21 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
             items_seq: data.items_seq,
             item_name: data.item_name,
             item_content: data.item_content,
-            coupon_content : data.coupon_content,
-            coupon_due_date : data.coupon_due_date,
+            coupon_content: data.coupon_content,
+            coupon_due_date: data.coupon_due_date,
         })
+    }
+
+    const resetItem = async () => {
+        var result = await DATA_SOURCE.UPDATE_REGISTER_DATE(data.items_seq);
+        Alert.alert(
+            "알림",
+            result.message,
+            [
+                { text: "OK" }
+            ]
+        )
+        callback(!modalVisible);
     }
 
     return (
@@ -60,6 +73,21 @@ const ModalBox = ({ data, visible, callback, navigation }) => {
             </View>
 
             <View style={styles.ContentArea}>
+                <TouchableOpacity style={styles.ContentForm} onPress={() => resetItem()}>
+                    <View style={styles.IconArea}>
+                        <Image source={require('../../images/reset_button_ico.png')}
+                            style={{ width: 20, height: 20, margin: 5 }}
+                        />
+                    </View>
+                    <View style={styles.ExplaArea}>
+                        <Text style={styles.ExplaTitleTxt}>
+                            끌어올리기
+                            </Text>
+                        <Text style={styles.ExplaSubTxt}>
+                            게시물을 상단에 위치시겠습니까?
+                            </Text>
+                    </View>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.ContentForm} onPress={() => registerCoupon()}>
                     <View style={styles.IconArea}>
                         <Image source={require('../../images/coupon_ico.png')} />

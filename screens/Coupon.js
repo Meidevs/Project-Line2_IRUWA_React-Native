@@ -8,6 +8,8 @@ import {
     TouchableOpacity,
     Animated,
     Alert,
+    Platform,
+    Keyboard
 } from 'react-native';
 
 import DATA_SOURCE from '../assets/dataSource/dataModel';
@@ -32,11 +34,56 @@ function CouponScreen({ route, navigation }) {
                 </View>
             ),
             headerRight: () =>
-                <View style={styles.RightHeader}>
+                <TouchableOpacity style={styles.RightHeader} onPress={() => deleteCoupon(items_seq)}>
                     <Text style={styles.TitleHeaderTxtStyle}>삭제</Text>
-                </View>
+                </TouchableOpacity>
         })
+    }, [route]);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow', (event) => {
+                keyboardDidShow(event)
+            } // or some other action
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide', (event) => keyboardDidHide(event) // or some other action
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
     }, []);
+
+    const keyboardDidShow = (e) => {
+        if (Platform.OS == 'ion') {
+            Animated.parallel([
+                Animated.timing(keyboardHeight, {
+                    useNativeDriver: false,
+                    duration: e.duration,
+                    toValue: e.endCoordinates.height,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(keyboardHeight, {
+                    useNativeDriver: false,
+                    duration: e.duration,
+                    toValue: e.endCoordinates.height / 2,
+                }),
+            ]).start();
+        }
+    }
+    const keyboardDidHide = (e) => {
+        Animated.parallel([
+            Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
+                duration: e.duration,
+                toValue: 0,
+            }),
+        ]).start();
+    }
 
     const setCouponText = (data) => {
         var stringlen = new Blob([data]).size;
@@ -89,6 +136,10 @@ function CouponScreen({ route, navigation }) {
         await DATA_SOURCE.SET_COUPON(items_seq, coupon_content, coupon_due_date);
     }
 
+    const deleteCoupon = async (items_seq) => {
+        console.log(items_seq)
+    }
+
     return (
         <Animated.View style={[styles.Container, { bottom: Platform.OS == 'ios' ? keyboardHeight : null }]}>
             <View style={styles.SearchCard}>
@@ -125,11 +176,11 @@ function CouponScreen({ route, navigation }) {
                             />
                         </View>
                     </View>
-                    <View style={styles.SearchBtn}>
-                        <TouchableOpacity style={styles.BtnStyle} onPress={() => checkCouponCondition()}>
-                            <Text style={styles.BtnTxt}>확인</Text>
-                        </TouchableOpacity>
-                    </View>
+                </View>
+                <View style={styles.SearchBtn}>
+                    <TouchableOpacity style={styles.BtnStyle} onPress={() => checkCouponCondition()}>
+                        <Text style={styles.BtnTxt}>확인</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </Animated.View>
@@ -160,34 +211,26 @@ const styles = StyleSheet.create({
     SearchCard: {
         width: width * 0.8,
         height: height * 0.6,
-        paddingRight: 25,
-        paddingLeft: 25,
+        padding: 25,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#ebebeb'
     },
-    Logo: {
-        padding: 15,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
     SearchContent: {
         flex: 1,
-        justifyContent: 'flex-start',
-        marginTop: 15,
     },
     Section: {
         flex: 1,
+        marginTop: 10,
         justifyContent: 'flex-start',
     },
     SearchBtn: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'flex-end'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     InnerSection: {
         flex: 1,
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     TextInput: {

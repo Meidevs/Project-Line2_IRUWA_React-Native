@@ -48,9 +48,7 @@ function BeforeLoginScreen({ navigation }) {
                 networkActivityIndicatorVisible={true}
             />
             <View style={styles.Container}>
-                <TouchableOpacity style={styles.SearchUserArea} onPress={() => navigation.navigate('FindUser')}>
-                    <Text style={styles.SearchUserTxt}>아이디 비밀번호 찾기</Text>
-                </TouchableOpacity>
+                
                 <View style={styles.IntroTextArea}>
                     <View style={styles.IntroSub}>
                         <Text style={styles.IntroSubTxt}>주변에 어디에서 놀아야할지 모르겠다면?</Text>
@@ -83,18 +81,6 @@ const styles = StyleSheet.create({
     Container: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.7)'
-    },
-    SearchUserArea: {
-        flex: 1,
-        paddingRight: 25,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    SearchUserTxt: {
-        color: 'rgba(205, 205, 205, 1)',
-        fontWeight: '700',
-        fontSize: 15,
     },
     IntroTextArea: {
         flex: 5,

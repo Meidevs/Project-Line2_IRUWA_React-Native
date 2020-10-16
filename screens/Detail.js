@@ -10,7 +10,8 @@ import {
     Image,
     StatusBar,
     ActivityIndicator,
-    Platform
+    Platform,
+    Linking
 } from 'react-native';
 
 import Constants from "expo-constants";
@@ -191,7 +192,7 @@ function DetailScreen({ route, navigation }) {
                     item_image_url: data.uri,
                     item_title: data.item_name,
                     item_content: data.item_content,
-                    ads_type : data.ads_type,
+                    ads_type: data.ads_type,
                     item_reg: time_avg,
                     cmp_seq: ITEM_INFOs.CMP_INFOs.cmp_seq,
                     cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
@@ -213,6 +214,10 @@ function DetailScreen({ route, navigation }) {
         }
         GET_ITEM_INFOs()
     }, []);
+
+    const goToNavigation = () => {
+        Linking.openURL(`https://kakaonavi-wguide.kakao.com/drive.html?ak=13da3914377346b0b8f74f5309b49dad&ctype=1&lt=${itemInfos.cmp_lat}&ln=${itemInfos.cmp_lon}`);
+    }
 
     const setNavigationParams = async () => {
         var cmp_seq = itemInfos.cmp_seq;
@@ -379,7 +384,13 @@ function DetailScreen({ route, navigation }) {
                         style={styles.ChatBtn}
                         onPress={() => setNavigationParams()}
                     >
-                        <Text style={styles.ChatTxtStyle}>채팅으로 거래하기</Text>
+                        <Text style={styles.ChatTxtStyle}>채팅</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.NavigationBtn}
+                        onPress={() => goToNavigation()}
+                    >
+                        <Text style={styles.ChatTxtStyle}>길안내</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView >
@@ -498,10 +509,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#15bac1',
     },
     ChatBtn: {
-        flex: 1,
+        flex : 1,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    NavigationBtn: {
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderLeftWidth : 0.5,
+        borderColor : '#ffffff'
     },
     ChatTxtStyle: {
         fontSize: 15,

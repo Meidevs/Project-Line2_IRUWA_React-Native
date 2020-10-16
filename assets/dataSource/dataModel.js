@@ -308,7 +308,7 @@ class DATA_SORUCE {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body : JSON.stringify({ items_seq : items_seq, coupon_content : coupon_content, coupon_due_date : coupon_due_date})
+                body: JSON.stringify({ items_seq: items_seq, coupon_content: coupon_content, coupon_due_date: coupon_due_date })
             });
             var json = await response.json();
             if (response.ok) {
@@ -318,7 +318,24 @@ class DATA_SORUCE {
             console.log(err);
         }
     }
-
+    UPDATE_REGISTER_DATE = async (data) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/item/regdate', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items_seq : data })
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 

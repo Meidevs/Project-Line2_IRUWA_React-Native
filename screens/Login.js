@@ -9,7 +9,7 @@ import {
     StyleSheet,
     Dimensions,
     Animated,
-    Keyboard, 
+    Keyboard,
     Platform
 } from 'react-native';
 import registerForPushNotificationsAsync from '../assets/components/Login/getDeviceToken';
@@ -27,7 +27,6 @@ function LoginScreen({ navigation }) {
             headerTitle: null,
         })
     }, []);
-
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
@@ -38,7 +37,7 @@ function LoginScreen({ navigation }) {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow', (event) => {
                 keyboardDidShow(event)
-            } // or some other action
+            }
         );
         const keyboardDidHideListener = Keyboard.addListener(
             'keyboardDidHide', (event) => keyboardDidHide(event) // or some other action
@@ -81,9 +80,9 @@ function LoginScreen({ navigation }) {
     }
 
     return (
-        <View
+        <Animated.View
             behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={styles.Container}>
+            style={[styles.Container, {bottom: keyboardHeight }]}>
             <StatusBar
                 barStyle="dark-content"
                 // dark-content, light-content and default
@@ -95,7 +94,7 @@ function LoginScreen({ navigation }) {
                 //allowing light, but not detailed shapes
                 networkActivityIndicatorVisible={true}
             />
-            <Animated.View style={{ flex: 1, bottom: Platform.OS == 'ios' ? keyboardHeight : keyboardHeight, }}>
+            <View style={{ flex: 1}}>
                 <View style={styles.HeaderStyle}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('../assets/images/back_button.png')} />
@@ -135,13 +134,14 @@ function LoginScreen({ navigation }) {
                         </View>
                     </View>
                 </View>
-            </Animated.View>
-            <View style={styles.BtnContainer}>
-                <TouchableOpacity style={styles.LoginBtnForm} onPress={() => Login()}>
-                    <Text style={styles.LoginBtnTxt}>로그인</Text>
-                </TouchableOpacity>
             </View>
-        </View>
+            <TouchableOpacity style={styles.SearchUserArea} onPress={() => navigation.navigate('FindUser')}>
+                <Text style={styles.SearchUserTxt}>아이디 비밀번호 찾기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.LoginBtnForm} onPress={() => Login()}>
+                <Text style={styles.LoginBtnTxt}>로그인</Text>
+            </TouchableOpacity>
+        </Animated.View>
     )
 }
 
@@ -157,6 +157,19 @@ const styles = StyleSheet.create({
         marginTop: 25,
         flexDirection: 'column',
     },
+    FindUser: {
+    },
+    SearchUserArea: {
+        padding: 25,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    SearchUserTxt: {
+        color: 'rgba(205, 205, 205, 1)',
+        fontWeight: '700',
+        fontSize: 15,
+    },
     MainContainer: {
         flex: 1,
         flexDirection: 'column',
@@ -167,6 +180,7 @@ const styles = StyleSheet.create({
         width: width,
     },
     MainTitle: {
+        marginTop: 15,
         paddingLeft: 25,
         justifyContent: 'center',
         alignItems: 'flex-start',
@@ -176,9 +190,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     InputForm: {
-        margin: 25,
-        padding: 10,
-        height: height * 0.08,
+        marginRight: 25,
+        marginLeft: 25,
+        marginTop: 15,
+        padding: 15,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: 'rgba(235, 235, 235, 1)',
@@ -188,20 +203,15 @@ const styles = StyleSheet.create({
     Input: {
         flex: 1,
     },
-    BtnContainer: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
     LoginBtnForm: {
         width: width,
-        height: height * 0.07,
+        padding: 20,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#15BAC1'
     },
     LoginBtnTxt: {
-        color: 'rgba(255, 255, 255, 1)',
+        color: '#ffffff',
         fontSize: 15,
     },
 })

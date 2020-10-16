@@ -45,7 +45,6 @@ function ItemListScreen({ route, navigation }) {
         React.useCallback(() => {
             const GET_MYLIST = async () => {
                 var MYLIST = await DATA_SOURCE.GET_MY_ITEMS(cmp_seq);
-                console.log(MYLIST)
                 setItems(MYLIST.content);
                 setIsLoad(true)
             }
