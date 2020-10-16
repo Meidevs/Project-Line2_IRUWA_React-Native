@@ -137,7 +137,7 @@ function CouponScreen({ route, navigation }) {
     }
 
     const deleteCoupon = async (items_seq) => {
-        console.log(items_seq)
+        await DATA_SOURCE.DELETE_COUPON(items_seq);
     }
 
     return (

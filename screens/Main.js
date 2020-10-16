@@ -191,12 +191,6 @@ function MainScreen({ route, navigation }) {
                     >
                         <View style={styles.LocationBtn}>
                             <Text style={styles.CurrentLocationTxt}>{user_location}</Text>
-                            <View style={styles.DropDownBtn}>
-                                <Image
-                                    source={require('../assets/images/down_arrow_ico.png')}
-                                    style={{ width: 15, height: 8 }}
-                                />
-                            </View>
                             <View style={styles.SearchBtn}>
                                 <Image
                                     source={require('../assets/images/search_ico_white.png')}
@@ -327,6 +321,7 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         padding: 8,
+        marginLeft : 5,
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',

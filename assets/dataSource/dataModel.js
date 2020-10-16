@@ -299,6 +299,24 @@ class DATA_SORUCE {
             console.log(err);
         }
     }
+    DELETE_COUPON = async (items_seq) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/item/removecoupon', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items_seq: items_seq})
+            });
+            let json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+
+        }
+    }
 
     SET_COUPON = async (items_seq, coupon_content, coupon_due_date) => {
         try {

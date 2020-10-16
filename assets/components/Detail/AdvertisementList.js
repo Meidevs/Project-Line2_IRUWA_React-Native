@@ -17,6 +17,7 @@ const AdvertisementList = ({ data, list, navigation }) => {
             list.map((item, index) => {
                 item.user_seq = data.user_seq
             });
+            console.log(list)
             setItem(list);
             setIsLoad(true);
         }
@@ -67,7 +68,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     ADSs: {
-        height: width,
         flexDirection : 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
@@ -83,8 +83,11 @@ const styles = StyleSheet.create({
         color: '#000000'
     },
     ADSContent: {
-        padding: 5,
-        height: width * 0.4,
+        padding: 10,
+        width : width * 0.4,
+        borderRadius : 10,
+        borderWidth : 1,
+        borderColor : '#ebebeb',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
@@ -96,19 +99,22 @@ const styles = StyleSheet.create({
     },
     NameArea: {
         flex: 1,
+        marginTop : 15,
+        marginBottom : 15,
         justifyContent: 'center',
         alignItems: 'center'
     },
     NameTxt : {
         fontSize : 13,
-        fontWeight : '800',
-        color : '#000000'
+        fontWeight : 'bold',
+        color : '#000000',
+        textAlign : 'center'
     },
     ItemsImages: {
         margin: 5,
         width: width * 0.30,
         height: width * 0.30,
-        borderRadius: 5,
+        borderRadius: 10,
         resizeMode: 'cover'
     }
 });

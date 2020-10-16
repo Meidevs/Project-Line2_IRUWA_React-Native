@@ -495,17 +495,17 @@ function UserTypeScreen({ route, navigation }) {
     }
     return (
         <View style={styles.Container}>
-            <View style={styles.RegisterCard}>
-                <Animated.View style={[styles.RegisterCardIcon, { bottom: keyboardHeight }]}>
+            <Animated.View style={[styles.RegisterCard, {bottom : keyboardHeight}]}>
+                <View style={styles.RegisterCardIcon}>
                     <Image source={require('../assets/logo.png')}
                         borderRadius={40}
                         style={{ width: 50, height: 50 }}
                     />
-                </Animated.View>
+                </View>
                 {
                     componentJSX_A()
                 }
-                <Animated.View style={[styles.NextBtn, {bottom : keyboardHeight}]}>
+                <View style={styles.NextBtn}>
                     {
                         status == 0 & pageCount == 3 ? (
                             <TouchableOpacity
@@ -529,8 +529,8 @@ function UserTypeScreen({ route, navigation }) {
                                     </TouchableOpacity>
                                 )
                     }
-                </Animated.View>
-            </View>
+                </View>
+            </Animated.View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
             <TermC visible={isTermC} callback={callbackC} />
