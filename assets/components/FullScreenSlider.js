@@ -39,8 +39,8 @@ const FullScreenSilder = ({ data, visible, callback }) => {
             animationType="slide"
             transparent={true}
             visible={visibility}>
-            <TouchableOpacity style={styles.HeaderBox}>
-                <Icon name={'arrowleft'} size={30} color={'white'} onPress={() => ReturnVisible(!visibility)} />
+            <TouchableOpacity style={styles.HeaderBox} onPress={() => ReturnVisible(false)}>
+                <Image source={require('../images/back_button_white.png')} />
             </TouchableOpacity>
             <FlatList
                 horizontal={true}
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         left: 0,
-        zIndex : 5,
-        padding : 10,
+        zIndex: 5,
+        padding: 15,
     },
     FullScreen: {
         width: width,

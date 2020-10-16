@@ -191,6 +191,7 @@ function DetailScreen({ route, navigation }) {
                     item_image_url: data.uri,
                     item_title: data.item_name,
                     item_content: data.item_content,
+                    ads_type : data.ads_type,
                     item_reg: time_avg,
                     cmp_seq: ITEM_INFOs.CMP_INFOs.cmp_seq,
                     cmp_name: ITEM_INFOs.CMP_INFOs.cmp_name,
@@ -343,6 +344,7 @@ function DetailScreen({ route, navigation }) {
                             </View>
                         </View>
                         <ContentCard data={itemInfos} />
+                        <CouponCard data={coupon} />
                         <View style={styles.ItemBox}>
                             <Text style={{
                                 fontSize: 13,
@@ -350,7 +352,6 @@ function DetailScreen({ route, navigation }) {
                                 color: '#000000'
                             }}>{itemInfos.cmp_name}의 위치</Text>
                         </View>
-                        <CouponCard data={coupon} />
                         <MapView
                             region={{
                                 latitude: itemInfos.cmp_lat,

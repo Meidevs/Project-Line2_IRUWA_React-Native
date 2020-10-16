@@ -76,10 +76,6 @@ function CategoryScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-    Container: {
-        flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
-    },
     TitleHeader: {
         flexDirection: 'column',
         alignItems: 'center',
@@ -88,6 +84,10 @@ const styles = StyleSheet.create({
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
         fontSize: 15
+    },
+    Container: {
+        flex: 1,
+        backgroundColor: 'rgba(255, 255, 255, 1)'
     },
     RightHeader: {
         flexDirection: 'row',

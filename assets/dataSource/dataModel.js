@@ -299,6 +299,26 @@ class DATA_SORUCE {
             console.log(err);
         }
     }
+
+    SET_COUPON = async (items_seq, coupon_content, coupon_due_date) => {
+        try {
+            var response = await fetch('https://mostfeel.site/api/item/coupon', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body : JSON.stringify({ items_seq : items_seq, coupon_content : coupon_content, coupon_due_date : coupon_due_date})
+            });
+            var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
 }
 
 

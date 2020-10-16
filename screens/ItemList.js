@@ -143,16 +143,16 @@ const styles = StyleSheet.create({
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     Container: {
         flex: 1,
     },
     ContentBox: {
         width: width,
-        backgroundColor: 'rgba(255, 255, 255, 1)',
+        backgroundColor: '#ffffff',
         borderBottomWidth: 0.6,
-        borderColor: 'rgba(245, 245, 245, 1)'
+        borderColor: '#f5f5f5'
     },
     UpperContent: {
         paddingTop: 15,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     },
     ShowAdsType: {
         borderRadius: 5,
-        backgroundColor: 'rgba(245, 245, 245, 1)',
+        backgroundColor: '#f5f5f5',
         justifyContent: 'center',
         alignItems: 'center',
         width: 60,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     },
     AdsTypeTxt: {
         fontSize: 12,
-        color: 'rgba(140, 140, 140, 1)',
+        color: '#8c8c8c',
         fontWeight: 'bold'
     },
     UploadTimeTxt: {

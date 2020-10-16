@@ -55,8 +55,8 @@ function ChatListScreen({ route, navigation }) {
         navigation.setOptions({
             headerLeft: () => <View></View>,
             headerTitle: () => (
-                <View style={styles.HeaderTitleBox}>
-                    <Text style={styles.HeaderTitleTxt}>채팅 리스트</Text>
+                <View style={styles.TitleHeader}>
+                    <Text style={styles.TitleHeaderTxtStyle}>채팅 리스트</Text>
                 </View>
             ),
             headerRight: () =>
@@ -110,14 +110,14 @@ function ChatListScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-    HeaderTitleBox: {
+    TitleHeader: {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center'
     },
-    HeaderTitleTxt: {
+    TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     Container: {
         backgroundColor: 'rgba(255, 255, 255, 1)'

@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     Container: {
         flex: 1,

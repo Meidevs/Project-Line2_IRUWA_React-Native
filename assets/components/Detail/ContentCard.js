@@ -8,11 +8,23 @@ import {
 const { width, height } = Dimensions.get('window');
 
 const ContentCard = ({ data }) => {
+    console.log(data)
     return (
         <View style={styles.CardBox}>
             <View style={styles.CardHeader}>
                 <View style={styles.HeaderStarter}>
-                    <Text style={styles.StarterTxt}>알려드려요!</Text>
+                    {
+                        data.ads_type == 0 ?
+                            (
+                                <View style={styles.AdsType}>
+                                    <Text style={styles.StarterTxt}>일반</Text>
+                                </View>
+                            ) : (
+                                <View style={styles.AdsType}>
+                                    <Text style={styles.StarterTxt}>프리미엄</Text>
+                                </View>
+                            )
+                    }
                 </View>
                 <View style={styles.HeaderTitle}>
                     <Text style={styles.HeaderTxt}>{data.item_title}</Text>
@@ -34,57 +46,65 @@ const ContentCard = ({ data }) => {
 
 const styles = StyleSheet.create({
     CardBox: {
-        margin : 10,
-        marginBottom : 25,
-        width : width * 0.9,
-        borderWidth : 2,
-        borderRadius : 10,
-        borderColor : 'rgba(245, 245, 245, 1)'
+        margin: 10,
+        marginBottom: 25,
+        width: width * 0.9,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#ebebeb'
     },
-    CardHeader : {
-        flexDirection : 'column',
-        justifyContent : 'center',
-        alignItems : 'flex-start'
+    CardHeader: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start'
     },
-    HeaderStarter : {
-        paddingTop : 25,
-        paddingLeft : 25,
-        paddingBottom : 20,
+    HeaderStarter: {
+        paddingTop: 25,
+        paddingLeft: 25,
+        paddingBottom: 20,
     },
-    StarterTxt : {
-        color : 'rgba(63, 200, 205, 1)',
-        fontSize : 14,
-        fontWeight : 'bold'
+    AdsType : {
+        borderRadius: 5,
+        backgroundColor: '#f5f5f5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 60,
+        height: 20,
     },
-    HeaderTitle : {
-        paddingLeft : 25,
+    StarterTxt: {
+        fontSize: 12,
+        color: '#8c8c8c',
+        fontWeight: 'bold'
     },
-    HeaderTxt : {
-        color : 'rgba(0, 0, 0, 1)',
-        fontSize : 24,
-        fontWeight : 'bold'
+    HeaderTitle: {
+        paddingLeft: 25,
     },
-    HeaderInfo : {
-        flexDirection : 'row',
-        justifyContent : 'space-between',
-        alignItems : 'center',
-        width : width * 0.9,
-        padding : 25,
+    HeaderTxt: {
+        color: '#000000',
+        fontSize: 24,
+        fontWeight: 'bold'
     },
-    HeaderInfoTxt : {
-        color : 'rgba(169, 169, 169, 1)',
-        fontSize : 14,
-        fontWeight : '700'
+    HeaderInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: width * 0.9,
+        padding: 25,
     },
-    CardContent : {
+    HeaderInfoTxt: {
+        color: 'rgba(169, 169, 169, 1)',
+        fontSize: 14,
+        fontWeight: '700'
+    },
+    CardContent: {
         paddingRight: 25,
         paddingLeft: 25,
     },
-    CardSubInfo : {
-        paddingTop : 10,
+    CardSubInfo: {
+        paddingTop: 10,
         paddingRight: 25,
         paddingLeft: 25,
-        paddingBottom : 25,
+        paddingBottom: 25,
     }
 });
 

@@ -25,7 +25,7 @@ function MyinfoScreen({ route, navigation }) {
             headerLeft: null,
             headerTitle: () => (
                 <View style={styles.TitleHeader}>
-                    <Text style={styles.TitleHeaderTxtStyle}>내 정보</Text>
+                    <Text style={styles.TitleHeaderTxtStyle}>MY</Text>
                 </View>
             ),
             headerRight: () => (
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     SettingHeader: {
         flexDirection: 'column',

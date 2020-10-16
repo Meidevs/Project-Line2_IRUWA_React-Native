@@ -65,7 +65,7 @@ const Item = ({ data, user, navigation, callback }) => {
                     <View style={styles.Icon}>
                         <Image source={require('../assets/images/like_ico_default.png')}
                             resizeMode={'contain'}
-                            style={{ width: 18, height: 18, marginRight : 10,}}
+                            style={{ width: 18, height: 18, marginRight: 10, }}
                         />
                         <Text>{data.cnt}</Text>
                     </View>
@@ -104,6 +104,9 @@ function PickListScreen({ route, navigation }) {
                     <Text style={styles.TitleHeaderTxtStyle}>관심 목록</Text>
                 </View>
             ),
+            headerRight: () => (
+                < View ></View>
+            )
         })
     }, []);
 
@@ -142,12 +145,12 @@ function PickListScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     TitleHeader: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     Container: {
         flex: 1,

@@ -7,12 +7,16 @@ import {
     TextInput,
     TouchableOpacity,
     Animated,
+    Alert,
 } from 'react-native';
+
+import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
 
 function CouponScreen({ route, navigation }) {
     const {
+        items_seq,
         item_name,
         item_content,
         coupon_content,
@@ -35,14 +39,54 @@ function CouponScreen({ route, navigation }) {
     }, []);
 
     const setCouponText = (data) => {
-        if (data.length > 20) {
-            data.substring(0,20);
+        var stringlen = new Blob([data]).size;
+        if (stringlen > 45) {
+            var stringLength = data.length;
+            data = data.substring(0, stringLength - 2);
         }
-        setCouponContent(data)
+        setCouponContent(data);
     }
 
-    const checkCouponDueDate = () => {
+    const checkCouponCondition = async () => {
+        var period;
+        if (!couponDueDate | !couponContent) return Alert.alert(
+            '알림',
+            '쿠폰 내용을 입력해 주세요.',
+            [
+                { text: "확인" }
+            ]
+        )
+        if (couponDueDate.includes('주')) {
+            var str = couponDueDate.replace(/[^0-9]/g, '');
+            period = parseInt(str) * 7;
+        } else if (couponDueDate.includes('개월')) {
+            var str = couponDueDate.replace(/[^0-9]/g, '');
+            period = parseInt(str) * 30;
+        } else if (couponDueDate.includes('년')) {
+            var str = couponDueDate.replace(/[^0-9]/g, '');
+            period = parseInt(str) * 365;
+        } else {
+            var str = couponDueDate.replace(/[^0-9]/g, '');
+            period = parseInt(str);
+        }
+        Alert.alert(
+            "쿠폰 내용을 확인해 주세요.",
+            "쿠폰 내용 : " + couponContent + '\n쿠폰 적용 기간 : ' + period + '일',
+            [
+                {
+                    text: "취소",
+                    style: "cancel"
+                },
+                {
+                    text: "확인",
+                    onPress: () => saveCoupon(couponContent, period)
+                }
+            ]
+        )
+    }
 
+    const saveCoupon = async (coupon_content, coupon_due_date) => {
+        await DATA_SOURCE.SET_COUPON(items_seq, coupon_content, coupon_due_date);
     }
 
     return (
@@ -77,12 +121,12 @@ function CouponScreen({ route, navigation }) {
                             <TextInput
                                 value={couponDueDate}
                                 placeholder={'기간을 입력해 주세요. (ex) 10일'}
-                                onChangeText={text => checkCouponDueDate(text)}
+                                onChangeText={text => setCouponDueDate(text)}
                             />
                         </View>
                     </View>
                     <View style={styles.SearchBtn}>
-                        <TouchableOpacity style={styles.BtnStyle} onPress={() => setCoupon()}>
+                        <TouchableOpacity style={styles.BtnStyle} onPress={() => checkCouponCondition()}>
                             <Text style={styles.BtnTxt}>확인</Text>
                         </TouchableOpacity>
                     </View>
@@ -100,7 +144,7 @@ const styles = StyleSheet.create({
     },
     TitleHeaderTxtStyle: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 15
     },
     RightHeader: {
         flexDirection: 'row',
