@@ -140,7 +140,7 @@ function UserTypeScreen({ route, navigation }) {
             Animated.timing(keyboardHeight, {
                 useNativeDriver: false,
                 duration: e.duration,
-                toValue: e.endCoordinates.height,
+                toValue: e.endCoordinates.height / 5,
             }),
         ]).start();
     }

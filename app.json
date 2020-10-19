@@ -2,7 +2,7 @@
   "expo": {
     "name": "IRUWA",
     "slug": "IRUWA",
-    "version": "1.0.4",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -16,8 +16,8 @@
       "androidMode": "default"
     },
     "android": {
-      "package": "com.Line2.test",
-      "versionCode": 4,
+      "package": "com.Line2.Iruwa",
+      "versionCode": 1,
       "useNextNotificationsApi": true,
       "permissions" : [
         "ACCESS_COARSE_LOCATION",
@@ -34,7 +34,7 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.Line2.test",
+      "bundleIdentifier": "com.Line2.Iruwa",
       "buildNumber": "1.0.0",
       "supportsTablet": true,
       "infoPlist": {
