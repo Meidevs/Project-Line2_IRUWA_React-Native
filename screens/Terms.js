@@ -495,7 +495,7 @@ function UserTypeScreen({ route, navigation }) {
     }
     return (
         <View style={styles.Container}>
-            <Animated.View style={[styles.RegisterCard, {bottom : keyboardHeight}]}>
+            <Animated.View style={[styles.RegisterCard, { bottom: keyboardHeight }]}>
                 <View style={styles.RegisterCardIcon}>
                     <Image source={require('../assets/logo.png')}
                         borderRadius={40}
@@ -505,31 +505,38 @@ function UserTypeScreen({ route, navigation }) {
                 {
                     componentJSX_A()
                 }
-                <View style={styles.NextBtn}>
-                    {
-                        status == 0 & pageCount == 3 ? (
+
+                {
+                    status == 0 & pageCount == 3 ? (
+                        <View style={styles.NextBtn}>
                             <TouchableOpacity
-                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 80 }}
+                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
                                 onPress={() => Register()}>
                                 <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
                             </TouchableOpacity>
-                        ) : status == 1 & pageCount == 5 ? (
+                        </View>
+                    ) : status == 1 & pageCount == 5 ? (
+                        <View style={styles.NextBtn}>
                             <TouchableOpacity
-                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 80 }}
+                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
                                 onPress={() => Register()}>
                                 <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
                             </TouchableOpacity>
-                        ) : (
+                        </View>
+                    ) : (
+                                <View style={styles.NextBtn}>
                                     <TouchableOpacity
-                                        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 80 }}
+                                        style={{
+                                            flex: 1, justifyContent: 'center', alignItems: 'center', width: 120,
+                                            height: 60
+                                        }}
                                         onPress={() => NextPage()}>
                                         <Image source={require('../assets/images/long_right_arrow_ico.png')}
-                                            style={{ width: 55, height: 27.5 }}
                                         />
                                     </TouchableOpacity>
-                                )
-                    }
-                </View>
+                                </View>
+                            )
+                }
             </Animated.View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
@@ -662,7 +669,6 @@ const styles = StyleSheet.create({
     NextBtn: {
         position: 'absolute',
         bottom: -30,
-        padding: 10,
         width: 120,
         height: 60,
         borderRadius: 5,

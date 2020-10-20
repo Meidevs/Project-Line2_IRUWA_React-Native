@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  AppState
+  AppState,
+  BackHandler
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { NavigationContainer } from '@react-navigation/native';
@@ -190,7 +191,6 @@ const MainStackScreens = () => {
   const notificationListener = useRef();
   const [appState, setAppState] = useState(AppState.currentState);
   const [token, setPushToken] = useState('');
-
   useEffect(() => {
     const SET_DEVICE_TOKEN = async () => {
       var pushToken = await registerForPushNotificationsAsync();

@@ -60,7 +60,7 @@ function BeforeLoginScreen({ navigation }) {
                     </View>
                 </View>
                 <View style={styles.BtnArea}>
-                    <TouchableOpacity style={styles.LoginBtn} onPress={() => navigation.navigate('Login')}>
+                    <TouchableOpacity style={styles.LoginBtn} onPress={() => navigation.replace('Login')}>
                         <Text style={styles.LoginTxt}>로그인</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.RegisterBtn} onPress={() => navigation.navigate('Register')}>

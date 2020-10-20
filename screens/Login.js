@@ -12,6 +12,7 @@ import {
     Keyboard,
     Platform
 } from 'react-native';
+import { StackActions } from '@react-navigation/native';
 import registerForPushNotificationsAsync from '../assets/components/Login/getDeviceToken';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 const { width, height } = Dimensions.get('window');
@@ -72,10 +73,9 @@ function LoginScreen({ navigation }) {
         const response = await AUTHENTICATION.LOGIN(user_id, user_pw, expoToken);
         if (response.flags == 0) {
             await AUTHENTICATION.USER_APPSTATE('active', expoToken.data);
-            navigation.replace('Main');
+            navigation.dispatch(StackActions.replace('Main'));
         } else {
             alert(response.message);
-
         }
     }
 
