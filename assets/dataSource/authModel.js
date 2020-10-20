@@ -291,13 +291,12 @@ class AUTHENTICATION {
 
     GET_COUPONS = async () => {
         try {
-            var response = await fetch('https://mostfeel.site/api/auth/removeban', {
-                method: 'POST',
+            var response = await fetch('https://mostfeel.site/api/auth/coupons', {
+                method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body: JSON.stringify({ target_user_seq: data })
             });
             var json = await response.json();
         } catch (err) {

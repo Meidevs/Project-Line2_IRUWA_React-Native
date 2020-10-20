@@ -77,7 +77,7 @@ function CateListScreen({ route, navigation }) {
         navigation.setOptions({
             headerTitle: () => (
                 <View style={styles.TitleHeader}>
-                    <Text style={styles.TitleHeaderTxtStyle}>근처 {category_name}</Text>
+                    <Text style={styles.TitleHeaderTxtStyle}>{category_name}</Text>
                 </View>
             ),
             headerRight: () =>

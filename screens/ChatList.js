@@ -36,7 +36,8 @@ const reducer = (state, action) => {
                         if (data.roomCode == action.params.messages.roomCode) {
                             return data.messages.push(action.params.messages)
                         }
-                    })
+                    }),
+                    ...state.params,
                 }
             }
 

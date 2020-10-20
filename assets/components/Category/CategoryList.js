@@ -8,55 +8,56 @@ import {
     TouchableOpacity,
     Dimensions
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import DATA_SOURCE from '../../dataSource/dataModel';
 const { width, height } = Dimensions.get('window');
 
-const getItem = (data, index) => {
-    const items = data[index];
-    return {
-        category_seq: items.category_seq,
-        category_name: items.category_name,
-        sub_category: items.sub_category,
-        uri: items.uri,
-    }
-}
+// const getItem = (data, index) => {
+//     const items = data[index];
+//     return {
+//         category_seq: items.category_seq,
+//         category_name: items.category_name,
+//         sub_category: items.sub_category,
+//         uri: items.uri,
+//     }
+// }
 
-const getItemCount = (data) => {
-    return data.length;
-}
+// const getItemCount = (data) => {
+//     return data.length;
+// }
 
-const Item = ({ data, navigation }) => {
-    return (
-        <TouchableOpacity style={styles.CategoryBox} onPress={() => navigation.navigate('CateList', {
-            category_name: data.category_name,
-            category_seq: data.category_seq,
-        })}>
-            <View style={styles.IconArea}>
-                <View style={styles.IconAround}>
-                    <Image source={{ uri: data.uri }}
-                        style={{ width: 27, height: 27 }}
-                    />
-                </View>
-            </View>
-            <View style={styles.ContentArea}>
-                <View style={styles.LeftContent}>
-                    <View style={styles.CategoryName}>
-                        <Text style={styles.CategoryNameTxt}>{data.category_name}</Text>
-                    </View>
-                    <View style={styles.SubCategory}>
-                        <Text style={styles.SubCategoryTxt}>{data.sub_category}</Text>
-                    </View>
-                </View>
-                <View style={styles.RightContent}>
-                    <Image
-                        source={require('../../images/right_arrow_ico.png')}
-                        style={{ width: 17, height: 17 }}
-                    />
-                </View>
-            </View>
-        </TouchableOpacity>
-    );
-}
+// const Item = ({ data, navigation }) => {
+//     return (
+//         <TouchableOpacity style={styles.CategoryBox} onPress={() => navigation.navigate('CateList', {
+//             category_name: data.category_name,
+//             category_seq: data.category_seq,
+//         })}>
+//             <View style={styles.IconArea}>
+//                 <View style={styles.IconAround}>
+//                     <Image source={{ uri: data.uri }}
+//                         style={{ width: 27, height: 27 }}
+//                     />
+//                 </View>
+//             </View>
+//             <View style={styles.ContentArea}>
+//                 <View style={styles.LeftContent}>
+//                     <View style={styles.CategoryName}>
+//                         <Text style={styles.CategoryNameTxt}>{data.category_name}</Text>
+//                     </View>
+//                     <View style={styles.SubCategory}>
+//                         <Text style={styles.SubCategoryTxt}>{data.sub_category}</Text>
+//                     </View>
+//                 </View>
+//                 <View style={styles.RightContent}>
+//                     <Image
+//                         source={require('../../images/right_arrow_ico.png')}
+//                         style={{ width: 17, height: 17 }}
+//                     />
+//                 </View>
+//             </View>
+//         </TouchableOpacity>
+//     );
+// }
 
 const CategoryListUp = ({ navigation }) => {
     const [categories, setCategories] = useState([]);
@@ -71,28 +72,59 @@ const CategoryListUp = ({ navigation }) => {
 
         return () => isCancelled = false;
     }, [])
-
-    return (
-        <View style={styles.InnerContainer}>
-            <VirtualizedList
-                data={categories}
-                initialNumToRender={categories.length}
-                renderItem={({ item }) => <Item data={item} navigation={navigation} />}
-                keyExtractor={item => item.category_seq.toString()}
-                getItemCount={getItemCount}
-                getItem={getItem}
-            />
-        </View>
-    )
+    if (categories.length > 0) {
+        return (
+            <ScrollView style={styles.InnerContainer}>
+                {
+                    categories.map((data, index) => {
+                        return (
+                            <TouchableOpacity
+                                key={index.toString()}
+                                style={styles.CategoryBox} onPress={() => navigation.navigate('CateList', {
+                                    category_name: data.category_name,
+                                    category_seq: data.category_seq,
+                                })}>
+                                <View style={styles.IconArea}>
+                                    <View style={styles.IconAround}>
+                                        <Image source={{ uri: data.uri }}
+                                            style={{ width: 27, height: 27 }}
+                                        />
+                                    </View>
+                                </View>
+                                <View style={styles.ContentArea}>
+                                    <View style={styles.LeftContent}>
+                                        <View style={styles.CategoryName}>
+                                            <Text style={styles.CategoryNameTxt}>{data.category_name}</Text>
+                                        </View>
+                                        <View style={styles.SubCategory}>
+                                            <Text style={styles.SubCategoryTxt}>{data.sub_category}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.RightContent}>
+                                        <Image
+                                            source={require('../../images/right_arrow_ico.png')}
+                                            style={{ width: 17, height: 17 }}
+                                        />
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })
+                }
+            </ScrollView>
+        )
+    } else {
+        return null;
+    }
 }
 
 const styles = StyleSheet.create({
     InnerContainer: {
-        width : width,
+        width: width,
     },
     CategoryBox: {
-        paddingTop : 10,
-        paddingBottom : 10,
+        paddingTop: 10,
+        paddingBottom: 10,
         paddingLeft: 25,
         paddingRight: 25,
         flexDirection: 'row',
@@ -143,7 +175,7 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: '600',
         letterSpacing: -0.22,
-        color : '#acacac'
+        color: '#acacac'
     },
     RightContent: {
         flex: 1,

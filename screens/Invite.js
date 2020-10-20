@@ -80,18 +80,18 @@ function InviteScreen({ route, navigation }) {
                     </Text>
                 </View>
                 <View style={styles.InviteBox}>
-                    <TouchableOpacity style={styles.KakaoBtnContent} onPress={() => alert('앗! 죄송합니다. 아직 준비중입니다.')}>
+                    <TouchableOpacity style={styles.KakaoBtnContent} onPress={() => onShare()}>
                         <Image source={require('../assets/images/kakao_ico.png')}
                             style={{ marginRight: 15 }}
                         />
                         <Text style={styles.BtnTxtStyle}>카카오톡으로 초대하기</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.UrlBtnContent} onPress={() => onShare()}>
+                    {/* <TouchableOpacity style={styles.UrlBtnContent} onPress={() => onShare()}>
                         <Image source={require('../assets/images/share_ico.png')}
                             style={{ width: 18, height: 20, marginRight: 15 }}
                         />
                         <Text style={styles.BtnTxtStyle}>URL 링크로 초대하기</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <View style={styles.SectionBorder}>
                     <View
