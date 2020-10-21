@@ -48,7 +48,6 @@ function BeforeLoginScreen({ navigation }) {
                 networkActivityIndicatorVisible={true}
             />
             <View style={styles.Container}>
-                
                 <View style={styles.IntroTextArea}>
                     <View style={styles.IntroSub}>
                         <Text style={styles.IntroSubTxt}>주변에 어디에서 놀아야할지 모르겠다면?</Text>
@@ -60,7 +59,7 @@ function BeforeLoginScreen({ navigation }) {
                     </View>
                 </View>
                 <View style={styles.BtnArea}>
-                    <TouchableOpacity style={styles.LoginBtn} onPress={() => navigation.replace('Login')}>
+                    <TouchableOpacity style={styles.LoginBtn} onPress={() => navigation.navigate('Login')}>
                         <Text style={styles.LoginTxt}>로그인</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.RegisterBtn} onPress={() => navigation.navigate('Register')}>

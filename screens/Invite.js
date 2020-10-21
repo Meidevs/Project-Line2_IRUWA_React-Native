@@ -10,14 +10,20 @@ import {
     SafeAreaView,
     Share,
     Platform,
+    Linking,
 } from 'react-native';
 
 import { Buffer } from "buffer";
 import AUTHENTICATION from '../assets/dataSource/authModel';
+import { Link } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 function InviteScreen({ route, navigation }) {
+    const {
+        user_email,
+        user_name,
+    } = route.params;
     const [coupons, setCoupons] = useState([1, 2, 3]);
     const [emailString, setEmailBase64] = useState(null);
     const [userName, setUserName] = useState(null);
@@ -36,16 +42,21 @@ function InviteScreen({ route, navigation }) {
     }, []);
 
     useEffect(() => {
+        let isCancelled = true;
         const GET_USER_INFO = async () => {
-            var user_info = await AUTHENTICATION.GET_USER_INFOs();
-            var user_coupon = await AUTHENTICATION.GET_COUPONS();
-            var stringToBase64 = await Buffer(user_info.user_email);
+            var user_coupon = await AUTHENTICATION.GET_COUPONS(user_email);
+            console.log(user_coupon)
+            var stringToBase64 = await Buffer(user_email);
             var s = stringToBase64.toString('base64');
-            setEmailBase64(s);
-            setUserName(user_info.user_name)
+            if (isCancelled) {
+                setCoupons(user_coupon)
+                setEmailBase64(s);
+                setUserName(user_name)
+            }
         }
         GET_USER_INFO();
-    }, [])
+        return () => isCancelled = false;
+    }, [route]);
 
     const onShare = async () => {
         try {
@@ -58,7 +69,7 @@ function InviteScreen({ route, navigation }) {
                 await Share.share({
                     title: userName + '님께서 초대 메세지를 보냈습니다',
                     url: 'https://play.google.com/store/apps/details?id=com.Line2.test \n',
-                    message : '초대 코드 : ' + emailString,
+                    message: '초대 코드 : ' + emailString,
                 });
             }
         } catch (error) {
@@ -76,7 +87,7 @@ function InviteScreen({ route, navigation }) {
                         <Text style={styles.IntroTxt}>이루와에 친구를 초대하세요!</Text>
                     </View>
                     <Text style={styles.IntroContent}>
-                        고객님이 초대한 친구가 가입하면 두 사람 모두 쿠폰을 1개를 받아요. 친구 세 명을 초대할 때마다 스타벅스 커피 1잔 쿠폰을 드려요! (인당 최대 30장)
+                        고객님이 초대한 친구가 가입하면 이루와 가맹점 쿠폰을 받아요. 친구 5명을 초대하면 가맹점 만원 쿠폰을 드려요!
                     </Text>
                 </View>
                 <View style={styles.InviteBox}>
@@ -105,30 +116,29 @@ function InviteScreen({ route, navigation }) {
                     <Text style={styles.CouponTitleTxt}>나의 쿠폰</Text>
                 </View>
                 <View style={styles.CheckCouponBox}>
-                    <Text style={styles.CouponTxt}>지금까지 쿠폰 0개를 받았어요</Text>
+                <Text style={styles.CouponTxt}>지금까지 쿠폰 {coupons.length}개를 받았어요</Text>
                     <Text style={styles.CouponTxt}>(최대 30개까지 받을 수 있어요!)</Text>
                 </View>
                 {
                     coupons.map((data, index) => {
                         return (
-                            <View style={styles.CouponArea} key={index.toString()}>
+                            <TouchableOpacity 
+                            onPress={() => Linking.openURL(data.coupon)}
+                            style={styles.CouponArea} key={index.toString()}>
                                 <View style={styles.LeftArea}>
                                     <Image source={require('../assets/images/thumbnail.png')}
                                         style={{ marginRight: 15 }}
                                     />
-                                    <Text style={styles.CouponTxt_a}>스타벅스 쿠폰</Text>
+                                    <Text style={styles.CouponTxt_a}>이루와 상품권</Text>
                                 </View>
                                 <View style={styles.RightArea}>
-                                    <Text style={styles.DateTxt}>2020.09.01까지</Text>
+                                    <Text style={styles.DateTxt}>{data.due_date.substring(0,10)}까지</Text>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         )
                     })
                 }
             </ScrollView>
-            <TouchableOpacity style={styles.goToCoupon} onPress={() => alert('앗! 죄송합니다. 아직 준비중입니다.')}>
-                <Text style={styles.goToCouponTxt}>내 쿠폰함 가기</Text>
-            </TouchableOpacity>
         </SafeAreaView>
     )
 }

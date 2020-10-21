@@ -289,16 +289,20 @@ class AUTHENTICATION {
         }
     }
 
-    GET_COUPONS = async () => {
+    GET_COUPONS = async (data) => {
         try {
             var response = await fetch('https://mostfeel.site/api/auth/coupons', {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: 'include',
+                body : JSON.stringify({user_email : data})
             });
             var json = await response.json();
+            if (response.ok) {
+                return json;
+            }
         } catch (err) {
             console.log(err);
         }

@@ -126,7 +126,10 @@ function MyinfoScreen({ route, navigation }) {
                                 null
                             )
                     }
-                    <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Invite')}>
+                    <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Invite', {
+                        user_email : infos.user_email,
+                        user_name : infos.user_name,
+                    })}>
 
                         <View style={styles.IconText}>
                             <View style={styles.IconArea}>

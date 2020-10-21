@@ -12,7 +12,7 @@ import {
     Keyboard,
     Platform
 } from 'react-native';
-import { StackActions } from '@react-navigation/native';
+import { CommonActions, StackActions } from '@react-navigation/native';
 import registerForPushNotificationsAsync from '../assets/components/Login/getDeviceToken';
 import AUTHENTICATION from '../assets/dataSource/authModel';
 const { width, height } = Dimensions.get('window');
@@ -73,16 +73,31 @@ function LoginScreen({ navigation }) {
         const response = await AUTHENTICATION.LOGIN(user_id, user_pw, expoToken);
         if (response.flags == 0) {
             await AUTHENTICATION.USER_APPSTATE('active', expoToken.data);
-            navigation.dispatch(StackActions.replace('Main'));
+            navigation.dispatch(
+                CommonActions.reset({
+                index : 1,
+                routes : [
+                    {name : 'Main'},
+                ]
+            }))
+            
         } else {
             alert(response.message);
         }
     }
+    const spaceRemover = (str) => {
+        var newStr = str.replace(/\s/g, '');
+        return newStr;
+    }
 
+    const lowerCase = (str) => {
+        var newStr = str.toLowerCase();
+        return newStr;
+    }
     return (
         <Animated.View
             behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={[styles.Container, {bottom: keyboardHeight }]}>
+            style={[styles.Container, { bottom: keyboardHeight }]}>
             <StatusBar
                 barStyle="dark-content"
                 // dark-content, light-content and default
@@ -94,7 +109,7 @@ function LoginScreen({ navigation }) {
                 //allowing light, but not detailed shapes
                 networkActivityIndicatorVisible={true}
             />
-            <View style={{ flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <View style={styles.HeaderStyle}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('../assets/images/back_button.png')} />
@@ -114,7 +129,11 @@ function LoginScreen({ navigation }) {
                                 placeholderTextColor={'rgba(140, 140, 140, 1)'}
                                 placeholder={'아이디를 입력해주세요'}
                                 style={styles.Input}
-                                onChangeText={text => setUserid(text)}
+                                onChangeText={text => {
+                                    var rawText = spaceRemover(text);
+                                    var newText = lowerCase(rawText);
+                                    setUserid(newText)
+                                }}
                             />
                         </View>
                     </View>

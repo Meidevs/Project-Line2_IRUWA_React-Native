@@ -304,7 +304,7 @@ const MainTabs = () => {
         name="Myinfo"
         component={MyinfoStackScreens}
         options={({ route }) => ({
-          tabBarLabel: '나의당근',
+          tabBarLabel: 'MY',
           tabBarVisible: getTabBarVisible(route)
         })} />
     </Tabs.Navigator>

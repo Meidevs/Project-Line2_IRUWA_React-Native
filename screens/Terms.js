@@ -240,6 +240,16 @@ function UserTypeScreen({ route, navigation }) {
         }
     }
 
+    const spaceRemover = (str) => {
+        var newStr = str.replace(/\s/g, '');
+        return newStr;
+    }
+
+    const lowerCase = (str) => {
+        var newStr = str.toLowerCase();
+        return newStr;
+    }
+
     const componentJSX_A = () => {
         switch (pageCount) {
             case 0:
@@ -292,7 +302,10 @@ function UserTypeScreen({ route, navigation }) {
                             <TextInput
                                 value={recommendation}
                                 placeholder={'추천인 코드를 입력해 주세요. (없으면 생략)'}
-                                onChangeText={text => setRecommendation(text)}
+                                onChangeText={text => {
+                                    var newText = spaceRemover(text);
+                                    setRecommendation(newText);
+                                }}
                             />
                         </View>
                     </View>
@@ -304,7 +317,11 @@ function UserTypeScreen({ route, navigation }) {
                             <TextInput
                                 value={user_id}
                                 placeholder={'아이디를 입력해주세요.'}
-                                onChangeText={text => setUserID(text)}
+                                onChangeText={text => {
+                                    var rawText = spaceRemover(text);
+                                    var newText = lowerCase(rawText);
+                                    setUserID(newText);
+                                }}
                             />
                         </View>
                         <View style={styles.TextInputForm_D}>
@@ -317,7 +334,7 @@ function UserTypeScreen({ route, navigation }) {
                             />
                         </View>
                         <View style={styles.TextMatch}>
-                            <Text style={styles.ExplanationText}>{password_boolean == false ? '영문(대,소문자), 특수문자, 숫자를 조합하여 8자 이상 입력해주세요.' : ''}</Text>
+                            <Text style={styles.ExplanationText}>{password_boolean == false ? '영문(대,소문자), 특수문자, 숫자를 조합하여 입력해주세요.' : ''}</Text>
                         </View>
                         <View style={styles.TextInputForm_D}>
                             <TextInput
@@ -352,9 +369,11 @@ function UserTypeScreen({ route, navigation }) {
                                 placeholder={'메일을 입력해 주세요.'}
                                 secureTextEntry={false}
                                 autoCapitalize={'none'}
-                                onChangeText={text => setUserEmail(text)}
+                                onChangeText={text => {
+                                    var newStr = spaceRemover(text);
+                                    setUserEmail(newStr)
+                                }}
                                 style={{ flex: 1 }}
-
                             />
                             <TouchableOpacity style={styles.AddressBtn} onPress={() => DuplicationCheck()}>
                                 <Text style={styles.AddrBtnTxt}>확인</Text>

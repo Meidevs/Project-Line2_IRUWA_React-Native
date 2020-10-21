@@ -79,7 +79,7 @@ const Item = ({ data, user, navigation, callback }) => {
                         items_seq: data.items_seq,
                         user_seq: user
                     })}>
-                    <Text style={styles.BtnTxt}>상품으로 이동</Text>
+                    <Text style={styles.BtnTxt}>광고로 이동</Text>
                 </TouchableOpacity>
                 <View>
                     <Text style={styles.Border}>|</Text>
