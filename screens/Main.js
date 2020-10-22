@@ -140,6 +140,7 @@ function MainScreen({ route, navigation }) {
     const onRefresh = async () => {
         setRefreshing(true);
         const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
+        console.log(ITEMS.content)
         setData(ITEMS.content);
         wait(2000).then(() => setRefreshing(false));
     };
