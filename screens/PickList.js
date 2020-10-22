@@ -52,9 +52,11 @@ const Item = ({ data, user, navigation, callback }) => {
                     />
                 </View>
                 <View style={styles.ContentArea}>
+                <View style={styles.ContentInfo} >
+                        <Text style={styles.CmpTxt}>{data.cmp_name}</Text>
+                    </View>
                     <View style={styles.ContentInfo} >
                         <Text style={styles.ItemNameTxt}>{data.item_name}</Text>
-                        <Text style={styles.CmpTxt}>  {data.cmp_name} </Text>
                     </View>
                     <View style={styles.ContentInfo}>
                         <Text style={styles.ItemSubTxt}>{data.cmp_location}</Text>

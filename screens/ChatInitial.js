@@ -6,6 +6,7 @@ import {
     TextInput,
     Image,
     StyleSheet,
+    Keyboard,
     Dimensions,
     SafeAreaView,
     Animated,
@@ -79,6 +80,8 @@ const ChatInitialScreen = ({ route, navigation }) => {
     const [state, dispatch] = useReducer(reducer, initialValue);
     const [isModal, setIsModal] = useState(false);
     const scrollViewRef = useRef();
+    const keyboardHeight = useRef(new Animated.Value(0)).current;
+
     const callback = (ChildFrom) => {
         setIsModal(ChildFrom)
     }
@@ -157,6 +160,41 @@ const ChatInitialScreen = ({ route, navigation }) => {
             socket.emit('sendMessage', form);
             setMessageText(null);
         }
+    }
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow', (event) => {
+                keyboardDidShow(event)
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide', (event) => keyboardDidHide(event) // or some other action
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
+    const keyboardDidShow = (e) => {
+        Animated.parallel([
+            Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
+                duration: e.duration,
+                toValue: e.endCoordinates.height,
+            }),
+        ]).start();
+    }
+    const keyboardDidHide = (e) => {
+        Animated.parallel([
+            Animated.timing(keyboardHeight, {
+                useNativeDriver: false,
+                duration: e.duration,
+                toValue: 0,
+            }),
+        ]).start();
     }
 
     const componentJSX_Chat = () => {
@@ -295,7 +333,7 @@ const ChatInitialScreen = ({ route, navigation }) => {
                     componentJSX_Chat()
                 }
             </Animated.ScrollView>
-            <Animated.View style={styles.MessageInputBox}>
+            <Animated.View style={[styles.MessageInputBox, Platform.OS == 'ios' ? { bottom : keyboardHeight} : null ]}>
                 <View style={styles.InputBox}>
                     <TextInput
                         value={message}
