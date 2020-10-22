@@ -8,6 +8,7 @@ const registerForPushNotificationsAsync = async () => {
         try {
             const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
             let finalStatus = existingStatus;
+
             if (existingStatus !== 'granted') {
                 const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
                 finalStatus = status;
@@ -16,7 +17,9 @@ const registerForPushNotificationsAsync = async () => {
                 alert('Failed to get push token for push notification!');
                 return;
             }
+
             token = await Notifications.getExpoPushTokenAsync();
+
             if (Platform.OS === 'android') {
                 Notifications.setNotificationChannelAsync('default', {
                     name: 'default',
