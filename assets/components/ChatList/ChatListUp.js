@@ -140,7 +140,7 @@ const ChatListUp = ({ data, user, navigation }) => {
         }
         GET_USER_PROFILE();
     }, [data]);
-
+    console.log(items)
     if (items.length > 0) {
         return (
             <View>
@@ -148,7 +148,7 @@ const ChatListUp = ({ data, user, navigation }) => {
                     data={items}
                     initialNumToRender={10}
                     renderItem={({ item }) => <Item data={item} user={user} navigation={navigation} />}
-                    keyExtractor={item => item.items_seq.toString()}
+                    keyExtractor={item => item.roomCode.toString()}
                     getItemCount={getItemCount}
                     getItem={getItem}
                 />

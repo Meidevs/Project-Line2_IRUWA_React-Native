@@ -31,6 +31,7 @@ const getItem = (data, index) => {
             items_seq: items.items_seq,
             item_name: items.item_name,
             cmp_location: items.cmp_location,
+            cmp_name: items.cmp_name,
             reg_date: items.reg_date,
             cmp_seq: items.cmp_seq,
             uri: items.uri,
@@ -58,6 +59,7 @@ const Item = ({ data, user, navigation }) => {
                 </View>
                 <View style={styles.RightArea}>
                     <Text style={styles.ItemName}>{data.item_name}</Text>
+                    <Text style={styles.CmpLocation}>{data.cmp_name}</Text>
                     <Text style={styles.CmpLocation}>{data.cmp_location}</Text>
                     <Text style={styles.Time_Gap}>{time_gap}</Text>
                 </View>
@@ -186,7 +188,9 @@ function MainScreen({ route, navigation }) {
                     <View style={styles.MainBackground} />
                 </ImageBackground>
                 <View>
-                    <TouchableOpacity style={[styles.HeaderTitle, { marginTop: headerHeight }]} onPress={() => navigation.navigate('Location')}
+                    <TouchableOpacity
+                        style={[styles.HeaderTitle, { marginTop: headerHeight }]}
+                        onPress={() => navigation.navigate('Location')}
                         activeOpacity={0.6}
                     >
                         <View style={styles.LocationBtn}>

@@ -26,6 +26,7 @@ const PremiumBannerItem = ({ item, navigation }) => {
                             <Text style={styles.IntroTxt}>프리미엄 광고</Text>
                         </View>
                         <View style={styles.PremiumTitle}>
+                            <Text style={styles.TitleTxt}>{item.cmp_name}</Text>
                             <Text style={styles.TitleTxt}>{item.item_name}</Text>
                         </View>
                         <View style={styles.PremiumContent}>
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
     },
-    IntroTxt : {
+    IntroTxt: {
         fontSize: 13,
         color: '#fff',
         fontWeight: 'bold',

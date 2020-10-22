@@ -170,7 +170,6 @@ const ChatScreen = ({ route, navigation }) => {
                             currentTime = '오전 ' + newTime;
                         }
                     }
-
                     if (data.sender_seq == receiver_seq) {
                         return (
                             <View

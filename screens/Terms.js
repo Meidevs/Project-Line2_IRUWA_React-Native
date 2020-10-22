@@ -67,24 +67,27 @@ function UserTypeScreen({ route, navigation }) {
                 return (
                     pageCount > 0 ? (
                         <HeaderBackButton
-                            tintColor={'#ffffff'}
+                            tintColor={'#000000'}
                             onPress={() => PrevPage()}
                         />
                     ) : (
                             <HeaderBackButton
-                                tintColor={'#ffffff'}
+                                tintColor={'#000000'}
                                 onPress={() => navigation.goBack()}
                             />
                         )
                 )
             },
             headerTitle: () => (
-                <View>
-                    <Text></Text>
+                <View style={styles.TitleHeader}>
+                    <Text style={styles.TitleHeaderTxtStyle}>개인정보수정</Text>
                 </View>
             ),
+            headerRight: () => (
+                <View></View>
+            ),
             headerStyle: {
-                backgroundColor: '#15bac1',
+                backgroundColor: '#ffffff',
                 elevation: 0,
                 shadowOffset: {
                     height: 0,
@@ -254,7 +257,7 @@ function UserTypeScreen({ route, navigation }) {
         switch (pageCount) {
             case 0:
                 return (
-                    <View>
+                    <View style={styles.RegisterForm}>
                         <View style={styles.AgreementTerms}>
                             <TouchableOpacity style={styles.Terms} onPress={() => setIsTermA(true)}>
                                 <Text>개인정보 처리방침</Text>
@@ -515,78 +518,78 @@ function UserTypeScreen({ route, navigation }) {
     return (
         <View style={styles.Container}>
             <Animated.View style={[styles.RegisterCard, { bottom: keyboardHeight }]}>
-                <View style={styles.RegisterCardIcon}>
-                    <Image source={require('../assets/logo.png')}
-                        borderRadius={40}
-                        style={{ width: 50, height: 50 }}
-                    />
-                </View>
                 {
                     componentJSX_A()
                 }
-
-                {
-                    status == 0 & pageCount == 3 ? (
-                        <View style={styles.NextBtn}>
-                            <TouchableOpacity
-                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
-                                onPress={() => Register()}>
-                                <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ) : status == 1 & pageCount == 5 ? (
-                        <View style={styles.NextBtn}>
-                            <TouchableOpacity
-                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
-                                onPress={() => Register()}>
-                                <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                                <View style={styles.NextBtn}>
-                                    <TouchableOpacity
-                                        style={{
-                                            flex: 1, justifyContent: 'center', alignItems: 'center', width: 120,
-                                            height: 60
-                                        }}
-                                        onPress={() => NextPage()}>
-                                        <Image source={require('../assets/images/long_right_arrow_ico.png')}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                            )
-                }
+                <View style={styles.BtnForm}>
+                    {
+                        status == 0 & pageCount == 3 ? (
+                            <View style={styles.NextBtn}>
+                                <TouchableOpacity
+                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
+                                    onPress={() => Register()}>
+                                    <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : status == 1 & pageCount == 5 ? (
+                            <View style={styles.NextBtn}>
+                                <TouchableOpacity
+                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
+                                    onPress={() => Register()}>
+                                    <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                                    <View style={styles.NextBtn}>
+                                        <TouchableOpacity
+                                            style={{
+                                                flex: 1, justifyContent: 'center', alignItems: 'center', width: 120,
+                                                height: 60
+                                            }}
+                                            onPress={() => NextPage()}>
+                                            <Image source={require('../assets/images/long_right_arrow_ico.png')}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                    }
+                </View>
             </Animated.View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
             <TermC visible={isTermC} callback={callbackC} />
             <CmpAddressSearchBox visible={modalVisible} location={ReturnLocation} callback={ReturnVisible} />
-        </View >
+        </View>
     )
 }
 const styles = StyleSheet.create({
+    TitleHeader: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    TitleHeaderTxtStyle: {
+        fontWeight: 'bold',
+        fontSize: 15
+    },
     Container: {
         flex: 1,
-        backgroundColor: '#15bac1',
-        justifyContent: 'center',
-        alignItems: 'center'
+        backgroundColor: '#ffffff',
     },
     RegisterCard: {
-        width: width * 0.9,
-        height: height * 0.5,
+        flex: 1,
         paddingTop: 60,
         paddingBottom: 60,
-        backgroundColor: '#ffffff',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 3,
-        elevation: 2,
-        shadowOffset: {
-            height: 1,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
+    },
+    RegisterForm: {
+        flex: 1,
+        backgroundColor : 'red'
+    },
+    BtnForm : {
+        flex : 1,
+        backgroundColor : 'red'
+
     },
     AgreementTerms: {
         flex: 1,
@@ -668,28 +671,9 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         color: '#15bac1'
     },
-    RegisterCardIcon: {
-        position: 'absolute',
-        top: -30,
-        padding: 10,
-        width: 60,
-        height: 60,
-        borderRadius: 60,
-        backgroundColor: '#ffffff',
-        elevation: 2,
-        shadowOffset: {
-            height: 2,
-        },
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-    },
     NextBtn: {
+        flex: 1,
         position: 'absolute',
-        bottom: -30,
-        width: 120,
-        height: 60,
         borderRadius: 5,
         backgroundColor: '#15bac1',
         elevation: 2,

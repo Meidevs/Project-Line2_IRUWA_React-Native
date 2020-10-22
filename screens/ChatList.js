@@ -22,25 +22,13 @@ const reducer = (state, action) => {
             return {
                 params: action.params
             }
-
         case 'update':
-            var result = state.params.findIndex(data => data.roomCode == action.params.roomInfo.roomCode);
-            if (result == -1) {
                 return {
-                    ...state.params,
-                    params: [action.params.roomInfo]
+                    params: [
+                        action.params.roomInfo,
+                        ...state.params.filter((data) => data.roomCode != action.params.roomInfo.roomCode)
+                    ],
                 }
-            } else {
-                return {
-                    params: state.params.filter(data => {
-                        if (data.roomCode == action.params.messages.roomCode) {
-                            return data.messages.push(action.params.messages)
-                        }
-                    }),
-                    ...state.params,
-                }
-            }
-
         case 'default':
             return {
                 params: state.params

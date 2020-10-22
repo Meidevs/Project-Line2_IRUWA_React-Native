@@ -7,7 +7,8 @@ import {
     Image,
     Dimensions,
     ScrollView,
-    SafeAreaView
+    SafeAreaView,
+    ActivityIndicator
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -18,7 +19,6 @@ const { width, height } = Dimensions.get('window');
 
 function MyinfoScreen({ route, navigation }) {
     const [hasComp, isUserHasComp] = useState(false);
-    const [userProfileUri, setUserProfileUri] = useState(null);
     const [infos, setInformations] = useState(null);
     useEffect(() => {
         navigation.setOptions({
@@ -30,7 +30,7 @@ function MyinfoScreen({ route, navigation }) {
             ),
             headerRight: () => (
                 <TouchableOpacity style={styles.SettingHeader} onPress={() => navigation.navigate('Settings', {
-                    user_name : infos.user_name,
+                    user_name: infos.user_name,
                 })}>
                     <Image source={require('../assets/images/more_button.png')}
                         resizeMode={'contain'}
@@ -56,7 +56,7 @@ function MyinfoScreen({ route, navigation }) {
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
-                <ProfileSetter hasComp={hasComp} user={infos} navigation={navigation} />
+                <ProfileSetter hasComp={hasComp} user={infos} navigation={navigation}/>
                 <View style={styles.ContentBox}>
                     {
                         hasComp == true ? (
@@ -103,9 +103,9 @@ function MyinfoScreen({ route, navigation }) {
                                         />
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Ringing',{
-                                    cmp_seq : infos.cmp_seq,
-                                    cmp_name : infos.cmp_name
+                                <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Ringing', {
+                                    cmp_seq: infos.cmp_seq,
+                                    cmp_name: infos.cmp_name
                                 })}>
                                     <View style={styles.IconText}>
                                         <View style={styles.IconArea}>
@@ -127,8 +127,8 @@ function MyinfoScreen({ route, navigation }) {
                             )
                     }
                     <TouchableOpacity style={styles.ContentArea} onPress={() => navigation.navigate('Invite', {
-                        user_email : infos.user_email,
-                        user_name : infos.user_name,
+                        user_email: infos.user_email,
+                        user_name: infos.user_name,
                     })}>
 
                         <View style={styles.IconText}>
@@ -197,13 +197,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 10,
     },
+    
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(255, 255, 255, 1)'
+        backgroundColor: '#ffffff'
     },
     ScrollView: {
     },
-
     ContentBox: {
         marginRight: 25,
         marginLeft: 25,

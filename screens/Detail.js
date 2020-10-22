@@ -498,7 +498,6 @@ const styles = StyleSheet.create({
         width: width * 0.9,
         justifyContent: 'flex-start',
     },
-
     ItemSimpleInfo: {
         marginTop: 5,
         flexDirection: 'row',

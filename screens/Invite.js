@@ -129,7 +129,7 @@ function InviteScreen({ route, navigation }) {
                                     <Image source={require('../assets/images/thumbnail.png')}
                                         style={{ marginRight: 15 }}
                                     />
-                                    <Text style={styles.CouponTxt_a}>이루와 상품권</Text>
+                                    <Text style={styles.CouponTxt_a}>이루와 가맹점 쿠폰</Text>
                                 </View>
                                 <View style={styles.RightArea}>
                                     <Text style={styles.DateTxt}>{data.due_date.substring(0,10)}까지</Text>

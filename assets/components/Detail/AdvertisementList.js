@@ -11,20 +11,20 @@ const { width, height } = Dimensions.get('window');
 
 const AdvertisementList = ({ data, list, navigation }) => {
     const [items, setItem] = useState([]);
-    const [isLoad, setIsLoad] = useState(false);
+    const [isLoaded, setIsLoad] = useState(false);
     useEffect(() => {
         const SET_ADS_LIST = () => {
             list.map((item, index) => {
-                item.user_seq = data.user_seq
+                item.flags = 0;
+                item.user_seq = data.user_seq;
             });
-            console.log(list)
             setItem(list);
             setIsLoad(true);
         }
         SET_ADS_LIST();
     }, [list]);
 
-    if (isLoad && list.length > 0) {
+    if (isLoaded && list.length > 0) {
         return (
             <View style={styles.ADSBox}>
                 <View style={styles.TitleBox}>
@@ -34,7 +34,7 @@ const AdvertisementList = ({ data, list, navigation }) => {
                 </View>
                 <View style={styles.ADSs}>
                     {
-                        items.map((data) => {
+                        items.map((data, index) => {
                             return (
                                 <TouchableOpacity
                                     style={styles.ADSContent}
@@ -68,10 +68,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     ADSs: {
-        flexDirection : 'row',
+        flex: 1,
+        flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent : 'center'
     },
     TitleBox: {
         paddingTop: 20,
@@ -83,11 +83,10 @@ const styles = StyleSheet.create({
         color: '#000000'
     },
     ADSContent: {
-        padding: 10,
-        width : width * 0.4,
-        borderRadius : 10,
-        borderWidth : 1,
-        borderColor : '#ebebeb',
+        margin: 10,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ebebeb',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
@@ -99,16 +98,16 @@ const styles = StyleSheet.create({
     },
     NameArea: {
         flex: 1,
-        marginTop : 15,
-        marginBottom : 15,
+        marginTop: 15,
+        marginBottom: 15,
         justifyContent: 'center',
         alignItems: 'center'
     },
-    NameTxt : {
-        fontSize : 13,
-        fontWeight : 'bold',
-        color : '#000000',
-        textAlign : 'center'
+    NameTxt: {
+        fontSize: 13,
+        fontWeight: 'bold',
+        color: '#000000',
+        textAlign: 'center'
     },
     ItemsImages: {
         margin: 5,
