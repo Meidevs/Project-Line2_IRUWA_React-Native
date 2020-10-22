@@ -16,8 +16,8 @@
       "androidMode": "default"
     },
     "android": {
-      "package": "com.Line2.test",
-      "versionCode": 5,
+      "package": "com.Line2.iruwaapp",
+      "versionCode": 1,
       "useNextNotificationsApi": true,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
@@ -26,7 +26,7 @@
         "WRITE_EXTERNAL_STORAGE",
         "FOREGROUND_SERVICE"
       ],
-      "googleServicesFile": "./google-services.json",
+      "googleServicesFile": "./google-services-iruwa.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBZ3D0BWNA_ikCXp4eLXMHq_xJsKiCHtiM"
@@ -34,7 +34,7 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.Line2.test",
+      "bundleIdentifier": "com.Line2.iruwaapp",
       "buildNumber": "1.0.0",
       "supportsTablet": false,
       "infoPlist": {
@@ -46,7 +46,7 @@
       "config": {
         "googleMapsApiKey": "AIzaSyAJ9lHLFDUcSq-ElL6xtlJmnx3xrKlRGRY"
       },
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info_iruwa.plist"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

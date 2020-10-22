@@ -11,3 +11,7 @@ web-build/
 deprecated/
 # macOS
 .DS_Store
+google-services_iruwa.json
+google-services.json
+GoogleService-Info_iruwa.plist
+GoogleService-Info.plist
