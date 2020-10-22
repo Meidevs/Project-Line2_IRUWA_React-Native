@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import Constants from "expo-constants";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import CHATTING from '../assets/dataSource/chatModel';
@@ -358,6 +358,7 @@ function DetailScreen({ route, navigation }) {
                             }}>{itemInfos.cmp_name}의 위치</Text>
                         </View>
                         <MapView
+                            provider={PROVIDER_GOOGLE}
                             region={{
                                 latitude: itemInfos.cmp_lat,
                                 longitude: itemInfos.cmp_lon,
@@ -508,7 +509,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#15bac1',
     },
     ChatBtn: {
-        flex : 1,
+        flex: 1,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center'
@@ -517,8 +518,8 @@ const styles = StyleSheet.create({
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center',
-        borderLeftWidth : 0.5,
-        borderColor : '#ffffff'
+        borderLeftWidth: 0.5,
+        borderColor: '#ffffff'
     },
     ChatTxtStyle: {
         fontSize: 15,

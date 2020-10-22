@@ -26,10 +26,10 @@
         "WRITE_EXTERNAL_STORAGE",
         "FOREGROUND_SERVICE"
       ],
-      "googleServicesFile": "./google-services-iruwa.json",
+      "googleServicesFile": "./google-services_iruwa.json",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBZ3D0BWNA_ikCXp4eLXMHq_xJsKiCHtiM"
+          "apiKey": "AIzaSyAi3x7BuLK_7YAK_H2TkFjVtxMEQ_RVg40"
         }
       }
     },
@@ -44,7 +44,7 @@
         ]
       },
       "config": {
-        "googleMapsApiKey": "AIzaSyAJ9lHLFDUcSq-ElL6xtlJmnx3xrKlRGRY"
+        "googleMapsApiKey": "AIzaSyCzuqq3xsvRBV5UBjl8BoOgLpdM1TWqV1w"
       },
       "googleServicesFile": "./GoogleService-Info_iruwa.plist"
     },
