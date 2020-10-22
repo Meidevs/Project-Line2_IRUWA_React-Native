@@ -146,7 +146,7 @@ const ChatListUp = ({ data, user, navigation }) => {
             <View>
                 <VirtualizedList
                     data={items}
-                    initialNumToRender={10}
+                    initialNumToRender={4}
                     renderItem={({ item }) => <Item data={item} user={user} navigation={navigation} />}
                     keyExtractor={item => item.roomCode.toString()}
                     getItemCount={getItemCount}

@@ -204,22 +204,20 @@ function MainScreen({ route, navigation }) {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View>
-                    <VirtualizedList
-                        data={data}
-                        initialNumToRender={10}
-                        refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                        }
-                        ListHeaderComponent={() => {
-                            return <PremiumBanner data={user_location} navigation={navigation} />
-                        }}
-                        renderItem={({ item }) => <Item data={item} location={user_location} user={user_seq} navigation={navigation} />}
-                        keyExtractor={(item, index) => JSON.stringify(index)}
-                        getItemCount={getItemCount}
-                        getItem={getItem}
-                    />
-                </View>
+                <VirtualizedList
+                    data={data}
+                    initialNumToRender={4}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                    ListHeaderComponent={() => {
+                        return <PremiumBanner data={user_location} navigation={navigation} />
+                    }}
+                    renderItem={({ item }) => <Item data={item} location={user_location} user={user_seq} navigation={navigation} />}
+                    keyExtractor={(item, index) => JSON.stringify(index)}
+                    getItemCount={getItemCount}
+                    getItem={getItem}
+                />
                 <PreminumFrontAds data={user_location} />
             </SafeAreaView>
         )

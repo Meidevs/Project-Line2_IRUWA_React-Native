@@ -104,7 +104,7 @@ function CateListScreen({ route, navigation }) {
             <SafeAreaView>
                 <VirtualizedList
                     data={data}
-                    initialNumToRender={10}
+                    initialNumToRender={4}
                     renderItem={({ item }) => <Item data={item} user={user_seq} navigation={navigation} />}
                     keyExtractor={(item, index) => JSON.stringify(index)}
                     getItemCount={getItemCount}

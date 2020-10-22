@@ -8,7 +8,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     Keyboard,
-    Animated
+    Animated,
+    Platform
 } from 'react-native';
 import { HeaderBackButton } from '@react-navigation/stack';
 import * as Location from 'expo-location';
@@ -60,7 +61,7 @@ function UserTypeScreen({ route, navigation }) {
         uri: null
     });
     const [category_seq, setCompanyCate] = useState('');
-    const keyboardHeight = useRef(new Animated.Value(-30)).current;
+    const keyboardHeight = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         navigation.setOptions({
@@ -144,7 +145,7 @@ function UserTypeScreen({ route, navigation }) {
             Animated.timing(keyboardHeight, {
                 useNativeDriver: false,
                 duration: e.duration,
-                toValue: e.endCoordinates.height / 5,
+                toValue: e.endCoordinates.height,
             }),
         ]).start();
     }
@@ -153,7 +154,7 @@ function UserTypeScreen({ route, navigation }) {
             Animated.timing(keyboardHeight, {
                 useNativeDriver: false,
                 duration: e.duration,
-                toValue: -30,
+                toValue: 0,
             }),
         ]).start();
     }
@@ -560,28 +561,30 @@ function UserTypeScreen({ route, navigation }) {
                 {
                     componentJSX_A()
                 }
-                {
-                    status == 0 & pageCount == 3 ? (
-                        <TouchableOpacity
-                            style={styles.BtnForm}
-                            onPress={() => Register()}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                        </TouchableOpacity>
-                    ) : status == 1 & pageCount == 5 ? (
-                        <TouchableOpacity
-                            style={styles.BtnForm}
-                            onPress={() => Register()}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                        </TouchableOpacity>
-                    ) : (
-                                <TouchableOpacity
-                                    style={styles.BtnForm}
-                                    onPress={() => NextPage()}>
-                                    <Image source={require('../assets/images/long_right_arrow_ico.png')}
-                                    />
-                                </TouchableOpacity>
-                            )
-                }
+                <Animated.View style={Platform.OS == 'ios' ? { bottom : keyboardHeight }: null} >
+                    {
+                        status == 0 & pageCount == 3 ? (
+                            <TouchableOpacity
+                                style={styles.BtnForm}
+                                onPress={() => Register()}>
+                                <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                            </TouchableOpacity>
+                        ) : status == 1 & pageCount == 5 ? (
+                            <TouchableOpacity
+                                style={styles.BtnForm}
+                                onPress={() => Register()}>
+                                <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                            </TouchableOpacity>
+                        ) : (
+                                    <TouchableOpacity
+                                        style={styles.BtnForm}
+                                        onPress={() => NextPage()}>
+                                        <Image source={require('../assets/images/long_right_arrow_ico.png')}
+                                        />
+                                    </TouchableOpacity>
+                                )
+                    }
+                </Animated.View>
             </Animated.View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
@@ -753,7 +756,7 @@ const styles = StyleSheet.create({
     Registration: {
         width: 80,
         height: 120,
-        borderRadius : 10,
+        borderRadius: 10,
     },
     ExplanationText: {
         fontSize: 10,
