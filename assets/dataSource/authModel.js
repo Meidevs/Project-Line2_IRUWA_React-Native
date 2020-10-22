@@ -74,6 +74,26 @@ class AUTHENTICATION {
             console.log(err)
         }
     }
+    USER_ID_DUPLICATION = async (user_id) => {
+        try {
+            let response = await fetch('https://mostfeel.site/api/auth/userduplication', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ user_id: user_id })
+            });
+
+            let json = await response.json();
+            if (response.ok) {
+                return json;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     GET_USER_INFOs = async () => {
         try {
             let response = await fetch('https://mostfeel.site/api/auth/info', {

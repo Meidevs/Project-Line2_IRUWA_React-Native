@@ -47,6 +47,7 @@ function UserTypeScreen({ route, navigation }) {
     const [user_phone, setUserPhone] = useState(null);
     const [user_email, setUserEmail] = useState(null);
     const [email_duplication, setEmailDuplicate] = useState(true);
+    const [user_duplication, setUserDuplicate] = useState(true);
     const [user_location, setUserLocation] = useState(null);
     const [cmp_name, setCompanyName] = useState('');
     const [cmp_phone, setCompanyPhone] = useState('');
@@ -190,6 +191,10 @@ function UserTypeScreen({ route, navigation }) {
 
             case 2:
                 if (user_id != null & user_pw != null & password_again != null) {
+                    if (user_duplication) {
+                        alert('아이디 중복을 확인해주세요.')
+                        break;
+                    }
                     if (user_pw == password_again) {
                         setPageCount(pageCount => pageCount + 1);
                     } else {
@@ -242,7 +247,17 @@ function UserTypeScreen({ route, navigation }) {
             }
         }
     }
-
+    const DuplicationIDCheck = async () => {
+        if (user_id != null) {
+            var duplication = await AUTHENTICATION.USER_ID_DUPLICATION(user_id);
+            if (duplication.flags == 0) {
+                setUserDuplicate(false);
+                alert(duplication.message);
+            } else {
+                alert(duplication.message);
+            }
+        }
+    }
     const spaceRemover = (str) => {
         var newStr = str.replace(/\s/g, '');
         return newStr;
@@ -286,7 +301,7 @@ function UserTypeScreen({ route, navigation }) {
                 )
             case 1:
                 return (
-                    <View style={styles.UserSelectForm}>
+                    <View style={styles.RegisterForm}>
                         <View style={styles.UserSelectTitle}>
                             <Text style={styles.TitleTxt}>사용자 유형을 선택해 주세요.</Text>
                         </View>
@@ -315,37 +330,42 @@ function UserTypeScreen({ route, navigation }) {
                 )
             case 2:
                 return (
-                    <View>
-                        <View style={styles.TextInputForm}>
+                    <View style={styles.RegisterForm}>
+                        <View style={[styles.TextInputForm, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                             <TextInput
+                                style={[styles.TextInputStyle, { width: width * 0.6 }]}
                                 value={user_id}
                                 placeholder={'아이디를 입력해주세요.'}
                                 onChangeText={text => {
                                     var rawText = spaceRemover(text);
                                     var newText = lowerCase(rawText);
+                                    setUserDuplicate(true);
                                     setUserID(newText);
                                 }}
                             />
+                            <TouchableOpacity style={styles.AddressBtn} onPress={() => DuplicationIDCheck()}>
+                                <Text style={styles.AddrBtnTxt}>확인</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.TextInputForm_D}>
+                        <View style={[styles.TextInputForm, { marginBottom: 0 }]}>
                             <TextInput
+                                style={styles.TextInputStyle}
                                 value={user_pw}
                                 placeholder={'비밀번호를 입력해주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => SetUserPassword(text)}
-                                style={{ flex: 1 }}
                             />
                         </View>
                         <View style={styles.TextMatch}>
                             <Text style={styles.ExplanationText}>{password_boolean == false ? '영문(대,소문자), 특수문자, 숫자를 조합하여 입력해주세요.' : ''}</Text>
                         </View>
-                        <View style={styles.TextInputForm_D}>
+                        <View style={[styles.TextInputForm, { marginBottom: 0 }]}>
                             <TextInput
+                                style={styles.TextInputStyle}
                                 value={password_again}
                                 placeholder={'비밀번호를 다시 입력해주세요.'}
                                 secureTextEntry={true}
                                 onChangeText={text => setPassword_Again(text)}
-                                style={{ flex: 1 }}
                             />
                         </View>
                         <View style={styles.TextMatch}>
@@ -355,7 +375,7 @@ function UserTypeScreen({ route, navigation }) {
                 )
             case 3:
                 return (
-                    <View>
+                    <View style={styles.RegisterForm}>
                         <View style={styles.TextInputForm}>
                             <TextInput
                                 value={user_name}
@@ -363,10 +383,11 @@ function UserTypeScreen({ route, navigation }) {
                                 clearTextOnFocus={true}
                                 secureTextEntry={false}
                                 onChangeText={text => setUserName(text)}
-                                style={{ flex: 1, }}
+                                style={styles.TextInputStyle}
+
                             />
                         </View>
-                        <View style={styles.TextInputForm_B}>
+                        <View style={[styles.TextInputForm, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                             <TextInput
                                 value={user_email}
                                 placeholder={'메일을 입력해 주세요.'}
@@ -374,9 +395,11 @@ function UserTypeScreen({ route, navigation }) {
                                 autoCapitalize={'none'}
                                 onChangeText={text => {
                                     var newStr = spaceRemover(text);
+                                    setEmailDuplicate(true);
                                     setUserEmail(newStr)
                                 }}
-                                style={{ flex: 1 }}
+                                style={[styles.TextInputStyle, { width: width * 0.6 }]}
+
                             />
                             <TouchableOpacity style={styles.AddressBtn} onPress={() => DuplicationCheck()}>
                                 <Text style={styles.AddrBtnTxt}>확인</Text>
@@ -389,19 +412,21 @@ function UserTypeScreen({ route, navigation }) {
                                 clearTextOnFocus={true}
                                 secureTextEntry={false}
                                 onChangeText={text => setUserPhone(text)}
-                                style={{ flex: 1 }}
+                                style={styles.TextInputStyle}
+
                             />
                         </View>
                         <View style={styles.TextInputForm}>
-                            <Text>{user_location}</Text>
+                            <Text style={{ paddingTop: 10, paddingBottom: 10 }}>{user_location}</Text>
                         </View>
                     </View>
                 )
             case 4:
                 return (
-                    <View>
+                    <View style={styles.RegisterForm}>
                         <View style={styles.TextInputForm}>
                             <TextInput
+                                style={styles.TextInputStyle}
                                 value={cmp_name}
                                 placeholder={'업체 명을 입력해주세요.'}
                                 onChangeText={text => setCompanyName(text)}
@@ -410,28 +435,42 @@ function UserTypeScreen({ route, navigation }) {
                         </View>
                         <View style={styles.TextInputForm}>
                             <TextInput
+                                style={styles.TextInputStyle}
                                 value={cmp_phone}
                                 placeholder={'업체 전화번호를 입력해주세요.'}
                                 onChangeText={text => setCompanyPhone(text)}
                             />
                         </View>
-                        <View style={styles.TextInputForm_B}>
-                            <Text>{cmp_location}</Text>
+                        <View style={[styles.TextInputForm, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                            <View style={{ justifyContent: 'center' }}>
+                                <Text>{cmp_location}</Text>
+                            </View>
                             <TouchableOpacity style={styles.AddressBtn} onPress={() => setModalVisible(true)}>
                                 <Text style={styles.AddrBtnTxt}>주소 검색</Text>
                             </TouchableOpacity>
                         </View>
+
                     </View>
                 )
             case 5:
                 return (
-                    <View>
-                        <View style={styles.TextInputForm_B}>
-                            <Image source={{ uri: cmp_certificates.uri }}
-                                resizeMode={'contain'}
-                                style={styles.Registration}
-                            />
-                            <TouchableOpacity style={styles.AddressBtn} onPress={() => REGISTRATION_PICKER()}>
+                    <View style={styles.RegisterForm}>
+                        <View style={[styles.TextInputForm_B, {
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }]}>
+                            {
+                                !cmp_certificates.uri ?
+                                    <Image source={{ uri: 'https://mostfeel.site/images/favicon.png' }}
+                                        resizeMode={'contain'}
+                                        style={styles.Registration}
+                                    /> : <Image source={{ uri: cmp_certificates.uri }}
+                                        resizeMode={'cover'}
+                                        style={styles.Registration}
+                                    />
+                            }
+                            <TouchableOpacity style={styles.certiBtn} onPress={() => REGISTRATION_PICKER()}>
                                 <Text>사업자 등록증</Text>
                             </TouchableOpacity>
                         </View>
@@ -517,43 +556,32 @@ function UserTypeScreen({ route, navigation }) {
     }
     return (
         <View style={styles.Container}>
-            <Animated.View style={[styles.RegisterCard, { bottom: keyboardHeight }]}>
+            <Animated.View style={styles.RegisterCard}>
                 {
                     componentJSX_A()
                 }
-                <View style={styles.BtnForm}>
-                    {
-                        status == 0 & pageCount == 3 ? (
-                            <View style={styles.NextBtn}>
+                {
+                    status == 0 & pageCount == 3 ? (
+                        <TouchableOpacity
+                            style={styles.BtnForm}
+                            onPress={() => Register()}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                        </TouchableOpacity>
+                    ) : status == 1 & pageCount == 5 ? (
+                        <TouchableOpacity
+                            style={styles.BtnForm}
+                            onPress={() => Register()}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                        </TouchableOpacity>
+                    ) : (
                                 <TouchableOpacity
-                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
-                                    onPress={() => Register()}>
-                                    <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
+                                    style={styles.BtnForm}
+                                    onPress={() => NextPage()}>
+                                    <Image source={require('../assets/images/long_right_arrow_ico.png')}
+                                    />
                                 </TouchableOpacity>
-                            </View>
-                        ) : status == 1 & pageCount == 5 ? (
-                            <View style={styles.NextBtn}>
-                                <TouchableOpacity
-                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 120, height: 60 }}
-                                    onPress={() => Register()}>
-                                    <Text style={{ fontSize: 15, fontWeight: 'bold', letterSpacing: -0.3, color: '#ffffff' }}>완료</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                                    <View style={styles.NextBtn}>
-                                        <TouchableOpacity
-                                            style={{
-                                                flex: 1, justifyContent: 'center', alignItems: 'center', width: 120,
-                                                height: 60
-                                            }}
-                                            onPress={() => NextPage()}>
-                                            <Image source={require('../assets/images/long_right_arrow_ico.png')}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                    }
-                </View>
+                            )
+                }
             </Animated.View>
             <TermA visible={isTermA} callback={callbackA} />
             <TermB visible={isTermB} callback={callbackB} />
@@ -578,26 +606,24 @@ const styles = StyleSheet.create({
     },
     RegisterCard: {
         flex: 1,
-        paddingTop: 60,
-        paddingBottom: 60,
         flexDirection: 'column',
     },
     RegisterForm: {
         flex: 1,
-        backgroundColor : 'red'
+        padding: 25,
     },
-    BtnForm : {
-        flex : 1,
-        backgroundColor : 'red'
-
+    BtnForm: {
+        width: width,
+        padding: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#15bac1'
     },
     AgreementTerms: {
-        flex: 1,
-        marginTop: 10,
-        marginBottom: 10,
         flexDirection: 'row',
+        paddingTop: 15,
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     Terms: {
         padding: 15,
@@ -686,48 +712,31 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
     },
     TextInputForm: {
-        width: width * 0.6,
         paddingBottom: 10,
         marginBottom: 25,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
         borderBottomWidth: 1,
         borderColor: '#ebebeb',
-    },
-    TextMatch: {
-        width: width * 0.6,
-        height: 30,
-        marginBottom: 5,
     },
     TextInputForm_B: {
-        width: width * 0.6,
         paddingBottom: 10,
-        marginBottom: 30,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        marginBottom: 25,
         borderBottomWidth: 1,
         borderColor: '#ebebeb',
     },
-    TextInputForm_C: {
-        width: width * 0.6,
-        marginTop: 10,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#ebebeb',
+    certiBtn: {
+        padding: 10,
         borderRadius: 10,
+        borderColor: '#15bac1',
+        borderWidth: 1,
+        marginLeft: 10,
     },
-    TextInputForm_D: {
-        width: width * 0.6,
+    TextInputStyle: {
+        paddingTop: 10,
         paddingBottom: 10,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: '#ebebeb',
+    },
+    TextMatch: {
+        height: 30,
+        marginBottom: 5,
     },
     AddressBtn: {
         padding: 10,
@@ -744,6 +753,7 @@ const styles = StyleSheet.create({
     Registration: {
         width: 80,
         height: 120,
+        borderRadius : 10,
     },
     ExplanationText: {
         fontSize: 10,
