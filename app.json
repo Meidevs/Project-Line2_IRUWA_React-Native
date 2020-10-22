@@ -19,7 +19,7 @@
       "package": "com.Line2.test",
       "versionCode": 5,
       "useNextNotificationsApi": true,
-      "permissions" : [
+      "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "READ_EXTERNAL_STORAGE",
@@ -27,9 +27,9 @@
         "FOREGROUND_SERVICE"
       ],
       "googleServicesFile": "./google-services.json",
-      "config" : {
-        "googleMaps" : {
-          "apiKey" : "AIzaSyBZ3D0BWNA_ikCXp4eLXMHq_xJsKiCHtiM"
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBZ3D0BWNA_ikCXp4eLXMHq_xJsKiCHtiM"
         }
       }
     },
@@ -42,7 +42,11 @@
           "location",
           "fetch"
         ]
-      }
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyAJ9lHLFDUcSq-ElL6xtlJmnx3xrKlRGRY"
+      },
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
