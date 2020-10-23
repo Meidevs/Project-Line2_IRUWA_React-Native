@@ -33,11 +33,17 @@
         }
       }
     },
+    "locales" : {
+      "ko" : "./language/korean.json"
+    },
     "ios": {
       "bundleIdentifier": "com.Line2.iruwaapp",
       "buildNumber": "1.0.0",
       "supportsTablet": false,
       "infoPlist": {
+        "CFBundleAllowMixedLocalizations" : true,
+        "NSLocationWhenInUseUsageDescription": "Do you allow to use your location to see Advertisement?",
+        "NSPhotoLibraryUsageDescription": "Do you allow to use yout image library to enroll Advertisement?",
         "UIBackgroundModes": [
           "location",
           "fetch"

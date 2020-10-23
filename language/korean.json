@@ -1,0 +1,5 @@
+{
+    "CFBundleDisplayName" : "이루와",
+    "NSLocationWhenInUseUsageDescription" : "관심 지역의 광고를 확인하기 위해 위치정보 접근을 허용하시겠습니까?",
+    "NSPhotoLibraryUsageDescription" : "광고 등록을 위해 사용자의 저장소에 접근을 허용하시겠습니까?"
+}

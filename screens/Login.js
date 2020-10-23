@@ -31,7 +31,7 @@ function LoginScreen({ navigation }) {
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
-            alert(token)
+            if(!token) return alert('앱 설치간에 문제가 발생했습니다. 앱을 재설치 해주세요.')
             setToken(token);
         }
         SET_DEVICE_TOKEN();
