@@ -26,7 +26,7 @@
         "WRITE_EXTERNAL_STORAGE",
         "FOREGROUND_SERVICE"
       ],
-      "googleServicesFile": "./google-services_iruwa.json",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyAi3x7BuLK_7YAK_H2TkFjVtxMEQ_RVg40"
@@ -46,7 +46,7 @@
       "config": {
         "googleMapsApiKey": "AIzaSyCzuqq3xsvRBV5UBjl8BoOgLpdM1TWqV1w"
       },
-      "googleServicesFile": "./GoogleService-Info_iruwa.plist"
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

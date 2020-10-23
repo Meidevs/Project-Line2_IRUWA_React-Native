@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>258758854908-4ra9ph7gq6b9p6ib32aq7f8hc7m8hnc8.apps.googleusercontent.com</string>
+	<string>860931211684-hesm8lpdobdhs79lahjsr4sse4dcsmmc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.258758854908-4ra9ph7gq6b9p6ib32aq7f8hc7m8hnc8</string>
+	<string>com.googleusercontent.apps.860931211684-hesm8lpdobdhs79lahjsr4sse4dcsmmc</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBgTEjWiWI8l7efv3xUpmupM24pOTbSYe4</string>
+	<string>AIzaSyB3OHH0mQOmVHqDn2vkJUbShaXrlOhjHQ0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>258758854908</string>
+	<string>860931211684</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.Line2.test</string>
+	<string>com.Line2.iruwaapp</string>
 	<key>PROJECT_ID</key>
-	<string>iruwa-456d2</string>
+	<string>iruwa-service</string>
 	<key>STORAGE_BUCKET</key>
-	<string>iruwa-456d2.appspot.com</string>
+	<string>iruwa-service.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:258758854908:ios:451b7fba7f6e964382ef79</string>
+	<string>1:860931211684:ios:5601911524320a2b5ec131</string>
 	<key>DATABASE_URL</key>
-	<string>https://iruwa-456d2.firebaseio.com</string>
+	<string>https://iruwa-service.firebaseio.com</string>
 </dict>
 </plist>
