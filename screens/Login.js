@@ -128,6 +128,8 @@ function LoginScreen({ navigation }) {
                                 value={user_id}
                                 placeholderTextColor={'rgba(140, 140, 140, 1)'}
                                 placeholder={'아이디를 입력해주세요'}
+                                secureTextEntry={false}
+                                autoCapitalize={'none'}
                                 style={styles.Input}
                                 onChangeText={(text) => {
                                     setUserid(lowerCase(spaceRemover(text)));

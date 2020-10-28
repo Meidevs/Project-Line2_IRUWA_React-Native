@@ -122,7 +122,6 @@ function AddScreen({ route, navigation }) {
     const SelectAdsType = (num) => {
         setAdsType(num);
     }
-
     return (
         <SafeAreaView style={styles.Container}>
             <ScrollView style={styles.ScrollView}>
@@ -133,13 +132,13 @@ function AddScreen({ route, navigation }) {
                     <View style={styles.SwitchBtnArea}>
                         <TouchableOpacity onPress={() => SelectAdsType(0)} style={styles.SwitchBtnContent}>
                             <View style={styles.SwitchBtn}>
-                                <View style={adsType == 0 ? styles.InnerSwitch : styles.NonInnerSwitch} />
+                                <View style={[styles.Circle, adsType == 0 ? {backgroundColor : '#15bac1'} : {backgroundColor : '#ffffff'}]} />
                             </View>
                             <Text style={styles.SwitchBtnTxt}>일반</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => SelectAdsType(1)} style={styles.SwitchBtnContent}>
                             <View style={styles.SwitchBtn}>
-                                <View style={adsType == 1 ? styles.InnerSwitch : styles.NonInnerSwitch} />
+                                <View style={[styles.Circle, adsType == 1 ? {backgroundColor : '#15bac1'} : {backgroundColor : '#ffffff'}]} />
                             </View>
                             <Text style={styles.SwitchBtnTxt}>프리미엄</Text>
                         </TouchableOpacity>
@@ -310,7 +309,7 @@ const styles = StyleSheet.create({
     },
     SwitchBtn: {
         marginRight: 13,
-        borderRadius: 10,
+        borderRadius: 15,
         width: 15,
         height: 15,
         borderWidth: 1,
@@ -318,16 +317,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    InnerSwitch: {
+    Circle: {
         width: 9,
         height: 9,
-        borderRadius: 10,
-        backgroundColor: '#15bac1'
-    },
-    NonInnerSwitch: {
-        width: 9,
-        height: 9,
-        borderRadius: 10,
+        borderRadius: 9,
     },
     SwitchBtnTxt: {
         fontSize: 15,

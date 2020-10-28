@@ -95,7 +95,6 @@ class DATA_SORUCE {
     }
 
     SAVE_IMAGES = async (formData) => {
-        console.log(formData)
         try {
             var response = await fetch('https://mostfeel.site/api/item/create', {
                 method: 'POST',
@@ -115,7 +114,6 @@ class DATA_SORUCE {
     }
 
     UPDATE_IMAGE = async (formData) => {
-        console.log(formData)
         try {
             var response = await fetch('https://mostfeel.site/api/item/update', {
                 method: 'POST',

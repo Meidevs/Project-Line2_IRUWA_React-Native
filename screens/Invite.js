@@ -27,6 +27,7 @@ function InviteScreen({ route, navigation }) {
     const [coupons, setCoupons] = useState([1, 2, 3]);
     const [emailString, setEmailBase64] = useState(null);
     const [userName, setUserName] = useState(null);
+    const [isLoaded, setIsLoad] = useState(false);
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -48,9 +49,10 @@ function InviteScreen({ route, navigation }) {
             var stringToBase64 = await Buffer(user_email);
             var s = stringToBase64.toString('base64');
             if (isCancelled) {
-                setCoupons(user_coupon)
+                setCoupons(user_coupon);
                 setEmailBase64(s);
-                setUserName(user_name)
+                setUserName(user_name);
+                setIsLoad(true);
             }
         }
         GET_USER_INFO();
@@ -75,71 +77,77 @@ function InviteScreen({ route, navigation }) {
             alert(error.message);
         }
     };
-    return (
-        <SafeAreaView style={styles.Container}>
-            <ScrollView>
-                <View style={styles.IntroBox}>
-                    <View style={styles.IntroTitle}>
+    if(isLoaded) {
+        return (
+            <SafeAreaView style={styles.Container}>
+                <ScrollView>
+                    <View style={styles.IntroBox}>
+                        <View style={styles.IntroTitle}>
+                            <Image source={require('../assets/images/invite_ico.png')}
+                                style={{ width: 20, height: 14, marginRight: 10 }}
+                            />
+                            <Text style={styles.IntroTxt}>이루와에 친구를 초대하세요!</Text>
+                        </View>
+                        <Text style={styles.IntroContent}>
+                            고객님이 초대한 친구가 가입하면 이루와 가맹점 쿠폰을 받아요. 친구 5명을 초대하면 가맹점 만원 쿠폰을 드려요!
+                        </Text>
+                    </View>
+                    <View style={styles.InviteBox}>
+                        <TouchableOpacity style={styles.KakaoBtnContent} onPress={() => onShare()}>
+                            <Image source={require('../assets/images/kakao_ico.png')}
+                                style={{ marginRight: 15 }}
+                            />
+                            <Text style={styles.BtnTxtStyle}>카카오톡으로 초대하기</Text>
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity style={styles.UrlBtnContent} onPress={() => onShare()}>
+                            <Image source={require('../assets/images/share_ico.png')}
+                                style={{ width: 18, height: 20, marginRight: 15 }}
+                            />
+                            <Text style={styles.BtnTxtStyle}>URL 링크로 초대하기</Text>
+                        </TouchableOpacity> */}
+                    </View>
+                    <View style={styles.SectionBorder}>
+                        <View
+                            style={{ borderWidth: 0.5, borderColor: '#f2f2f2', width: width * 0.8 }}
+                        />
+                    </View>
+                    <View style={styles.CurrentCouponTitle}>
                         <Image source={require('../assets/images/invite_ico.png')}
                             style={{ width: 20, height: 14, marginRight: 10 }}
                         />
-                        <Text style={styles.IntroTxt}>이루와에 친구를 초대하세요!</Text>
+                        <Text style={styles.CouponTitleTxt}>나의 쿠폰</Text>
                     </View>
-                    <Text style={styles.IntroContent}>
-                        고객님이 초대한 친구가 가입하면 이루와 가맹점 쿠폰을 받아요. 친구 5명을 초대하면 가맹점 만원 쿠폰을 드려요!
-                    </Text>
-                </View>
-                <View style={styles.InviteBox}>
-                    <TouchableOpacity style={styles.KakaoBtnContent} onPress={() => onShare()}>
-                        <Image source={require('../assets/images/kakao_ico.png')}
-                            style={{ marginRight: 15 }}
-                        />
-                        <Text style={styles.BtnTxtStyle}>카카오톡으로 초대하기</Text>
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={styles.UrlBtnContent} onPress={() => onShare()}>
-                        <Image source={require('../assets/images/share_ico.png')}
-                            style={{ width: 18, height: 20, marginRight: 15 }}
-                        />
-                        <Text style={styles.BtnTxtStyle}>URL 링크로 초대하기</Text>
-                    </TouchableOpacity> */}
-                </View>
-                <View style={styles.SectionBorder}>
-                    <View
-                        style={{ borderWidth: 0.5, borderColor: '#f2f2f2', width: width * 0.8 }}
-                    />
-                </View>
-                <View style={styles.CurrentCouponTitle}>
-                    <Image source={require('../assets/images/invite_ico.png')}
-                        style={{ width: 20, height: 14, marginRight: 10 }}
-                    />
-                    <Text style={styles.CouponTitleTxt}>나의 쿠폰</Text>
-                </View>
-                <View style={styles.CheckCouponBox}>
-                <Text style={styles.CouponTxt}>지금까지 쿠폰 {coupons.length}개를 받았어요</Text>
-                    <Text style={styles.CouponTxt}>(최대 30개까지 받을 수 있어요!)</Text>
-                </View>
-                {
-                    coupons.map((data, index) => {
-                        return (
-                            <TouchableOpacity 
-                            onPress={() => Linking.openURL(data.coupon)}
-                            style={styles.CouponArea} key={index.toString()}>
-                                <View style={styles.LeftArea}>
-                                    <Image source={require('../assets/images/thumbnail.png')}
-                                        style={{ marginRight: 15 }}
-                                    />
-                                    <Text style={styles.CouponTxt_a}>이루와 가맹점 쿠폰</Text>
-                                </View>
-                                <View style={styles.RightArea}>
-                                    <Text style={styles.DateTxt}>{JSON.stringify(data.due_date).substring(1,11)}까지</Text>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })
-                }
-            </ScrollView>
-        </SafeAreaView>
-    )
+                    <View style={styles.CheckCouponBox}>
+                    <Text style={styles.CouponTxt}>지금까지 쿠폰 {coupons.length}개를 받았어요</Text>
+                        <Text style={styles.CouponTxt}>(최대 30개까지 받을 수 있어요!)</Text>
+                    </View>
+                    {
+                        coupons.map((data, index) => {
+                            var newString = data.due_date.substring(0,10);
+                            return (
+                                <TouchableOpacity 
+                                onPress={() => Linking.openURL(data.coupon)}
+                                style={styles.CouponArea} key={index.toString()}>
+                                    <View style={styles.LeftArea}>
+                                        <Image source={require('../assets/images/thumbnail.png')}
+                                            style={{ marginRight: 15 }}
+                                        />
+                                        <Text style={styles.CouponTxt_a}>이루와 가맹점 쿠폰</Text>
+                                    </View>
+                                    <View style={styles.RightArea}>
+                            <Text style={styles.DateTxt}>{newString}까지</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                </ScrollView>
+            </SafeAreaView>
+        )
+    } else {
+        return null;
+    }
+    
 }
 
 const styles = StyleSheet.create({

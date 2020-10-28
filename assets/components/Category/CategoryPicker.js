@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import {
-    View,
-    Picker
-} from 'react-native';
+    Picker,
+    Dimensions
+} from 'react-native'
 import DATA_SOURCE from '../../dataSource/dataModel';
+const { width, height } = Dimensions.get('window');
 
 const CategoryPicker = ({ callback }) => {
     const [categories, setCategories] = useState([]);
-    const [category, setCategory] = useState([]);
+    const [category, setCategory] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,11 +25,12 @@ const CategoryPicker = ({ callback }) => {
     }
     return (
         <Picker
-            style={{ flex: 1}}
+            style={{padding : 15, width : width * 0.6 }}
             selectedValue={category}
-            mode='dropdown'
-            onValueChange={(itemValue) => onChangeRefresh(itemValue)
-            }
+            mode="dropdown"
+            onValueChange={(itemValue) => {
+                onChangeRefresh(itemValue)
+            }}
         >
             {categories.map(data => (
                 <Picker.Item key={data.category_seq} label={data.category_name} value={data.category_seq} />

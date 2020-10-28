@@ -337,9 +337,10 @@ function UserTypeScreen({ route, navigation }) {
                                 style={[styles.TextInputStyle, { width: width * 0.6 }]}
                                 value={user_id}
                                 placeholder={'아이디를 입력해주세요.'}
+                                autoCapitalize={'none'}
+                                autoCorrect={false}
                                 onChangeText={text => {
-                                    var rawText = spaceRemover(text);
-                                    var newText = lowerCase(rawText);
+                                    var newText = lowerCase(spaceRemover(text));
                                     setUserDuplicate(true);
                                     setUserID(newText);
                                 }}
@@ -561,7 +562,7 @@ function UserTypeScreen({ route, navigation }) {
                 {
                     componentJSX_A()
                 }
-                <Animated.View style={Platform.OS == 'ios' ? { bottom : keyboardHeight }: null} >
+                <Animated.View style={Platform.OS == 'ios' ? { bottom: keyboardHeight } : null} >
                     {
                         status == 0 & pageCount == 3 ? (
                             <TouchableOpacity
@@ -726,6 +727,13 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#ebebeb',
     },
+    TextInputForm_C : {
+        padding : 15,
+        borderColor : '#ebebeb',
+        borderWidth : 1,
+        justifyContent : 'center',
+        alignItems : 'center',
+    },
     certiBtn: {
         padding: 10,
         borderRadius: 10,
@@ -747,6 +755,8 @@ const styles = StyleSheet.create({
         borderColor: '#15bac1',
         borderWidth: 1,
         marginLeft: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     AddrBtnTxt: {
         fontSize: 12,

@@ -178,7 +178,6 @@ function DetailScreen({ route, navigation }) {
         setColor(Color)
     }, [])
 
-
     useEffect(() => {
         const GET_ITEM_INFOs = async () => {
             try {

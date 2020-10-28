@@ -104,7 +104,6 @@ function SearchScreen({ navigation, route }) {
 
     const Callback = async (FromChild) => {
         var ITEM_LIST = await DATA_SOURCE.GET_ITEMS_ON_KEYWORD(FromChild);
-        console.log(ITEM_LIST)
         if(ITEM_LIST.flags == 0) {
             setItems(ITEM_LIST.content);
         } else {

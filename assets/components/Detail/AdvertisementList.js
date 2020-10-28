@@ -101,7 +101,8 @@ const styles = StyleSheet.create({
         marginTop: 15,
         marginBottom: 15,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        width : width * 0.3
     },
     NameTxt: {
         fontSize: 13,

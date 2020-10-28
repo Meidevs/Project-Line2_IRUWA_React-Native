@@ -76,7 +76,6 @@ function ProfileScreen({ route, navigation }) {
                 allowsEditing: true,
                 quality: 1,
             });
-            console.log(IMAGE_INFOs)
 
             //Resize Image to Send Server.
             var resizedImage = await ImageManipulator.manipulateAsync(
@@ -94,7 +93,6 @@ function ProfileScreen({ route, navigation }) {
             });
             // Send User Profile Image to Server
             var SAVE_RESULT = await AUTHENTICATION.SAVE_PROFILE_IMAGE(formData);
-            console.log('SAVE_RESULT', SAVE_RESULT)
             if (!IMAGE_INFOs.cancelled) {
                 if (SAVE_RESULT.flags == 1) {
                     setProfileImage({
