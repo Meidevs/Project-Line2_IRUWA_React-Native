@@ -45,7 +45,6 @@ function InviteScreen({ route, navigation }) {
         let isCancelled = true;
         const GET_USER_INFO = async () => {
             var user_coupon = await AUTHENTICATION.GET_COUPONS(user_email);
-            console.log(user_coupon)
             var stringToBase64 = await Buffer(user_email);
             var s = stringToBase64.toString('base64');
             if (isCancelled) {
@@ -132,7 +131,7 @@ function InviteScreen({ route, navigation }) {
                                     <Text style={styles.CouponTxt_a}>이루와 가맹점 쿠폰</Text>
                                 </View>
                                 <View style={styles.RightArea}>
-                                    <Text style={styles.DateTxt}>{data.due_date.substring(0,10)}까지</Text>
+                                    <Text style={styles.DateTxt}>{JSON.stringify(data.due_date).substring(1,11)}까지</Text>
                                 </View>
                             </TouchableOpacity>
                         )

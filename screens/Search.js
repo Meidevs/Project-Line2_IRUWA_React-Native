@@ -8,6 +8,7 @@ import {
     Dimensions,
     SafeAreaView,
     Image,
+    Alert,
     VirtualizedList
 } from 'react-native';
 import AUTHENTICATION from '../assets/dataSource/authModel';
@@ -103,7 +104,18 @@ function SearchScreen({ navigation, route }) {
 
     const Callback = async (FromChild) => {
         var ITEM_LIST = await DATA_SOURCE.GET_ITEMS_ON_KEYWORD(FromChild);
-        setItems(ITEM_LIST.content);
+        console.log(ITEM_LIST)
+        if(ITEM_LIST.flags == 0) {
+            setItems(ITEM_LIST.content);
+        } else {
+            Alert.alert(
+                '알림',
+                ITEM_LIST.content,
+                [
+                    { text: "확인" }
+                ]
+            )
+        }
         showPrevSearch(false);
         setText(null);
     }
@@ -113,7 +125,17 @@ function SearchScreen({ navigation, route }) {
             if (searchText !== null) {
                 setPrevItem(searchText)
                 var ITEM_LIST = await DATA_SOURCE.GET_ITEMS_ON_KEYWORD(searchText);
-                setItems(ITEM_LIST.content);
+                if(ITEM_LIST.flags == 0) {
+                    setItems(ITEM_LIST.content);
+                } else {
+                    Alert.alert(
+                        '알림',
+                        ITEM_LIST.content,
+                        [
+                            { text: "확인" }
+                        ]
+                    )
+                }
             }
             showPrevSearch(false);
             setText(null);

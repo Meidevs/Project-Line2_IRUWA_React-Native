@@ -87,13 +87,12 @@ function LoginScreen({ navigation }) {
         }
     }
     const spaceRemover = (str) => {
-        var newStr = str.replace(/\s/g, '');
-        return newStr;
+        return str.replace(/\s/g, '');
+        
     }
 
     const lowerCase = (str) => {
-        var newStr = str.toLowerCase();
-        return newStr;
+        return str.toLowerCase();
     }
     return (
         <Animated.View
@@ -130,10 +129,8 @@ function LoginScreen({ navigation }) {
                                 placeholderTextColor={'rgba(140, 140, 140, 1)'}
                                 placeholder={'아이디를 입력해주세요'}
                                 style={styles.Input}
-                                onChangeText={text => {
-                                    var rawText = spaceRemover(text);
-                                    var newText = lowerCase(rawText);
-                                    setUserid(newText)
+                                onChangeText={(text) => {
+                                    setUserid(lowerCase(spaceRemover(text)));
                                 }}
                             />
                         </View>
