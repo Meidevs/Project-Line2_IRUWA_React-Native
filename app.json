@@ -17,7 +17,7 @@
     },
     "android": {
       "package": "com.Line2.iruwaapp",
-      "versionCode": 2,
+      "versionCode": 3,
       "useNextNotificationsApi": true,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
