@@ -29,7 +29,7 @@
       "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAJJt3hFI5paxsE4Eyz1Yi7R4wDovvEnzY"
+          "apiKey": "AIzaSyCTHBm3mr2BA5MxaqFxPvKcJaKAPugTmc0"
         }
       }
     },
@@ -50,7 +50,7 @@
         ]
       },
       "config": {
-        "googleMapsApiKey": "AIzaSyCzuqq3xsvRBV5UBjl8BoOgLpdM1TWqV1w"
+        "googleMapsApiKey": "AIzaSyD9-Xr7ySlf364c2I-DIWg7nCCNbArH3LM"
       },
       "googleServicesFile": "./GoogleService-Info.plist"
     },
