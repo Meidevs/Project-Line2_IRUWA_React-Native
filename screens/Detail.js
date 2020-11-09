@@ -283,7 +283,7 @@ function DetailScreen({ route, navigation }) {
                         <Text style={styles.HeaderTitleTxtStyle}>
                             {yPosition > 300 ?
                                 itemInfos.item_title != null ?
-                                    itemInfos.item_title : null
+                                itemInfos.item_title : null
                                 : null}
                         </Text>
                     </View>
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     HeaderTitleTxtStyle: {
-        fontSize: 20,
+        flexShrink : 1,
         fontWeight: 'bold'
     },
     ScrollView: {

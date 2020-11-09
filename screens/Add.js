@@ -5,12 +5,10 @@ import {
     ScrollView,
     TextInput,
     TouchableOpacity,
-    StatusBar,
     StyleSheet,
     Image,
     Dimensions,
     SafeAreaView,
-    Platform
 } from 'react-native';
 
 import Constants from "expo-constants";
@@ -176,7 +174,7 @@ function AddScreen({ route, navigation }) {
                                             style={{ width: 10, height: 10 }}
                                         />
                                     </View>
-                                    <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
+                                    <Image source={{ uri: data.uri }} resizeMode='cover' style={{width : 50, height : 50, borderRadius : 10,}} />
                                 </TouchableOpacity>
                             )
                         })
@@ -201,7 +199,7 @@ function AddScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: 'rgba(255,255,255,1)'
+        backgroundColor: '#ffffff'
     },
     ScrollView: {
         flex: 1,
@@ -239,10 +237,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     ImageList: {
-        padding: 25,
+        margin : 25,
+        flexWrap : "wrap",
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     ItemTitleBox: {
         marginRight: 25,
@@ -274,16 +273,13 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     ImageListForm: {
-        width: 60,
-        height: 60,
-        borderRadius: 10,
-        marginRight: 15,
+        margin: 10,
     },
     DeleteIcon: {
         position: 'absolute',
         zIndex: 2,
-        top: 5,
-        right: 5,
+        top : 5,
+        right : 5
     },
     SwitchBtnForm: {
         margin: 25,

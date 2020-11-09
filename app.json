@@ -2,7 +2,7 @@
   "expo": {
     "name": "IRUWA",
     "slug": "IRUWA",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "package": "com.Line2.iruwaapp",
-      "versionCode": 4,
+      "versionCode": 5,
       "useNextNotificationsApi": true,
       "permissions": [
         "ACCESS_COARSE_LOCATION",

@@ -47,6 +47,7 @@ const getItemCount = (data) => {
 
 const Item = ({ data, user, navigation }) => {
     var time_gap = TimeGap(data.reg_date);
+    var titleString = data.item_name.length > 20 ? data.item_name.substring(0, 19) + "..." : data.item_name;
     return (
         <View>
             <TouchableOpacity style={styles.ContentBox} onPress={() => navigation.navigate('Detail', {
@@ -58,7 +59,7 @@ const Item = ({ data, user, navigation }) => {
                     <Image source={{ uri: data.uri[0] }} style={styles.ImageContent} />
                 </View>
                 <View style={styles.RightArea}>
-                    <Text style={styles.ItemName}>{data.item_name}</Text>
+                    <Text style={styles.ItemName}>{titleString}</Text>
                     <Text style={styles.CmpLocation}>{data.cmp_name}</Text>
                     <Text style={styles.CmpLocation}>{data.cmp_location}</Text>
                     <Text style={styles.Time_Gap}>{time_gap}</Text>
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     },
     ItemName: {
         flex: 1,
-        fontSize: 15,
+        flexShrink : 1,
         fontWeight: '800',
         color: '#000000'
     },
