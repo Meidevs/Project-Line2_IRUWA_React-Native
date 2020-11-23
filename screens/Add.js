@@ -174,7 +174,7 @@ function AddScreen({ route, navigation }) {
                                             style={{ width: 10, height: 10 }}
                                         />
                                     </View>
-                                    <Image source={{ uri: data.uri }} resizeMode='cover' style={{width : 50, height : 50, borderRadius : 10,}} />
+                                    <Image source={{ uri: data.uri }} resizeMode='cover' style={{width : 50, height : 50, borderRadius : 10}} />
                                 </TouchableOpacity>
                             )
                         })

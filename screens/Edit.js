@@ -34,8 +34,8 @@ function EditScreen({ route, navigation }) {
         ads_type,
         uri,
     } = route.params;
-    const [itemName, setItemName] = useState(null);
-    const [itemContent, setItemContent] = useState(null);
+    const [itemName, setItemName] = useState(item_name);
+    const [itemContent, setItemContent] = useState(JSON.parse(item_content));
     const [adsType, setItemAds] = useState(ads_type);
     const [itemUri, setItemUri] = useState([]);
 
@@ -80,6 +80,7 @@ function EditScreen({ route, navigation }) {
 
     const IMAGE_PICKER = async () => {
         try {
+            if (itemUri.length >= 10) return alert('이미지는 10개 이상 업로드 하실 수 없습니다.')
             let IMAGE_INFOs = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 aspect: [400, 400],
@@ -120,7 +121,7 @@ function EditScreen({ route, navigation }) {
         formData.append('item_content', JSON.stringify(itemContent));
         formData.append('ads_type', adsType);
         if (itemUri.length <= 0) return alert('이미지는 한가지 이상 등록해주세요.');
-        
+
         for (var i = 0; i < itemUri.length; i++) {
             formData.append('image', {
                 uri: itemUri[i].uri,
@@ -179,28 +180,30 @@ function EditScreen({ route, navigation }) {
                     </View>
 
                 </View>
+                <View style={styles.ImageList}>
+                    {
+                        itemUri.map((data, index) => {
+                            return (
+                                <TouchableOpacity
+                                    key={index.toString()}
+                                    style={styles.ImageListForm}
+                                    onPress={() => DELETE_IMAGE(index)}>
+                                    <View style={styles.DeleteIcon}>
+                                        <Image source={require('../assets/images/close_button.png')}
+                                            style={{ width: 10, height: 10 }}
+                                        />
+                                    </View>
+                                    <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                </View>
                 <View style={styles.ImageUploadBox}>
                     <TouchableOpacity style={styles.ImageUploadBtn} onPress={() => IMAGE_PICKER()}>
                         <Image source={require('../assets/images/photo_ico.png')} />
                         <Text>{itemUri.length}/10</Text>
                     </TouchableOpacity>
-                    <View style={styles.ImageList}>
-                        {
-                            itemUri.map((data, index) => {
-                                return (
-                                    <TouchableOpacity
-                                        key={index.toString()}
-                                        style={styles.ImageListForm}
-                                        onPress={() => DELETE_IMAGE(index)}>
-                                        <View style={styles.DeleteIcon}>
-                                            <Image source={require('../assets/images/close_button.png')} />
-                                        </View>
-                                        <Image source={{ uri: data.uri }} resizeMode='cover' style={styles.ImageListForm} />
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
-                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -278,37 +281,40 @@ const styles = StyleSheet.create({
     },
     ImageUploadBox: {
         width: width,
-        height: height * 0.1,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderBottomWidth: 2,
-        borderColor: 'rgba(238, 238, 238, 1)'
     },
     ImageUploadBtn: {
         flex: 1,
+        marginRight: 25,
+        marginLeft: 25,
+        marginBottom: 25,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: '#4C4C4C',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center'
     },
     ImageList: {
-        flex: 5,
+        margin : 25,
+        flexWrap: "wrap",
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center'
     },
     ImageListForm: {
         margin: 3,
-        width: 40,
-        height: 40,
-        borderRadius: 5,
+        width: 50,
+        height: 50,
+        borderRadius: 10,
     },
     DeleteIcon: {
-        flex: 1,
         position: 'absolute',
-        zIndex: 5,
-        top: -1,
-        left: 30,
+        zIndex: 2,
+        top: 5,
+        right: 5,
     },
 })
 
