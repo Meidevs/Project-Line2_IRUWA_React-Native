@@ -1,7 +1,7 @@
 class DATA_SORUCE {
     GET_NOTIFICATIONS = async (user_location) => {
         try {
-            var response = await fetch('https://mostfeel.site/api/noti/list', {
+            var response = await fetch('http://localhost:3000/api/noti/list', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

@@ -17,7 +17,7 @@ class GLOBE {
             reconnectionAttempts: 5000,
             transports: ['polling', 'websocket']/// you need to explicitly tell it to use websockets
         };
-        var socket = io('https://mostfeel.site', connectionConfig);
+        var socket = io('http://localhost:3000', connectionConfig);
         this.GLOBE_SOCKET = socket;
     }
 
