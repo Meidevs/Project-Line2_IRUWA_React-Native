@@ -28,24 +28,21 @@ function BannedListScreen({ navigation }) {
             ),
         })
     }, []);
-
-    useEffect(() => {
-        const GET_BANNED_LIST = async () => {
-            if (isLoaded) {
-                var BANNED_LIST = await AUTHENTICATION.GET_BANNED_LIST();
-                setBannedList(BANNED_LIST);
-            }
-        }
-        setIsLoad(false);
-        GET_BANNED_LIST();
-    }, [isLoaded])
-
     const removeBanned = async (data) => {
         var REMOVE_RESULT = await AUTHENTICATION.REMOVE_BAN_USER(data);
         alert(REMOVE_RESULT.messages);
-        setIsLoad(true);
-
     }
+    useEffect(() => {
+        let isCancelled = true;
+        const GET_BANNED_LIST = async () => {
+            var BANNED_LIST = await AUTHENTICATION.GET_BANNED_LIST();
+            setBannedList(BANNED_LIST);
+            setIsLoad(false);
+        }
+        GET_BANNED_LIST();
+        return () => isCancelled = false;
+    }, [])
+
     if (bannedList.length > 0) {
         return (
             <SafeAreaView style={styles.Container}>

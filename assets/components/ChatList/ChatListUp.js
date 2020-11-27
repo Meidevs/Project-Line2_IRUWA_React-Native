@@ -140,7 +140,6 @@ const ChatListUp = ({ data, user, navigation }) => {
         }
         GET_USER_PROFILE();
     }, [data]);
-    console.log(items)
     if (items.length > 0) {
         return (
             <View>
