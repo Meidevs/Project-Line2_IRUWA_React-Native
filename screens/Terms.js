@@ -63,6 +63,10 @@ function UserTypeScreen({ route, navigation }) {
     const [category_seq, setCompanyCate] = useState('');
     const keyboardHeight = useRef(new Animated.Value(0)).current;
 
+    // the TermScreen's back button has two types of functions. One is prevPage and the other is return to page;
+    // This functions are classified according to pageCount;
+    // The useEffect function sees deps, deps is the variable referneced by userEffect;
+    // When the deps variable changes, the useEffect makes the view reflect the changes again ;
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => {
@@ -100,6 +104,10 @@ function UserTypeScreen({ route, navigation }) {
         })
     }, [pageCount]);
 
+
+    // The TermScreen needs location information. So, requestPermissionsAsync function checks whether the status variable is "granted";
+    // When status variable is "granted", the getCurrentPositionAsync function calls the latitude & longitude
+    // Then, the GET_CURRENT_LOCATION function make a requests to the Kakao map API for reverseGeolocation; 
     useEffect(() => {
         (async () => {
             if (Constants.platform.ios || Constants.platform.android) {
@@ -115,6 +123,7 @@ function UserTypeScreen({ route, navigation }) {
                 }
             }
         })();
+        // The TermScreen needs to access image library of the user's device. So, getAsync function checks whether the status variable of CAMERA_ROLL is "granted"
         (async () => {
             if (Constants.platform.ios || Constants.platform.android) {
                 let { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
@@ -124,6 +133,8 @@ function UserTypeScreen({ route, navigation }) {
             }
         })();
     }, []);
+
+    // The keyboradDidShowListender/keyboardDidHideListener is a class which deal with Keyboard specifications by applying addListener to Keyboard element of React-Native;
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow', (event) => {
@@ -139,7 +150,8 @@ function UserTypeScreen({ route, navigation }) {
             keyboardDidShowListener.remove();
         };
     }, []);
-
+    // The keyboardDidShow function receives event from the keyboardDidShowListener;
+    // Then the keyboard appears in the view, the keyboardDidShow function changes the layout;
     const keyboardDidShow = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
@@ -149,6 +161,8 @@ function UserTypeScreen({ route, navigation }) {
             }),
         ]).start();
     }
+    // The keyboardDidHide function receives event from the keyboardDidHideListener;
+    // Then the keyboard disappears in the view, the keyboardDidHide function changes the layout;
     const keyboardDidHide = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
@@ -158,6 +172,8 @@ function UserTypeScreen({ route, navigation }) {
             }),
         ]).start();
     }
+
+    // The callbackA, B, C function receive parameters from childComponent;
     const callbackA = (ChildFrom) => {
         setIsTermA(ChildFrom)
     }
@@ -167,6 +183,8 @@ function UserTypeScreen({ route, navigation }) {
     const callbackC = (ChildFrom) => {
         setIsTermC(ChildFrom)
     }
+    // The SetUserPassword function asks PASSWORD_CHECK function to check presence of special characters, uppercase, lowercase, number in the password;
+    // If the string sent to the PASSWORD_CHECK function meets the requirements, the PASSOWORD_CHECK function returns the password and password_boolean;
     const SetUserPassword = async (data) => {
         try {
             var PASSWORD = await PASSWORD_CHECK(data);
@@ -177,6 +195,13 @@ function UserTypeScreen({ route, navigation }) {
         }
     }
 
+    // The NextPage function has 5 responses based on pageCount;
+    // case 0 is to confirm all terms and conditions for using the IRUWA service;
+    // case 1 do nothing;
+    // case 2 is to check for duplicate user IDs, matching password, blanck entries;
+    // case 3 is to check for duplicate user E-mails, blanck entries;
+    // case 4 is to check for blanck entries;
+    // case 5 is to check for blanck entries;
     const NextPage = () => {
         switch (pageCount) {
             case 0:
@@ -234,9 +259,14 @@ function UserTypeScreen({ route, navigation }) {
                 break;
         }
     }
+
+    // The PrevPage function subtracts 1 from pageCount;
     const PrevPage = () => {
         setPageCount(pageCount => pageCount - 1);
     }
+
+    // The DuplicationCheck function requests the REST endpoint to check for email duplicates;
+    // If the return value is 0, you can use email;
     const DuplicationCheck = async () => {
         if (user_email != null) {
             var DUPLICATION = await AUTHENTICATION.EMAIL_DUPLICATION(user_email);
@@ -248,6 +278,9 @@ function UserTypeScreen({ route, navigation }) {
             }
         }
     }
+
+    // The DuplicationIDCheck function requests the REST endpoint to check for user ID duplicates;
+    // If the return value is 0, you can use user ID;
     const DuplicationIDCheck = async () => {
         if (user_id != null) {
             var duplication = await AUTHENTICATION.USER_ID_DUPLICATION(user_id);
@@ -259,16 +292,20 @@ function UserTypeScreen({ route, navigation }) {
             }
         }
     }
+
+    // The spaceRemover function removes spaces in a string;
     const spaceRemover = (str) => {
         var newStr = str.replace(/\s/g, '');
         return newStr;
     }
 
+    // The lowerCase function removes uppercase in a string;
     const lowerCase = (str) => {
         var newStr = str.toLowerCase();
         return newStr;
     }
 
+    // The componentJSX_A is an input form that changes according to pageCount;
     const componentJSX_A = () => {
         switch (pageCount) {
             case 0:
@@ -483,6 +520,10 @@ function UserTypeScreen({ route, navigation }) {
                 )
         }
     }
+
+    // The REGISTRATION_PICKER function gets an images from the device's image library;
+    // The launchImageLibraryAsync function of ImagePicker gets basic information of images;
+    // The manipulateAsync function of ImagePicker makes a new format of image;
     const REGISTRATION_PICKER = async () => {
         try {
             let IMAGE_INFOs = await ImagePicker.launchImageLibraryAsync({
@@ -495,6 +536,7 @@ function UserTypeScreen({ route, navigation }) {
                 { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
             );
 
+            // Save the image uri to the memory;
             if (!IMAGE_INFOs.cancelled) {
                 setImage(
                     {
@@ -507,6 +549,9 @@ function UserTypeScreen({ route, navigation }) {
             console.log('Image Error', err);
         }
     }
+
+    // The Register function sends data to the REST End-point;
+    // It is sent to REST end-point as formData type;
     const Register = async () => {
         var data = new Object();
         var formData = new FormData();
@@ -542,14 +587,18 @@ function UserTypeScreen({ route, navigation }) {
             alert(response.message);
         }
     }
+
+    // The ReturnCategory function receives the companyCategory codes from childComponent;
     const ReturnCategory = (ChildFrom) => {
         setCompanyCate(ChildFrom)
     }
 
+    // The ReturnVisible function communicates with childComponent to set modal visibility;
     const ReturnVisible = (ChildFrom) => {
         setModalVisible(ChildFrom)
     }
 
+    // The ReturnLocation function receives detail location, simple location, latitude, longitude from childComponent;
     const ReturnLocation = (ChildFrom) => {
         setCompanyDLocation(ChildFrom[0]);
         setCompanyLocation(ChildFrom[1]);
@@ -727,12 +776,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#ebebeb',
     },
-    TextInputForm_C : {
-        padding : 15,
-        borderColor : '#ebebeb',
-        borderWidth : 1,
-        justifyContent : 'center',
-        alignItems : 'center',
+    TextInputForm_C: {
+        padding: 15,
+        borderColor: '#ebebeb',
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     certiBtn: {
         padding: 10,

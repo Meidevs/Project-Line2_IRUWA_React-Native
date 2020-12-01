@@ -22,6 +22,8 @@ function FindUserScreen({ route, navigation }) {
     const [searchEmail_a, setSearchEmail_A] = useState(null);
     const [searchEmail_b, setSearchEmail_B] = useState(null);
 
+    // Delete shadow and elevation of header;
+    // Shadow/Elevation is a gray line or literally a shadow under the header;
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -40,6 +42,7 @@ function FindUserScreen({ route, navigation }) {
         })
     }, []);
 
+    // The keyboradDidShowListender/keyboardDidHideListener is a class which deal with Keyboard specifications by applying addListener to Keyboard element of React-Native;
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow', (event) => {
@@ -56,6 +59,8 @@ function FindUserScreen({ route, navigation }) {
         };
     }, []);
 
+    // The keyboardDidShow function receives event from the keyboardDidShowListener;
+    // Then the keyboard appears in the view, the keyboardDidShow function changes the layout;
     const keyboardDidShow = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
@@ -65,6 +70,8 @@ function FindUserScreen({ route, navigation }) {
             }),
         ]).start();
     }
+    // The keyboardDidHide function receives event from the keyboardDidHideListener;
+    // Then the keyboard disappears in the view, the keyboardDidHide function changes the layout;
     const keyboardDidHide = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
@@ -75,6 +82,8 @@ function FindUserScreen({ route, navigation }) {
         ]).start();
     }
 
+    // The SearchUserID function sends the email created by the user to the REST End-point;
+    // When return value of the SEND_USER_EMAIL function is 0, Alert shows user id;
     const SearchUserID = async () => {
         var resReturn = await AUTHENTICATION.SEND_USER_EMAIL(searchEmail_a);
         if (resReturn.flags == 0) {
@@ -98,6 +107,8 @@ function FindUserScreen({ route, navigation }) {
         }
     }
 
+    // The SearchUserPW function sends the email created by the user to the REST End-point;
+    // When return value of the SEND_USER_EMAIL function is 0, Alert shows announcement "임시 비밀번호를 메일로 전달했습니다";
     const SearchUserPW = async () => {
         var resReturn = await AUTHENTICATION.FIND_USER_PASSWORD(searchEmail_b);
         if (resReturn.flags == 0) {

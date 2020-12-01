@@ -28,6 +28,8 @@ import AdvertisementList from '../assets/components/Detail/AdvertisementList';
 import PhoneList from '../assets/components/Detail/PhoneList';
 const { width, height } = Dimensions.get('window');
 
+// The _getHeaderBackgroundColor function receives scrollY variable which is the position of the current view;
+// This function uses interpolate to change the transparent, it helps to change the color gradually;
 const _getHeaderBackgroundColor = (scrollY) => {
     const variable = scrollY.interpolate({
         inputRange: [0, 300],
@@ -48,11 +50,13 @@ const _getHeaderBorderColor = (scrollY) => {
     return variable;
 }
 
+// The scrollHandle function works when the user scrolls the view. And it returns the current point of view location;
 const scrollHandle = (event) => {
     var yPosition = event.nativeEvent.contentOffset.y;
     return yPosition;
 }
 
+// The iconColorHandle function changes icon's color based on current point of view location;
 const iconColorHandle = (event) => {
     const yiColor = [
         'rgba(255, 255, 255, 1)',
@@ -141,6 +145,7 @@ const iconColorHandle = (event) => {
     }
     return iconColor;
 }
+
 function DetailScreen({ route, navigation }) {
     const scrollY = useRef(new Animated.Value(0)).current;
     const [yColor, setColor] = useState(null);
@@ -171,6 +176,7 @@ function DetailScreen({ route, navigation }) {
     const cmp_seq = route.params.cmp_seq;
     const user_seq = route.params.user_seq;
 
+    // Gets scrollY variable and sets borderColor and color of header;
     useEffect(() => {
         const Color = _getHeaderBackgroundColor(scrollY);
         const BorderColor = _getHeaderBorderColor(scrollY);
@@ -178,6 +184,7 @@ function DetailScreen({ route, navigation }) {
         setColor(Color)
     }, [])
 
+    // The GET_ITEM_DETAIL function requests all necessary data from the DetailScreen;
     useEffect(() => {
         const GET_ITEM_INFOs = async () => {
             try {
@@ -214,10 +221,13 @@ function DetailScreen({ route, navigation }) {
         GET_ITEM_INFOs()
     }, []);
 
+    // The goToNavigation function connects to the navigation web page;
     const goToNavigation = () => {
         Linking.openURL(`https://kakaonavi-wguide.kakao.com/drive.html?ak=13da3914377346b0b8f74f5309b49dad&ctype=1&lt=${itemInfos.cmp_lat}&ln=${itemInfos.cmp_lon}`);
     }
 
+    // The setNavigationParams function moves to ChatInitial Screen passing item images, items_seq, etc..;
+    // Also, the setNavigationParams function requests user_seq, user_name from USER_INFO function, host_seq, host_name, etc using CMP_INFO function, items_seq, item_name using ITEM_INFO function;
     const setNavigationParams = async () => {
         var cmp_seq = itemInfos.cmp_seq;
         var items_seq = itemInfos.items_seq;
@@ -240,6 +250,9 @@ function DetailScreen({ route, navigation }) {
             roomCode: keyString
         })
     }
+
+    // The InterestList function requests to update user's pick at the REST End-point;
+    // The heart icon changes to empty, full, or vice versa;
     const InterestList = async () => {
         var RESULT = await DATA_SOURCE.UPDATE_ITEM_PICK(items_seq);
         if (RESULT.flags !== 2) {
@@ -252,6 +265,8 @@ function DetailScreen({ route, navigation }) {
             alert(RESULT.message);
         }
     }
+
+    // The NavigationBack function returns the user to the MainScreen;
     const NavigationBack = () => {
         setIsLoad(false);
         navigation.goBack();

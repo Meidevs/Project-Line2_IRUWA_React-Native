@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "860931211684",
+    "firebase_url": "https://iruwa-service.firebaseio.com",
+    "project_id": "iruwa-service",
+    "storage_bucket": "iruwa-service.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860931211684:android:2cde314bad805f5d5ec131",
+        "android_client_info": {
+          "package_name": "com.Line2.iruwaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "860931211684-l8rd1qjja9vas7o2veeng2h23rj9vuqg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvnm9Amns4ZR2hL4sVd1uonJxVmaZNChI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "860931211684-l8rd1qjja9vas7o2veeng2h23rj9vuqg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

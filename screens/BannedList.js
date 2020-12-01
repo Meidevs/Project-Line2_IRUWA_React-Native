@@ -28,10 +28,14 @@ function BannedListScreen({ navigation }) {
             ),
         })
     }, []);
+
+    // The removeBanned function requests REST End-point to remove the selected user from the list of banned users;
     const removeBanned = async (data) => {
         var REMOVE_RESULT = await AUTHENTICATION.REMOVE_BAN_USER(data);
         alert(REMOVE_RESULT.messages);
-    }
+    };
+
+    // The GET_BANNED_LIST function requests the list of banned users to the REST End-point. And, Sets banned users;
     useEffect(() => {
         let isCancelled = true;
         const GET_BANNED_LIST = async () => {
@@ -43,6 +47,7 @@ function BannedListScreen({ navigation }) {
         return () => isCancelled = false;
     }, [])
 
+    // When rendering the view,When rendering the view, the presence of data.cmp_name means that the banned user is a company;
     if (bannedList.length > 0) {
         return (
             <SafeAreaView style={styles.Container}>

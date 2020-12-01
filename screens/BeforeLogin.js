@@ -14,6 +14,8 @@ const { width, height } = Dimensions.get('window');
 
 function BeforeLoginScreen({ navigation }) {
 
+    // BeforeLoginScreen is the first screen that appears when the application is turned on;
+    // The application asks the user to make a permission to access "Notifications", "Camera_Roll", "Location";
     useEffect(() => {
         const getAllPermission = async () => {
             if (Constants.platform.ios || Constants.platform.android) {
