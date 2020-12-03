@@ -90,6 +90,7 @@ function SearchScreen({ navigation, route }) {
         })
     }, []);
 
+    // useEffect's GET_USER_INFOs function requests the user information;
     useEffect(() => {
         const GET_USER_INFOs = async () => {
             var USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
@@ -98,10 +99,12 @@ function SearchScreen({ navigation, route }) {
         GET_USER_INFOs();
     }, [])
 
+    // The toggleSearchHistory function shows or hides the list of previous search history;
     const toggleSearchHistory = () => {
         showPrevSearch(!showPrev);
     }
 
+    // The Callback function receives search keyword from childComponent and sends keyword to the server to reqeusts item lists;
     const Callback = async (FromChild) => {
         var ITEM_LIST = await DATA_SOURCE.GET_ITEMS_ON_KEYWORD(FromChild);
         if(ITEM_LIST.flags == 0) {
@@ -119,6 +122,7 @@ function SearchScreen({ navigation, route }) {
         setText(null);
     }
 
+    // The SearchItem function checks searchText is null. And, it sends searchText(keyword) to the server to request item lists;
     const SearchItem = async () => {
         try {
             if (searchText !== null) {

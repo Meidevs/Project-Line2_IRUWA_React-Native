@@ -41,6 +41,10 @@ function MyinfoScreen({ route, navigation }) {
         })
     }, [infos]);
 
+    // The useFocusEffect function works when this user sees this screen;
+    // The USER_CMP_CHECK function requests the user information to the server;
+    // If the return value has cmp_exist as "Y", the function isUserHasComp sets true;
+    // It means that the user is both normal and corporate user.
     useFocusEffect(
         React.useCallback(() => {
             const USER_CMP_CHECK = async () => {

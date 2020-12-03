@@ -85,6 +85,8 @@ function CouponScreen({ route, navigation }) {
         ]).start();
     }
 
+    // The setCounponText function receives the coupon content and truncates the coupon content if the size is more than 45 bytes;
+    // And, the setCouponContent function sets a new edited string;
     const setCouponText = (data) => {
         var stringlen = new Blob([data]).size;
         if (stringlen > 45) {
@@ -94,6 +96,9 @@ function CouponScreen({ route, navigation }) {
         setCouponContent(data);
     }
 
+    // The checkCouponCondition function checks coupon's deadline and presence of coupon content;
+    // The checkCouponCondition function will return a notification if there is a problem with the coupon deadline or the coupon content;
+    // Also, if the checkCouponCondition function contains the text "주", "개월", "년" in the couponDuedate variable, the checkCouponCondition function replaces the text with numbers;
     const checkCouponCondition = async () => {
         var period;
         if (!couponDueDate | !couponContent) return Alert.alert(
@@ -131,11 +136,11 @@ function CouponScreen({ route, navigation }) {
             ]
         )
     }
-
+    // The saveCoupon function sends the coupon content, deadline to the server;
     const saveCoupon = async (coupon_content, coupon_due_date) => {
         await DATA_SOURCE.SET_COUPON(items_seq, coupon_content, coupon_due_date);
     }
-
+    // The saveCoupon function request to delete the coupon to the server;
     const deleteCoupon = async (items_seq) => {
         await DATA_SOURCE.DELETE_COUPON(items_seq);
     }

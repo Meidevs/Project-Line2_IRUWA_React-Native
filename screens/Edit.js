@@ -17,6 +17,7 @@ import * as Permissions from 'expo-permissions';
 import * as ImageManipulator from "expo-image-manipulator";
 const { width, height } = Dimensions.get('window');
 
+// The getImageRollAsync function asks permission to access the device's image library;
 async function getImageRollAsync() {
     if (Constants.platform.ios || Constants.platform.android) {
         const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -54,11 +55,11 @@ function EditScreen({ route, navigation }) {
         })
     }, [items_seq, itemName, itemContent, itemUri, adsType]);
 
+    // The useEffect works after the React DOM has been created. The SET_IMAGE function creates a list of images using the image URI of the previous screen;
     useEffect(() => {
         const REQUEST_PERMISSIONS = async () => {
             await getImageRollAsync();
         }
-
         const SET_IMAGE = async () => {
             var rawArray = new Array();
             for (var i = 0; i < uri.length; i++) {
@@ -78,6 +79,8 @@ function EditScreen({ route, navigation }) {
         REQUEST_PERMISSIONS();
     }, [uri]);
 
+    // The IMAGE_PICKER function brings images from the device's image library and stores it in memory;
+    // Also, images.length is number of images. if number of images are over the 10, it returns alert;
     const IMAGE_PICKER = async () => {
         try {
             if (itemUri.length >= 10) return alert('이미지는 10개 이상 업로드 하실 수 없습니다.')
@@ -107,12 +110,14 @@ function EditScreen({ route, navigation }) {
         }
     }
 
+    // The DELETE_IMAGE function removes images from the memory (images array);
     const DELETE_IMAGE = (arrayNumber) => {
         setItemUri([
             ...itemUri.slice(0, arrayNumber), ...itemUri.slice(arrayNumber + 1, itemUri.length)
         ])
     }
-
+    // The SaveImages function has a form data type;
+    // The SaveImage function creates the formData and sends it to the REST End-point using the SAVE_IMAGES function.;
     const SaveImages = async () => {
 
         var formData = new FormData();
@@ -121,7 +126,7 @@ function EditScreen({ route, navigation }) {
         formData.append('item_content', JSON.stringify(itemContent));
         formData.append('ads_type', adsType);
         if (itemUri.length <= 0) return alert('이미지는 한가지 이상 등록해주세요.');
-
+        // The loop function appends images to the image type;
         for (var i = 0; i < itemUri.length; i++) {
             formData.append('image', {
                 uri: itemUri[i].uri,
@@ -298,7 +303,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     ImageList: {
-        margin : 25,
+        margin: 25,
         flexWrap: "wrap",
         flexDirection: 'row',
         justifyContent: 'flex-start',

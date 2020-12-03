@@ -31,6 +31,7 @@ function SettingsScreen({ route, navigation }) {
         })
     }, []);
 
+    // The LOGOUT function request to delete user session information;
     const LOGOUT = async () => {
         var LOGOUT = await AUTHENTICATION.LOGOUT();
         if (LOGOUT) {

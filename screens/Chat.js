@@ -21,13 +21,19 @@ const { width, height } = Dimensions.get('window');
 const initialValue = {
     params: []
 }
+
+// The reducer function receives action, state parameters from dispatch function declared in the ChatScreen function;
 const reducer = (state, action) => {
     switch (action.type) {
+        // When action.type parameter is initial, return action.params;
         case 'initial':
             return {
                 params: action.params
             }
-
+        // When action.type parameter is "update", the reducer uses findIndex function to check presence of roomCode;
+        // If there is no data matching the roomCode, the reducer only returns the current value;
+        // But, If there is data matching the roomCode, the reducer filters the data matching the roomCode;
+        // The reducer pushes data to messages array and returns it;
         case 'update':
             var result = state.params.findIndex(data => data.roomCode == action.params.roomInfo.roomCode);
             if (result == -1) {
@@ -44,7 +50,9 @@ const reducer = (state, action) => {
                     })
                 }
             }
-
+        // When action.type parameter is "official", the reducer uses findIndex function to check presence of roomCode;
+        // there is data matching the roomCode, the reducer filters the data matching the roomCode;
+        // The reducer pushes data to messages array and returns it;
         case 'official':
             return {
                 params: state.params.filter(data => {
@@ -62,6 +70,8 @@ const reducer = (state, action) => {
 }
 let socket;
 const ChatScreen = ({ route, navigation }) => {
+
+    // The ChatScreen receives parameters from previous screen;
     const {
         item_uri,
         items_seq,
@@ -81,9 +91,15 @@ const ChatScreen = ({ route, navigation }) => {
     const scrollViewRef = useRef();
     const keyboardHeight = useRef(new Animated.Value(0)).current;
 
+    // The callback function is passed to childComponent as a parameter and receives parameters from childComponent;
+    // The variable sent from childComponent are true/false;
     const callback = (ChildFrom) => {
         setIsModal(ChildFrom)
     }
+
+    // The USER_PROFILE function requests profile of user by sending receiver_seq;
+    // The GET_SOCKET_IO function requests socket information;
+    // This useEffect asks for information about the opponent;
     useEffect(() => {
         const USER_PROFILE = async () => {
             try {
@@ -100,6 +116,10 @@ const ChatScreen = ({ route, navigation }) => {
         USER_PROFILE();
     }, [route]);
 
+    // This useEffect requests chat room information from the server;
+    // Also, the name "GetRoom" requests initial room information. The initial room information is from previous chat history;
+    // The dispatch function is used to update messages using the useReducer library;
+
     useEffect(() => {
         let isCancelled = true;
         socket = GLOBAL.GET_SOCKET_IO();
@@ -109,6 +129,10 @@ const ChatScreen = ({ route, navigation }) => {
         });
         return () => isCancelled = false;
     }, [state]);
+
+    // This useEffect requests chat room information from the server;
+    // Also, the name "receiveMessage" receives messages;
+    // The dispatch function is used to update messages using the useReducer library;
 
     useEffect(() => {
         let isCancelled = true;
@@ -120,6 +144,10 @@ const ChatScreen = ({ route, navigation }) => {
         return () => isCancelled = false;
     }, []);
 
+    // This useEffect requests chat room information from the server;
+    // Also, the name "officialMessage" receives official messages such as "사용자가 방을 나갔습니다";
+    // The dispatch function is used to update messages using the useReducer library;
+
     useEffect(() => {
         let isCancelled = true;
         socket = GLOBAL.GET_SOCKET_IO();
@@ -130,6 +158,10 @@ const ChatScreen = ({ route, navigation }) => {
         return () => isCancelled = false;
     }, []);
 
+
+    // The sendMessage function sends a message to the server using socket.IO;
+    // The DateFunction function create a date/time variable;
+    // The setMessageText function clears the text after sending the message;
     const sendMessage = async () => {
         if (message) {
             var dateTime = await DateFunction();
@@ -181,6 +213,9 @@ const ChatScreen = ({ route, navigation }) => {
             }),
         ]).start();
     }
+
+    // The componentJSX_Chat function creates a view that separates the sender and receiver of a message;
+    // Also, it edits current time variable "00:00:00" style to "오후/오전 00:00"
     const componentJSX_Chat = () => {
         if (state.params.length > 0)
             return (
@@ -315,7 +350,7 @@ const ChatScreen = ({ route, navigation }) => {
                     componentJSX_Chat()
                 }
             </Animated.ScrollView>
-            <Animated.View style={[styles.MessageInputBox, Platform.OS == 'ios' ? { bottom : keyboardHeight} : null ]}>
+            <Animated.View style={[styles.MessageInputBox, Platform.OS == 'ios' ? { bottom: keyboardHeight } : null]}>
                 <View style={styles.InputBox}>
                     <TextInput
                         value={message}

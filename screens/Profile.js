@@ -17,7 +17,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import AUTHENTICATION from '../assets/dataSource/authModel';
 
 const { width, height } = Dimensions.get('window');
-
+// The getImageRollAsync function asks permission to access the device's image library;
 async function getImageRollAsync() {
     if (Constants.platform.ios || Constants.platform.android) {
         const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -55,6 +55,8 @@ function ProfileScreen({ route, navigation }) {
         })
     }, []);
 
+    // useEffect's GET_PROFILE_IMAGE function runs the getImageRollAsync function to get permission to access the device's image library;
+    // the GET_USER_PROFILE function requests user profile image to the server by passing user_seq;
     useEffect(() => {
         const GET_PROFILE_IMAGE = async () => {
             getImageRollAsync();
@@ -66,7 +68,7 @@ function ProfileScreen({ route, navigation }) {
         }
         GET_PROFILE_IMAGE();
     }, [route])
-
+    // The IMAGE_PICKER function brings images from the device's image library and stores it in memory;
     const IMAGE_PICKER = async () => {
         try {
             // Image Picker 
@@ -104,6 +106,8 @@ function ProfileScreen({ route, navigation }) {
             console.log('Image Error', err);
         }
     }
+
+    // The UPDATE_NAME, UPDATE_PHONE, UPDATE_CMP_NAME, UPDATE_CMP_PHONE functions request to update user or company information;
     const UPDATE_NAME = async () => {
         var RESULT = await AUTHENTICATION.PROFILE_CHANGE({ code: '0', data: name });
         setName(null);
@@ -383,8 +387,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    ChangeBtn : {
-        padding : 10,
+    ChangeBtn: {
+        padding: 10,
     },
     ProfileSettingTxt: {
         flex: 1,

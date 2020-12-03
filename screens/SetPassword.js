@@ -31,12 +31,18 @@ function SearchUser({ route, navigation }) {
         })
     }, []);
 
+    // The SetUserPassword function receives a new password and sends it to the PasswordMatch function;
+    // It returns text (string), response (boolean);
     const SetUserPassword = (data) => {
         var PASSWORD = PasswordMatch(data);
         setNewPassword(PASSWORD.text);
         setPassword_Boolean(PASSWORD.response)
     }
 
+    // The UPDATE_PASSWORD function checks the password_boolean is true or not;
+    // password_boolean is true means that the passowrd is enough to use;
+    // newPassword is same as againPassword means that double check of password;
+    // Finally, the function checks null value;
     const UPDATE_PASSWORD = async () => {
         if (password_boolean) {
             if (newPassword == againPassword) {

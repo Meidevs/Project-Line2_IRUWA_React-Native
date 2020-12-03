@@ -112,6 +112,7 @@ function PickListScreen({ route, navigation }) {
         })
     }, []);
 
+    // useEffect's GET_MYLIST function passes user_seq to request a user-selected list;
     useEffect(() => {
         const GET_MYLIST = async () => {
             var MYLIST = await DATA_SOURCE.GET_MY_PICKS(user_seq);
@@ -121,6 +122,8 @@ function PickListScreen({ route, navigation }) {
         GET_MYLIST();
     }, [user_seq, isLoaded]);
 
+    // The DELETE_PICK function receives a parameter from childComponent that is items_seq;
+    // And it sends items_seq to the server to delete items from the list of items selected by the user;
     const DELETE_PICK = async (ChildFrom) => {
         await DATA_SOURCE.UPDATE_ITEM_PICK(ChildFrom);
         setIsLoad(false)
