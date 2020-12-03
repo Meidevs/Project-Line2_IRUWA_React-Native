@@ -36,6 +36,10 @@ function LocationScreen({ route, navigation }) {
     const [currentLocation, setUserLocation] = useState(null);
     const [isLoaded, setIsLoading] = useState(false);
     const [visible, setModalVisible] = useState(false);
+
+    // useEffect uses getCurrentPositionAsync function that is supported by EXPO library;
+    // The getCurrentPositionAsync function returns latitude & longitude;
+    // useEffect's GET_CURRENT_LOCATION function requests reversGeocoding through the Kakao Map API by passing the current location (lat, lon);
     useEffect(() => {
         let isCancelled = true;
         const GET_CURRENT_LOCATION = async () => {
@@ -53,6 +57,8 @@ function LocationScreen({ route, navigation }) {
         return () => isCancelled = false;
     }, [currentLocation]);
 
+    // AsyncStorage uses device's memory to save data;
+    // useEffect's GET_ALL_KEYS function requests all stored keys except "@my_Key";
     useEffect(() => {
         const GET_ALL_KEYS = async () => {
             const allKeys = await AsyncStorage.getAllKeys();
@@ -67,9 +73,9 @@ function LocationScreen({ route, navigation }) {
             headerLeft: () =>
                 <View style={styles.HeaderStyle}>
                     <TouchableOpacity style={styles.HeaderContent} onPress={() => navigation.goBack()}>
-                        <Image 
-                        source={require('../assets/images/close_button.png')} 
-                        style={{width : 18, height : 18}}
+                        <Image
+                            source={require('../assets/images/close_button.png')}
+                            style={{ width: 18, height: 18 }}
                         />
                     </TouchableOpacity>
                 </View>,
@@ -88,9 +94,9 @@ function LocationScreen({ route, navigation }) {
         })
     }, []);
 
+    // useEffect's READ_PREVIOUS_LOCATION function requests multiple data and creates a list of previous locations;
     useEffect(() => {
         let isCancelled = true;
-
         const READ_PREVIOUSE_LOCATION = async () => {
             try {
                 const prevLocations = await AsyncStorage.multiGet(keys);
@@ -106,6 +112,12 @@ function LocationScreen({ route, navigation }) {
         return () => isCancelled = false;
     }, [keys]);
 
+    // The UPDATE_CURRENT_LOCATION function is used to update previous location to current location;
+    // The UPDATE_USER_LOCATION function sends currentLocation value to the server to update current location;
+    // If the return is true, the UPDATE_CURRENT_LOCATION function creates object that has key id & location name;
+    // The prevLocationExistence function receives currentLocation value and compare with previous location lists;
+    // And, if there are currentLocation, it doesn't store currentLocation value in AsyncStorage;
+    // Finally, the currentLocation is stored in AsyncStorage;
     const UPDATE_CURRENT_LOCATION = async () => {
         try {
             if (!currentLocation) return alert('주소가 없습니다.')
@@ -128,6 +140,11 @@ function LocationScreen({ route, navigation }) {
         }
     };
 
+    // The LocateCallback function updates the user's current location by receiving the generated location text and sending it to the server;
+    // If the return is true, the UPDATE_CURRENT_LOCATION function creates object that has key id & location name;
+    // The prevLocationExistence function receives currentLocation value and compare with previous location lists;
+    // And, if there are currentLocation, it doesn't store currentLocation value in AsyncStorage;
+    // Finally, the currentLocation is stored in AsyncStorage;
     const LocateCallback = async (Location) => {
         try {
             var UPDATE_RESULT = await AUTHENTICATION.UPDATE_USER_LOCATION(Location);
@@ -150,6 +167,8 @@ function LocationScreen({ route, navigation }) {
         }
     };
 
+    // The DELETE_PREV_LOCATION function receives index, the index is used to find specific item from AsyncStorage, it uses index to create "@my_prev_location" key and filters/updates the previous locations matching the key;
+    //Also, if removes key in AsyncStorage;
     const DELETE_PREV_LOCATION = async (index) => {
         try {
             var keyString = "@my_prev_location_" + (index + 1);
@@ -160,11 +179,13 @@ function LocationScreen({ route, navigation }) {
         }
     };
 
+    // The ClearAll function removes all keys in AsyncStorage;
     const ClearAll = async () => {
         await AsyncStorage.multiRemove(keys);
         setAllKeys([])
     };
-
+    // The callback function is passed to childComponent as a parameter and receives parameters from childComponent;
+    // The variable sent from childComponent are true/false;
     const Callback = (ChildFrom) => {
         setModalVisible(ChildFrom)
     }
@@ -192,9 +213,9 @@ function LocationScreen({ route, navigation }) {
                                 style={{ flex: 1, }}
                             />
                             <TouchableOpacity style={styles.SearchInputBtn} onPress={() => setModalVisible(true)}>
-                                <Image 
+                                <Image
                                     source={require('../assets/images/search_ico.png')}
-                                    style={{width : 23, height : 23}}
+                                    style={{ width: 23, height: 23 }}
                                 />
                             </TouchableOpacity>
                         </View>
@@ -208,9 +229,9 @@ function LocationScreen({ route, navigation }) {
                 <View style={styles.LocationList}>
                     <View style={styles.PrevSearch}>
                         <View style={styles.PrevSearchTitle}>
-                            <Image 
-                            source={require('../assets/images/address_ico.png')}
-                                style={{width : 22, height : 20}}
+                            <Image
+                                source={require('../assets/images/address_ico.png')}
+                                style={{ width: 22, height: 20 }}
                             />
                             <Text style={styles.PrevSearchText}>최근 주소</Text>
                         </View>

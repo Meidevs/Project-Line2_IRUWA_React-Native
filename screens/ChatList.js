@@ -15,20 +15,24 @@ const { width, height } = Dimensions.get('window');
 const initialValue = {
     params: []
 }
-
+// The reducer function receives action, state parameters from dispatch function declared in the ChatListScreen function;
 const reducer = (state, action) => {
     switch (action.type) {
+        // When action.type parameter is initial, return action.params;F
         case 'initial':
             return {
                 params: action.params
             }
+        // When action.type parameter is "update", the reducer checks presence of roomCode;
+        // there is data matching the roomCode, the reducer filters the data matching the roomCode;
+        // The reducer pushes data to params array and returns it;
         case 'update':
-                return {
-                    params: [
-                        action.params.roomInfo,
-                        ...state.params.filter((data) => data.roomCode != action.params.roomInfo.roomCode)
-                    ],
-                }
+            return {
+                params: [
+                    action.params.roomInfo,
+                    ...state.params.filter((data) => data.roomCode != action.params.roomInfo.roomCode)
+                ],
+            }
         case 'default':
             return {
                 params: state.params
@@ -53,6 +57,9 @@ function ChatListScreen({ route, navigation }) {
         })
     }, []);
 
+    // The useFocusEffect function works when this user sees this screen;
+    // The INITIAL function requests user information through the GET_USER_INFOs function and gets the socket information through the GET_SOCKET_IO function;
+    // And the "GetRoomList" socket requests a list of rooms from the server;
     useFocusEffect(
         React.useCallback(() => {
             let isCancelled = true;
@@ -71,6 +78,8 @@ function ChatListScreen({ route, navigation }) {
             return () => isCancelled = false;
         }, [])
     );
+
+    // The GET_SOCKET_IO function uses a socket to create a communication channel, and the socket receives a list of rooms; 
     useEffect(() => {
         let isCancelled = true;
         socket = GLOBAL.GET_SOCKET_IO();
@@ -81,6 +90,7 @@ function ChatListScreen({ route, navigation }) {
         return () => isCancelled = false;
     }, []);
 
+    // The GET_SOCKET_IO function uses a socket to create a communication channel, and the socket receives messages; 
     useEffect(() => {
         let isCancelled = true;
         socket = GLOBAL.GET_SOCKET_IO();

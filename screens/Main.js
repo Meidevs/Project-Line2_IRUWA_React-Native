@@ -94,6 +94,8 @@ function MainScreen({ route, navigation }) {
     const [user_seq, setUserSeq] = useState(null);
     const [isLoad, setIsLoad] = useState(false);
     const [refreshing, setRefreshing] = React.useState(false);
+
+    // 
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => <View></View>,
@@ -118,6 +120,8 @@ function MainScreen({ route, navigation }) {
         })
     }, [user_location]);
 
+    // The useFocusEffect function works when this user sees this screen;
+    // The GET_USER_INFOs function requests user_seq and user_location;
     useFocusEffect(
         React.useCallback(() => {
             let isCancelled = true;
@@ -138,6 +142,9 @@ function MainScreen({ route, navigation }) {
         }, [])
     );
 
+    // The onRefresh function works when the user drags the view down;
+    // In this case, the GET_ITEM requests new item lists at the REST endpoint;
+    // It literally refreshes a list of items;
     const onRefresh = async () => {
         setRefreshing(true);
         const ITEMS = await DATA_SOURCE.GET_ITEMS(user_location);
@@ -145,6 +152,7 @@ function MainScreen({ route, navigation }) {
         wait(2000).then(() => setRefreshing(false));
     };
 
+    // The GET_ITEMS function requests new list of items at the REST End-point;
     useEffect(() => {
         let isCancelled = true;
         const SET_DATAS = async () => {
@@ -159,6 +167,8 @@ function MainScreen({ route, navigation }) {
         return () => isCancelled = false;
     }, [user_location])
 
+    // The SET_SOCKET_IO function make a initial connection to the socket.io;
+    // The CONNECT_TO_SOCKET_IO function sends user_seq at the server to store user information;
     useEffect(() => {
         GLOBAL.SET_SOCKET_IO();
         GLOBAL.CONNECT_TO_SOCKET_IO(user_seq);
@@ -212,6 +222,7 @@ function MainScreen({ route, navigation }) {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                     ListHeaderComponent={() => {
+                        // PremiumBanner is Swiper ads at the top of the list view
                         return <PremiumBanner data={user_location} navigation={navigation} />
                     }}
                     renderItem={({ item }) => <Item data={item} location={user_location} user={user_seq} navigation={navigation} />}
@@ -219,6 +230,8 @@ function MainScreen({ route, navigation }) {
                     getItemCount={getItemCount}
                     getItem={getItem}
                 />
+
+                {/* PremiumFrontAds are ads that pop up right after the screen is rendered */}
                 <PreminumFrontAds data={user_location} />
             </SafeAreaView>
         )
@@ -260,7 +273,7 @@ const styles = StyleSheet.create({
     },
     ItemName: {
         flex: 1,
-        flexShrink : 1,
+        flexShrink: 1,
         fontWeight: '800',
         color: '#000000'
     },

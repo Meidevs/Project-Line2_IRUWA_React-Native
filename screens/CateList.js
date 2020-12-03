@@ -70,6 +70,7 @@ const Item = ({ data, user, navigation }) => {
 }
 
 function CateListScreen({ route, navigation }) {
+    // The CateListScreen receives category_name and category_seq parameters from previous screen;
     const category_name = route.params.category_name;
     const category_seq = route.params.category_seq;
     const [data, setData] = useState([]);
@@ -87,6 +88,7 @@ function CateListScreen({ route, navigation }) {
         })
     }, [category_name]);
 
+    // The GET_ITEMS_LIST function requests item lists based on category_seq and the user information;
     const GET_ITEMS_LIST = useCallback(async () => {
         const USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
         const GET_ITEMS = await DATA_SOURCE.GET_ITEMS_ON_CATEGORY(category_seq);
@@ -99,6 +101,7 @@ function CateListScreen({ route, navigation }) {
         GET_ITEMS_LIST();
     }, [GET_ITEMS_LIST]);
 
+    // VirtualizedList element's getItem is declare data type to use in the VirtualizedList;
     if (isLoaded) {
         return (
             <SafeAreaView>

@@ -33,6 +33,7 @@ function RingingScreen({ route, navigation }) {
         })
     }, []);
 
+    // useEffect's GET_RINGING_LIST function requests a list of the company's phone numbers;
     useEffect(() => {
         const GET_RINGING_LIST = async () => {
             var RINGING_LIST = await DATA_SOURCE.GET_RINGING_LIST();
@@ -43,6 +44,8 @@ function RingingScreen({ route, navigation }) {
         setIsLoad(false)
     }, [isLoaded]);
 
+    // The RegisterPhone function sends name, phone, position of the target to the server;
+    // This function checks null value;
     const RegisterPhone = async () => {
         var data = new Object();
         if (name == null | phone == null | position == null) return alert('정보를 모두 입력해 주세요.')
@@ -59,7 +62,7 @@ function RingingScreen({ route, navigation }) {
             alert(INSERT_RESPONSE.messages)
         }
     }
-
+    // The RegisterPhone function removes an item on the list by passing phone_seq;
     const DELETE_PHONE = async (phone_seq) => {
         var DELETE_RESPONSE = await DATA_SOURCE.DELETE_RINGING_LIST(phone_seq);
         if (DELETE_RESPONSE.flags == 0) {

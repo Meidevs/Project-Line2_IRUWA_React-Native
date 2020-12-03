@@ -30,6 +30,7 @@ function NotificationScreen({ route, navigation }) {
         })
     }, []);
 
+    // The GET_QUESTIONS function has a list of questions and sets "visible" variables to make the hide/show function;
     const GET_QUESTIONS = async () => {
         var Questions = [
             { id: 'a_2', question: 'Q. 업체 게시글 등록에 대해 알려주세요.', answer: 'A. 이루와 앱에 등록된 가맹점들은 승인과 동시에 템플릿 범위 내 자체 홍보글을 작성할 수 있습니다.' },
@@ -52,7 +53,8 @@ function NotificationScreen({ route, navigation }) {
         initQuestion(Questions);
         showQuestions(Questions)
     }
-
+    // The GET_NOTICATE function sets category of questions and it pushes an empty array when the length of the NotisCate doesn't divided into 3;
+    // This is because view of the CSScreen. The CSScreen displays 3 items in one row. If the item is not divided into three, the remaining space is occupied by an empty array;
     const GET_NOTICATE = useCallback(async () => {
         // const data = await DATA_SOURCE.GetNotifications();
         var NotisCate = [
@@ -77,12 +79,14 @@ function NotificationScreen({ route, navigation }) {
         GET_NOTICATE();
     }, [GET_NOTICATE])
 
+    // The orderCSList function receives question_id such as "a_1", "a_2", "a_3" and makes a new array to show items matching the question_id;
     const orderCSList = (data) => {
         var rawArray = new Array();
         rawArray = questions.filter((item) => item.id == data);
         showQuestions(rawArray)
     }
 
+    // The toggleAnswer function shows/hides the detail of the question when the user taps the quesion;
     const toggleAnswer = (data) => {
         questionList[data].visible = !questionList[data].visible;
         showQuestions([

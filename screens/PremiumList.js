@@ -85,6 +85,7 @@ function CateListScreen({ navigation }) {
         })
     }, []);
 
+    // the GET_ITEM_LIST function requests user information through the GET_USER_INFOs function and premium item lists through the GET_PREMIUM_SEARCH_PREMIUMS function;
     const GET_ITEMS_LIST = useCallback(async () => {
         const USER_INFOs = await AUTHENTICATION.GET_USER_INFOs();
         const GET_ITEMS = await DATA_SOURCE.GET_PREMIUM_SEARCH_PREMIUMS();

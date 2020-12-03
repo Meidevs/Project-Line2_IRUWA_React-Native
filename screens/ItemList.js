@@ -11,13 +11,13 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
-import Icon from 'react-native-vector-icons/Entypo';
 import DATA_SOURCE from '../assets/dataSource/dataModel';
 import TimeGap from '../assets/components/TimeGap';
 import ModalBox from '../assets/components/Myinfo/ModalBox';
 const { width, height } = Dimensions.get('window');
 
 function ItemListScreen({ route, navigation }) {
+    // ItemListScreen shows a list of items registered by the user;
     const user_seq = route.params.user_seq;
     const cmp_seq = route.params.cmp_seq;
     const [items, setItems] = useState([]);
@@ -40,7 +40,8 @@ function ItemListScreen({ route, navigation }) {
             headerRight: () => <View></View>
         })
     }, []);
-
+    // The useFocusEffect function works when this user sees this screen;
+    // The GET_MYLIST function sends cmp_seq to request a list of items registered by the user;
     useFocusEffect(
         React.useCallback(() => {
             const GET_MYLIST = async () => {
@@ -52,6 +53,7 @@ function ItemListScreen({ route, navigation }) {
         }, [user_seq, isModal])
     );
 
+    // The setStatus function receives item's information;
     const setStatus = (data) => {
         setEdit({
             items_seq: data.items_seq,
@@ -63,6 +65,8 @@ function ItemListScreen({ route, navigation }) {
         setIsModal(true);
     }
 
+    // The callback function is passed to childComponent (ModalBox) as a parameter and receives parameters from childComponent;
+    // The variable sent from childComponent are true/false;
     const callback = (ChildFrom) => {
         setIsModal(ChildFrom)
     }
@@ -169,9 +173,9 @@ const styles = StyleSheet.create({
         width: 60,
         height: 20,
     },
-    UploadTime : {
-        paddingRight : 10,
-        paddingLeft : 10,
+    UploadTime: {
+        paddingRight: 10,
+        paddingLeft: 10,
     },
     AdsTypeTxt: {
         fontSize: 12,

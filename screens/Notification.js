@@ -28,6 +28,8 @@ function NotificationScreen({ route, navigation }) {
         })
     }, []);
 
+    // useEffect's GET_NOTIFICATIONS function requests official notification to the server;
+    // After receiving the notification, the function creates a toggle function by setting the "visible" variable;
     useEffect(() => {
         const GET_NOTIFICATIONS = async () => {
             var NOTIS = await NOTIFICATIONS.GET_NOTIFICATIONS();
@@ -39,6 +41,8 @@ function NotificationScreen({ route, navigation }) {
         GET_NOTIFICATIONS();
     }, []);
 
+    // The OpenContent function works when the user presses the notification;
+    // It shows/hides a detail of notifications;
     const OpenContent = (num) => {
         notifications[num].visible = !notifications[num].visible;
         setNotifications([

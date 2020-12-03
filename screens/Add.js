@@ -19,6 +19,7 @@ import DATA_SOURCE from '../assets/dataSource/dataModel';
 
 const { width, height } = Dimensions.get('window');
 
+// The getImageRollAsync function asks permission to access the device's image library;
 async function getImageRollAsync() {
     if (Constants.platform.ios || Constants.platform.android) {
         const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -47,6 +48,7 @@ function AddScreen({ route, navigation }) {
         })
     }, [images, title, content, adsType]);
 
+    // The REQUEST_PERMISSIONS function executes getImageRollAsync function;
     useEffect(() => {
         const REQUEST_PERMISSIONS = async () => {
             await getImageRollAsync();
@@ -54,6 +56,8 @@ function AddScreen({ route, navigation }) {
         REQUEST_PERMISSIONS();
     }, []);
 
+    // The IMAGE_PICKER function brings images from the device's image library and stores it in memory;
+    // Also, images.length is number of images. if number of images are over the 10, it returns alert;
     const IMAGE_PICKER = async () => {
         try {
             if (images.length >= 10) return alert('이미지는 10개 이상 업로드 하실 수 없습니다.')
@@ -84,18 +88,21 @@ function AddScreen({ route, navigation }) {
         }
     }
 
+    // The DELETE_IMAGE function removes images from the memory (images array);
     const DELETE_IMAGE = (arrayNumber) => {
         setImage([
             ...images.slice(0, arrayNumber), ...images.slice(arrayNumber + 1, images.length)
         ])
     }
 
+    // The SaveImages function has a form data type;
+    // The SaveImage function creates the formData and sends it to the REST End-point using the SAVE_IMAGES function.;
     const SaveImages = async () => {
-
         var formData = new FormData();
         formData.append('item_name', title);
         formData.append('item_content', JSON.stringify(content));
         formData.append('ads_type', adsType);
+        // The loop function appends images to the image type;
         for (var i = 0; i < images.length; i++) {
             formData.append('image', {
                 uri: images[i].uri,
@@ -117,6 +124,8 @@ function AddScreen({ route, navigation }) {
         }
     }
 
+    // The SelectAdsType function is used to select premiumor normal ads;
+    // Switch the type number between 0 and 1.
     const SelectAdsType = (num) => {
         setAdsType(num);
     }

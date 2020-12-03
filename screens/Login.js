@@ -18,24 +18,33 @@ import AUTHENTICATION from '../assets/dataSource/authModel';
 const { width, height } = Dimensions.get('window');
 
 function LoginScreen({ navigation }) {
+
+    // LoginScreen mainly dealing with login function;
+    // The useRef function lets you access DOM elements. And the initial value of keyboardHeight is 0; 
     const keyboardHeight = useRef(new Animated.Value(0)).current;
     const [user_id, setUserid] = useState('');
     const [user_pw, setUserpw] = useState('');
     const [expoToken, setToken] = useState('');
+
+    // The navigation.setOptions function help to design header style. In this page, there is no header;
     useEffect(() => {
         navigation.setOptions({
             headerLeft: null,
             headerTitle: null,
         })
     }, []);
+
+    // The useEffect function works after React DOM is created;
+    // The registerForPushNotificationAsync function is supported by EXPO library and generates EXPO Token used to send notifications;
     useEffect(() => {
         const SET_DEVICE_TOKEN = async () => {
             var token = await registerForPushNotificationsAsync();
-            if(!token) return alert('앱 설치간에 문제가 발생했습니다. 앱을 재설치 해주세요.')
+            if (!token) return alert('앱 설치간에 문제가 발생했습니다. 앱을 재설치 해주세요.')
             setToken(token);
         }
         SET_DEVICE_TOKEN();
 
+        // The keyboradDidShowListender/keyboardDidHideListener is a class which deal with Keyboard specifications by applying addListener to Keyboard element of React-Native;
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow', (event) => {
                 keyboardDidShow(event)
@@ -50,7 +59,8 @@ function LoginScreen({ navigation }) {
             keyboardDidShowListener.remove();
         };
     }, []);
-
+    // The keyboardDidShow function receives event from the keyboardDidShowListener;
+    // Then the keyboard appears in the view, the keyboardDidShow function changes the layout;
     const keyboardDidShow = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
@@ -60,6 +70,8 @@ function LoginScreen({ navigation }) {
             }),
         ]).start();
     }
+    // The keyboardDidHide function receives event from the keyboardDidHideListener;
+    // Then the keyboard disappears in the view, the keyboardDidHide function changes the layout;
     const keyboardDidHide = (e) => {
         Animated.parallel([
             Animated.timing(keyboardHeight, {
@@ -70,27 +82,31 @@ function LoginScreen({ navigation }) {
         ]).start();
     }
 
+    // The Login function sends user_id, user_pw, expoToken to the REST End-point;
+    // Also, the USER_APPSTATE function updates the user appstate to one of "active", "inactive" or "background";
+    // The CommonActions.reset function removes all stacks in the navigator and creates a stack starting with "Main" after successful login;
     const Login = async () => {
         const response = await AUTHENTICATION.LOGIN(user_id, user_pw, expoToken);
         if (response.flags == 0) {
             await AUTHENTICATION.USER_APPSTATE('active', expoToken.data);
             navigation.dispatch(
                 CommonActions.reset({
-                index : 1,
-                routes : [
-                    {name : 'Main'},
-                ]
-            }))
-            
+                    index: 1,
+                    routes: [
+                        { name: 'Main' },
+                    ]
+                }))
+
         } else {
             alert(response.message);
         }
     }
+    // The spaceRemover function deletes blanks in the string;
     const spaceRemover = (str) => {
         return str.replace(/\s/g, '');
-        
-    }
 
+    }
+    // The spaceRemover function makes a string lowercase;
     const lowerCase = (str) => {
         return str.toLowerCase();
     }

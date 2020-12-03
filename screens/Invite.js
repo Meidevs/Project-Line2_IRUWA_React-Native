@@ -41,7 +41,8 @@ function InviteScreen({ route, navigation }) {
             )
         })
     }, []);
-
+    // useEffect's GET_USER_INFO function requests the user's coupon list and creates a Base64 string using the user's email;
+    // This string is used as code when the user invites others. It is also decrypted by email and used to count the number of invitations;
     useEffect(() => {
         let isCancelled = true;
         const GET_USER_INFO = async () => {
@@ -59,6 +60,7 @@ function InviteScreen({ route, navigation }) {
         return () => isCancelled = false;
     }, [route]);
 
+    // The onShare function shares content and displays pop up links;
     const onShare = async () => {
         try {
             if (Platform.OS == 'android') {
